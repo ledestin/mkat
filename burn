@@ -15,7 +15,8 @@ function usage {
   echo "  -sSPEED	    add 'speed=SPEED' to cdrecord parameters"
   echo "  -c		    add 'blank=fast' to cdrecord parameters"
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
-  echo "     --skip	    skip catalog and check"
+  echo "     --nocat	    skip catalog"
+  echo "     --nocheck	    skip afterburn check"
   echo "  -h		    print this help"
   exit $1
 }
@@ -26,7 +27,8 @@ found=1
 while [ $found ]; do
   case "$1" in
     "-n") PRINT_ONLY=1 ;;
-    "--skip") SKIP_CATALOG=1 ;;
+    "--nocat") SKIP_CATALOG=1 ;;
+    "--nocheck") SKIP_CHECK=1 ;;
     "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
        *) unset found ;;
   esac
@@ -64,10 +66,13 @@ unset IFS; cdrecord $CDREC_OPTS "$ISO_IMAGE"; IFS='
 '
 
 #CATALOG
-if [ ! $SKIP_CATALOG ] || [ -z $CD ]; then
+if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   echo "Catalog..."
   mkat
+fi
 
+#AFTERBURN CHECK
+if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
   echo "Afterburn check..."
   for f in $*; do
