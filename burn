@@ -20,12 +20,7 @@ function usage {
   exit $1
 }
 
-[ _"$1" = _'-h' ] && usage 0
-
-if [ "$#" -lt 2 ]; then
-  echo >&2 "not enough parameters"
-  usage 1
-fi
+[ _"$1" = _"-h" ] && usage 0
 
 found=1
 while [ $found ]; do
@@ -39,6 +34,12 @@ while [ $found ]; do
   [ "${1:0:2}" = "-s" ] && { CDREC_OPTS="$CDREC_OPTS speed=${1:2}"; found=1; }
   [ $found ] && shift;
 done
+
+#label and files must be provided
+if [ "$#" -lt 2 ]; then
+  echo >&2 "not enough parameters"
+  usage 1
+fi
 
 [ $DEBUG ] && echo $CDREC_OPTS
 
@@ -63,7 +64,7 @@ unset IFS; cdrecord $CDREC_OPTS "$ISO_IMAGE"; IFS='
 '
 
 #CATALOG
-if [ ! $SKIP_CATALOG ]; then
+if [ ! $SKIP_CATALOG ] || [ -z $CD ]; then
   echo "Catalog..."
   mkat
 
