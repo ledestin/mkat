@@ -4,8 +4,8 @@ MKAT
 MKAT is a set of command line tools to burn, catalog audio or data CD-R[W]s
 and then search the catalog database.
 It uses mkisofs and cdrecord to create iso and burn CDs, -r option allows 
-to pass through options to cdrecord. Catalog tools can be used separately 
-from burn tools.
+to pass through options to cdrecord. Catalog tools are mkat and mkata,
+burn tools are burn and burna, with trailing `a' standing for `audio'.
 
 It has been made because I was tired of specifying parameters to mkisofs and
 cdrecord, and I also wanted a database of my CD collection that could be
@@ -22,6 +22,21 @@ I also have a symlink
 lrwxrwxrwx    1 root     root           17 2004-04-21 13:13 /misc -> /var/autofs/misc/
 so I can just say `ls /misc/iso' and see the contents of the iso image.
 
+INSTALLATION
+
+`make install' if you're a not Debian user, apt-get otherwise.
+`make uninstall' is available.
+
+MKAT depends on cdrecord, mkisofs, sed, awk, cdparanoia, cd-discid present,
+latest two only required for work with audio CDs.
+
+CONFIGURATION
+
+/etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
+.mkatrc settings override global settings from /etc/mkatrc.
+
+See manual pages for more info.
+
 DESCRIPTION
 
 mkat creates a file in $LISTDIR (see mkatrc) named after CD label with
@@ -33,18 +48,6 @@ FMP2 1-4
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_01.avi:176M:635f23f89dd69fff11162a89655f5ca1
 
 That is file description consists of the file name, size, md5 sum.
-
-INSTALLATION
-
-`make install' if you're a not Debian user, apt-get otherwise.
-`make uninstall' is available.
-
-CONFIGURATION
-
-/etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
-.mkatrc settings override global settings from /etc/mkatrc.
-
-See manual pages for more info.
 
 --
 /Dmitry Maksyoma <ledestin@amur.ru>, Mon, 31 May 2004 13:51:23 +1000
