@@ -11,12 +11,12 @@ RCFILE=cdlistrc
 #set -u #unset var is an error
 
 function usage {
-  echo "usage: $0 [-n] [-rCDREC_OPTS] <label> <file>..."
-  echo "  -n	    print estimated image size, exit"
-  echo "  -sSPEED   add 'speed=SPEED' to cdrecord parameters"
-  echo "  -c	    add 'blank=fast' to cdrecord parameters"
-  echo "  -r	    pass parameters to cdrecord"
-  echo "  --skip    skip catalog and check"
+  echo "usage: $0 [options] <label> <file>..."
+  echo "  -n		    print estimated image size, exit"
+  echo "  -sSPEED	    add 'speed=SPEED' to cdrecord parameters"
+  echo "  -c		    add 'blank=fast' to cdrecord parameters"
+  echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
+  echo "     --skip	    skip catalog and check"
   exit $1
 }
 
@@ -74,4 +74,4 @@ if [ ! $SKIP_CATALOG ]; then
   done
 fi
 
-sleep 6 && eject
+sleep $AUTOFS_DELAY && eject
