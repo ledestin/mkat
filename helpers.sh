@@ -42,36 +42,36 @@ function print_usage {
   done
 }
 
-#process_options($options)
+#process_options($*)
 #process a program's arguments, which means,
 #execute code attached to an option with eval
 function process_options {
-  local i=0 pos
+  local i=0 found REQUIRES_PARAM
   while [ ${#*} -gt 0 ]; do
     local o=${OPTIONS[$i]}
+    unset REQUIRES_PARAM; [ `expr index "$o" =` -ne 0 ] && REQUIRES_PARAM=1
     #deal with -h|--help like options
     while [ `expr index "$o" '|'` -ne 0 ]; do
       found=${o%%|*}
       if [ "${found%=*}" = "$1" ]; then
 	#add =VALUE to short option if long is --o=VALUE
-	[ `expr index "$o" =` -ne 0 ] && \
+	[ $REQUIRES_PARAM ] && \
 	  [ ${1:0:2} != '--' ] && [ ! -z ${o#*=} ] && found="$found=${o#*=}"
 	o=$found; break
       fi
       o=${o#*|}
     done
     #allow repitition for short options w/o parameters
+    #(cut -vvv to -v (defined form) and assign to cur_opt)
     cur_opt="$1"
     local s=${1:1}
-    [ "${s:0:1}" != '-' ] && [ `expr index "$s" =` -eq 0 ] && \
-      [ ${#s} -gt 1 ] && [ -z "${s//${s:0:1}/}" ] && \
-	cur_opt="-${s:0:1}"
-    #process argument
-    if [ "${o%=*}" = "$cur_opt" ] || [ "--no${o%=*}" = "$cur_opt" ]; then
+    [ "${s:0:1}" != '-' ] && [ -z $REQUIRES_PARAM ] && \
+      [ ${#s} -gt 1 ] && [ -z "${s//${s:0:1}/}" ] && cur_opt="-${s:0:1}"
+    #process cur_opt
+    if [ "${o%=*}" = "$cur_opt" ] || [ "--no${o}" = "$cur_opt" ]; then
       #debug "found argument: $1"
-      local pos=`expr index "$o" =`
       #make sure that $2 is a param if option requires one
-      if [ $pos -ne 0 ]; then
+      if [ $REQUIRES_PARAM ]; then
 	([ "$2" ] && [ ${2:0:1} != '-' ]) || \
 	  { echo "option $o requires parameter"; exit 1; }
       fi
@@ -91,11 +91,11 @@ function process_options {
       done
       debug "action: $action"
       eval "$action"
-      if [ $pos -ne 0 ]; then
-	shift 2
-      else
-        shift
-      fi
+      shift
+      #shift parameter as well if option has one
+      [ $REQUIRES_PARAM ] && shift
+      #will process the next positional argument, so OPTIONS will be cycled
+      #from the start, hence i=0
       i=0; continue
     fi
     i=$(($i+3))
@@ -125,11 +125,10 @@ function test_helpers {
   assert '[ $CONFIG = file.conf ]' \
     "config file isn't the one specified with --rc option"
   assert '[ ${#TAGS[@]} -eq 3 ]' "3 -t options specified, but ${#TAGS} found"
-  assert '[ ${TAGS[0]} = tag1 ] && \
-    [ ${TAGS[1]} = tag2 ] && [ ${TAGS[2]} = tag3 ]' "tag names are wrong"
+  assert '[ "_${TAGS[*]}" = "_tag1 tag2 tag3" ]' "tag names are wrong"
   assert '[ -z $RECURSIVE ]' '--no-r should yield non-existing $RECURSIVE'
   assert '[ $VERBOSE_LEVEL -eq 3 ]' \
-    "verbose option was specified 2 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
+    "verbose option was specified 3 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
   echo "usage:"; print_usage "${OPTIONS[@]}"
 }
 if [ ${0##*/} = helpers.sh ]; then
