@@ -8,7 +8,7 @@ RCFILE=cdlistrc
   echo "usage $0 [-s|-f|-c|-y|-h]";
   echo "-f  overwrite list file"
   echo "-s  search the CD database"
-  echo "-c  make md5 sum(s) and search for them in the db"
+  echo "-m  make md5 sum(s) and search for them in the db"
   echo "-y  cycle { cdlist; eject; }"
   echo "-h  print this help"
   exit;
@@ -22,7 +22,7 @@ if [ _$1 = _"-y" ]; then
     [ $? -ne 0 ] && exit
   done
 fi
-if [ _"$1" = _"-c" ]; then
+if [ _"$1" = _"-m" ]; then
   shift; md5sum "$@"\
     | ruby -e 'a=[]; while gets; a.push($_.split[0]); end; puts a.join("|")'\
     | xargs $0 -s 
