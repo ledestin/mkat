@@ -32,6 +32,9 @@ INSTALLATION
 MKAT depends on cdrecord, mkisofs, sed, awk, dotlockfile, cdparanoia,
 cd-discid present, the last two only required for work with audio CDs.
 
+burn(1) depends on cdrecord, dotlockfile exclusively, so if you don't intend
+to use it, no need for them. The same thing with burna(1) and cdparanoia.
+
 CONFIGURATION
 
 /etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
