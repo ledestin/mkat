@@ -117,7 +117,7 @@ if [ "$REGEX" ]; then
   if [ "$RES" ]; then
     cmd="echo -e ${RES//$RET/\\\\n} | $GREP $REGEX"
   else
-    cmd="$GREP "$REGEX" "$LISTDIR"/*.list"
+    cmd="$GREP "\'$REGEX\'" "$LISTDIR"/*.list"
   fi
   [ $FILTER_TAGS ] && cmd="$cmd | $GREP -v '(^|:)tags:'"
   if [ ${#REGEX[@]} -gt 1 ]; then
