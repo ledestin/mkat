@@ -63,6 +63,7 @@ while [ $found ]; do
   case "$1" in
     "-h"|"--help") usage 0 ;;
     "-n") PRINT_ONLY=1 ;;
+    "-o") CDREC_OPTS="$CDREC_OPTS -overburn -dao" ;;
     "--noimg") SKIP_MKIMAGE=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;

@@ -44,7 +44,10 @@ print estimated iso image size
 add 'speed=SPEED' to cdrecord parameters
 .TP
 .B \-c
-add 'blank=fast' to cdrecord parameters
+clean the CR-RW (add 'blank=fast' to cdrecord parameters)
+.TP
+.B \-o
+overburn (add '-overburn -dao' to cdrecord parameters)
 .TP
 .B \-r \fI<CDREC_OPTS>\fR
 pass parameters to cdrecord
