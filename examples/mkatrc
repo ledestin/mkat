@@ -8,5 +8,5 @@ MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points'
 CDREC_OPTS='-v'
 
 #options for the control freaks
-MKIMAGE_CMD="mkisofs \$MKIMAGE_OPTS -V \"\$LABEL\" -o \"\$ISO_IMAGE\" \"\${FILES[@]}\""
+MKIMAGE_CMD="mkisofs -V \"\$LABEL\" -o \"\$ISO_IMAGE\" \$MKIMAGE_OPTS \"\${FILES[@]}\""
 ISO_IMAGE="$TMP/cdimage.iso"
