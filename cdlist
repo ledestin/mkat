@@ -1,0 +1,45 @@
+#!/bin/bash
+
+RCFILE=cdlistrc 
+[ -f /etc/$RCFILE ] && source /etc/$RCFILE
+[ -f ~/.$RCFILE ] && source ~/.$RCFILE
+
+[ _$1 = _"-h" ] && {
+  echo "usage $0 [-s|-f|-c|-h]";
+  echo "-f  overwrite list file"
+  echo "-s  search the CD database"
+  echo "-c  cycle { cdlist; eject; }"
+  echo "-h  print this help"
+  exit;
+}
+
+[ _$1 = _"-s" ] && { grep -i "$2" "$LISTDIR"/*.list; exit; }
+if [ _$1 = _"-c" ]; then
+  while : ; do
+    cdlist && sleep 6 && eject
+    read -p "Press Enter when ready..."
+    [ $? -ne 0 ] && exit
+  done
+fi
+
+#catalog the CD
+LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
+[ -z "$LABEL" ] && { echo "could not obtain CD label"; exit 1; }
+DEST="$LISTDIR/$LABEL.list"
+{ [ _$1 != _"-f" ] \
+  && [ -e "$DEST" ] ; } && \
+  { echo >&2 "file already exists: '$DEST'"; exit 1; }
+
+{
+echo $LABEL
+IFS='
+'
+for f in `find $CD -mindepth 1`; do
+  rel=`echo "$f" | sed -ne "s!$CD!!;s!^/!!p"`
+  if [ -d "$f" ]; then
+    echo $rel
+  elif [ -f "$f" ]; then
+    echo -e $rel:`du -h "$f" | awk '{print $1}'`:`md5sum "$f" | awk '{ print $1}'`
+  fi
+done
+} | tee "$DEST"

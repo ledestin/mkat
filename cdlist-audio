@@ -1,0 +1,19 @@
+#!/bin/sh
+
+RCFILE=cdlistrc 
+[ -f /etc/$RCFILE ] && source /etc/$RCFILE
+[ -f ~/.$RCFILE ] && source ~/.$RCFILE
+set -u #unset var is an error
+
+LIST=$LISTDIR/audiocd.list
+entry=`cd-discid $DRIVE`
+if [ -f $LIST ]; then
+  grep "$entry" $LIST > /dev/null
+  case $? in
+  0) echo -e >&2 "the CD already exists in the database:\n$entry"; exit 1 ;;
+  2) echo >&2 "grep error"; exit 1 ;;
+  esac
+else
+  > $LIST
+fi
+echo "$entry" >> $LIST

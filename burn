@@ -1,0 +1,53 @@
+#!/bin/bash
+
+#1. Make iso
+#2. Burn iso
+#3. Add the burned CD to the catalog
+#4. Compare files on the CD with the original files
+
+RCFILE=cdlistrc 
+[ -f /etc/$RCFILE ] && source /etc/$RCFILE
+[ -f ~/.$RCFILE ] && source ~/.$RCFILE
+#set -u #unset var is an error
+
+function usage {
+  echo "usage: $0 [-n] <label> <file>..."
+  echo "  -n  print estimated image size, exit"
+  exit $1
+}
+
+[ _"$1" = _'-h' ] && usage 0
+
+if [ "$#" -lt 2 ]; then
+  echo >&2 "not enough parameters"
+  usage 1
+fi
+
+[ "$1" = "-n" ] && { PRINT_ONLY=1; shift; }
+
+IFS='
+'
+LABEL="$1"; shift
+if [ $PRINT_ONLY ]; then
+  str=`mkisofs ${PRINT_ONLY:+'-print-size'} -graft-points "$@"`; echo "$str"
+  size=`echo $str | tail -1`
+  echo `echo "($size*2048)/1024^2" | bc`Mb
+  exit
+else
+  mkisofs -J -file-mode 444 -graft-points -V "$LABEL" -o "$ISO_IMAGE" "$@"
+fi
+
+set -e
+read -p "Press Enter to proceed to burn or Control-C to abort"
+echo "BURN!"
+cdrecord -v "$ISO_IMAGE"
+
+echo "Catalog..."
+cdlist
+
+set +e
+echo "Afterburn check..."
+for f in $*; do
+  cmp "$f" "$CD/`basename $f`"
+done
+sleep 6 && eject
