@@ -5,7 +5,7 @@
 #3. Add the burned CD to the catalog
 #4. Compare files on the CD with the original files
 
-RCFILE=cdlistrc 
+RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 #set -u #unset var is an error
@@ -66,7 +66,7 @@ unset IFS; cdrecord $CDREC_OPTS -v "$ISO_IMAGE"; IFS='
 #CATALOG
 if [ ! $SKIP_CATALOG ]; then
   echo "Catalog..."
-  cdlist
+  mkat
 
   set +e
   echo "Afterburn check..."

@@ -1,4 +1,7 @@
-CDLIST is a set of command line tools to burn, catalog audio or data CD-R[W]s
+MKAT
+------
+
+MKAT is a set of command line tools to burn, catalog audio or data CD-R[W]s
 and then search the catalog database.
 It uses mkisofs and cdrecord to create iso and burn CDs, -r option allows 
 to pass through options to cdrecord. Catalog tools can be used separately 
@@ -21,7 +24,7 @@ so I can just say `ls /misc/iso' and see the contents of the iso image.
 
 DESCRIPTION
 
-cdlist creates a file in $LISTDIR (see cdlistrc) named after CD label with
+mkat creates a file in $LISTDIR (see mkatrc) named after CD label with
 first line being a label, consecutive lines listing CD contents, e.g.
 FMP2 1-4
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_04.avi:175M:b43e0fd3bd7f3afc97b47a75810276d3
@@ -33,10 +36,10 @@ That is file description consists of the file name, size, md5 sum.
 
 CONFIGURATION
 
-/etc/cdlistrc and ~/.cdlistrc are sourced by the tools in that order,
-.cdlistrc settings override global settings from /etc/cdlistrc.
+/etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
+.mkatrc settings override global settings from /etc/mkatrc.
 
 See manual pages for more info.
 
 --
-/Dmitry Maksyoma (Fri May 28 10:31:12 YAKST 2004)
+/Dmitry Maksyoma <ledestin@amur.ru>, Mon, 31 May 2004 13:51:23 +1000

@@ -4,7 +4,7 @@
 #2. rip the CD back and compare with the original wav files
 #choose both or either of those
 
-RCFILE=cdlistrc 
+RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
@@ -24,7 +24,7 @@ function usage {
 set -e
 if [ ! $SKIP_BURN ]; then
   echo "Burning audio CD..."
-  cdrecord -v -dao -speed=4 -audio "$@"
+  cdrecord -v -dao -speed=4 a "$@"
 fi
 
 echo "Ripping CD..."
@@ -45,7 +45,7 @@ while [ $# -gt $i ]; do
 done
 if [ ! $BROKEN_RECORD ]; then
   echo "Catalog the CD..."
-  cdlist-audio
+  mkata
 fi
 echo "Done..."
 eject

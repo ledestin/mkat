@@ -5,7 +5,7 @@
 #3. report whether CD is in the db
 #4. add to collection unless -c option specified
 
-RCFILE=cdlistrc 
+RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 

@@ -25,14 +25,14 @@ CD data with the files iso were made from.
 
 .SH DESCRIPTION
 \fBburn\fR creates iso, burns and catalogs it using mkisofs(8), cdrecord(1) and
-cdlist(1) respectively.
+mkat(1) respectively.
 
 Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
 options control burn speed and if the CD needs to be blanked (in case of
 CD-RW) by passing a parameter to cdrecord. \fB-r\fR option allows to pass any 
 option through to cdrecord (e.g. -dummy).
 
-If you don't want to catalog your CDs with cdlist(1), use \fB--skip\fR
+If you don't want to catalog your CDs with mkat(1), use \fB--skip\fR
 option.
 
 .SH OPTIONS
@@ -69,11 +69,11 @@ Burn a CD-R in dummy mode
 
 .SH FILES
 .TP
-.B /etc/cdlistrc, ~/.cdlistrc
+.B /etc/mkatrc, ~/.mkatrc
 config files where $CD, $DRIVE, etc. are defined
 
 .SH SEE ALSO
-\fIcdlist(1), cdlistrc(5)\fR
+\fImkat(1), mkatrc(5)\fR
 
 .SH AUTHOR
 This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,

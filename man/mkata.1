@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH CDLIST-AUDIO 1 "May 31, 2004"
+.TH MKAT-AUDIO 1 "May 31, 2004"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,14 +16,14 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-cdlist-audio \- catalog audio CD, check if CD is already in the catalog
+mkata \- catalog audio CD, check if CD is already in the catalog
 
 .SH SYNOPSIS
-\fBcdlist-audio\fR
+\fBmkata\fR
 .RI [ options ]
 
 .SH DESCRIPTION
-\fBcdlist-audio\fR tries to obtain audio CD id using cd-discid(1), reports
+\fBmkata\fR tries to obtain audio CD id using cd-discid(1), reports
 if the CD is already in the collection, adds the id to 
 $LISTDIR/audiocd.list unless \fB-c\fR (check only) option is specified.
 
@@ -37,11 +37,11 @@ Show summary of options.
 
 .SH FILES
 .TP
-.B /etc/cdlistrc, ~/.cdlistrc
+.B /etc/mkatrc, ~/.mkatrc
 config files where $CD, $DRIVE, etc. are defined
 
 .SH SEE ALSO
-\fIburn-audio(1), cdlistrc(5)\fR
+\fIburna(1), mkatrc(5)\fR
 
 .SH AUTHOR
 This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RCFILE=cdlistrc 
+RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
@@ -9,7 +9,7 @@ RCFILE=cdlistrc
   echo "  -f	     overwrite list file"
   echo "  -s <regex> search the CD database"
   echo "  -m <file>  make md5 sum(s) and search for them in the db"
-  echo "  -y	     cycle { cdlist; eject; }"
+  echo "  -y	     cycle { mkat; eject; }"
   echo "  -h	     print this help"
   exit;
 }
@@ -17,7 +17,7 @@ RCFILE=cdlistrc
 [ _$1 = _"-s" ] && { grep -i -E "$2" "$LISTDIR"/*.list; exit; }
 if [ _$1 = _"-y" ]; then
   while : ; do
-    cdlist && sleep $AUTOFS_DELAY && eject
+    mkat && sleep $AUTOFS_DELAY && eject
     read -p "Press Enter when ready..."
     [ $? -ne 0 ] && exit
   done

@@ -16,20 +16,20 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-burn-audio \- burn audio CD from wav files, compare a CD with wav files
+burna \- burn audio CD from wav files, compare a CD with wav files
 
 .SH SYNOPSIS
-\fBburn-audio\fR
+\fBburna\fR
 .RI "[-s] <wav file>..."
 
 .SH DESCRIPTION
-\fBburn-audio\fR uses cdrecord(1) to burn audio CD from wav files. The
+\fBburna\fR uses cdrecord(1) to burn audio CD from wav files. The
 burned CD can be checked against original wav files, which is done by 
 ripping the CD with cdparanoia(1) and comparing original and just ripped 
 wav files. If you just want to compare CD with wav files, use \fB-s\fR 
-option. Note that the ripped files are placed into $TMP (see cdlistrc(5)).
+option. Note that the ripped files are placed into $TMP (see mkatrc(5)).
 
-A CD is also catalogued by calling cdlist-audio(1).
+A CD is also catalogued by calling mkata(1).
 
 .SH OPTIONS
 .TP
@@ -41,11 +41,11 @@ Show summary of options.
 
 .SH FILES
 .TP
-.B /etc/cdlistrc, ~/.cdlistrc
+.B /etc/mkatrc, ~/.mkatrc
 config files where $TMP, $CD, $DRIVE, etc. are defined
 
 .SH SEE ALSO
-\fIcdlist-audio(1), cdlistrc(5)\fR
+\fImkata(1), mkatrc(5)\fR
 
 .SH AUTHOR
 This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,

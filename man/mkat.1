@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH CDLIST 1 "May 30, 2004"
+.TH MKAT 1 "May 30, 2004"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,15 +16,15 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-cdlist \- catalog CDs and then search database by file name or md5 sum
+mkat \- catalog CDs and then search database by file name or md5 sum
 
 .SH SYNOPSIS
-\fBcdlist\fR
+\fBmkat\fR
 .RI [ options ]
 
 .SH DESCRIPTION
-If called without options \fBcdlist\fR tries to read files at $CD (see
-\fIcdlistrc(5)\fR) and creates a .list file in $LISTDIR named after the CD label obtained
+If called without options \fBmkat\fR tries to read files at $CD (see
+\fImkatrc(5)\fR) and creates a .list file in $LISTDIR named after the CD label obtained
 from the physical $DRIVE. Thus, it expects CD data to be available at $CD
 and physical drive to be at $DRIVE.
 
@@ -32,11 +32,11 @@ A .list file contains CD label as first line, consecutive lines contain
 CD directories and files. A file entry looks like this: 
 \fBfilename:size:md5\fR.
 Those files can be searched with a regexp using \fB-s\fR option.
-Also, cdlist can obtain a md5 sum of an existing file and grep for that 
+Also, mkat can obtain a md5 sum of an existing file and grep for that 
 sum (\fB-m\fR option).
 
-\fBcdlist\fR is automatically called from \fBburn\fR, but if you already 
-have a lot of CDs, \fBcdlist -y\fR will process a CD, eject it and wait 
+\fBmkat\fR is automatically called from \fBburn\fR, but if you already 
+have a lot of CDs, \fBmkat -y\fR will process a CD, eject it and wait 
 for keyboard input (Enter), process next CD, and so on.
 
 If a file with the same name as the CD label already exists in $LISTDIR,
@@ -54,26 +54,26 @@ make md5 sum(s) and search for them in the db
 search the CD database
 .TP
 .B \-y
-cycle { cdlist; eject; }
+cycle { mkat; eject; }
 .TP
 .B \-h
 Show summary of options.
 
 .SH EXAMPLES
 .TP
-cdlist -s 'Fruits Basket 1.+'
+mkat -s 'Fruits Basket 1.+'
 Find files using grep regular expressions
 .TP
-cdlist -m unknown_stuff.avi
+mkat -m unknown_stuff.avi
 Find out if the specified file exists in the catalog using its md5 sum
 
 .SH FILES
 .TP
-.B /etc/cdlistrc, ~/.cdlistrc
+.B /etc/mkatrc, ~/.mkatrc
 config files where $CD, $DRIVE, etc. are defined
 
 .SH SEE ALSO
-\fIburn(1), cdlistrc(5)\fR
+\fIburn(1), mkatrc(5)\fR
 
 .SH AUTHOR
 This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,
