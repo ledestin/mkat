@@ -47,11 +47,14 @@ If a file with the same name as the CD label already exists in $LISTDIR,
 .B \-f
 overwrite list file
 .TP
+.B \-s \fI<regex>\fR
+search the CD database
+.TP
 .B \-m \fI<file>\fR
 make md5 sum(s) and search for them in the db
 .TP
-.B \-s \fI<regex>\fR
-search the CD database
+.B \-\-md5dir\fI<dir>\fR
+print files in the dir and its subdirs that aren't in the db (using mkat -m)
 .TP
 .B \-y
 cycle { mkat; eject; }
