@@ -60,8 +60,16 @@ The dir defaults to "." (current dir).
 .B \-y
 cycle { mkat; eject; }
 .TP
+.B \-q
+be quiet
+.TP
 .B \-h, \-\-help
 Show summary of options.
+
+.SH EXIT CODES
+When given \fB-s\fR or \fB-m\fR option mkat exit code is zero if something was
+found and nonzero otherwise. Actually, exit code returned by grep(1) is
+returned here.
 
 .SH EXAMPLES
 .TP

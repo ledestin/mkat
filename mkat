@@ -31,41 +31,55 @@ function usage {
   echo "  -m <file>		make md5 sum(s) and search for them in the db"
   echo "      --md5dir <dir>	print files with md5 sums not present in the db"
   echo "  -y			cycle { mkat; eject; }"
+  echo "  -q			be quiet"
   echo "  -h, --help		print this help"
   exit $1
 }
 
-case "$1" in
-  "-h"|"--help") usage 0 ;;
-  "--md5dir")
-    DIR="$2"
-    [ -z "$DIR" ] && DIR=. ;;
-esac
+#process parameters
+found=1
+while [ $found ]; do
+  case "$1" in
+    "-h"|"--help") usage 0 ;;
+    "-q") CHILD_PARAMS="-q"; GREP_PARAMS="-q" ;;
+    "-y") CYCLE_CATALOG=1 ;;
+    "--md5dir")
+      DIR="$2"
+      [ -z "$DIR" ] && DIR=. ;;
+    *) unset found ;;
+  esac
+  [ $found ] && shift
+done
+
+MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
 
 #process --md5dir option
 if [ "$DIR" ]; then
   IFS=:
   for f in `find "$DIR" -type f -printf '%p:'`; do
-    mkat -m "$f" > /dev/null;
+    $MKAT -q -m "$f"
     [ $? -ne 0 ] && echo "$f";
   done;
   exit
 fi
 
-[ _$1 = _"-s" ] && { grep -i -E "$2" "$LISTDIR"/*.list; exit $?; }
-if [ _$1 = _"-y" ]; then
-  while : ; do
-    mkat && sleep $AUTOFS_DELAY && eject
-    read -p "Press Enter when ready..."
-    [ $? -eq 0 ] || exit
-  done
-fi
+#search the database with grep (-s option)
+[ _$1 = _"-s" ] && { grep $GREP_PARAMS -i -E "$2" "$LISTDIR"/*.list; exit $?; }
 
 #search by md5 sum of a file
 if [ _"$1" = _"-m" ]; then
   shift
-  md5sum "$@" | awk '{ printf "%s|", $1 }' | sed 's/|$/\n/' | xargs $0 -s 
+  md5sum "$@" | awk '{ printf "%s|", $1 }' | sed 's/|$/\n/' | xargs $MKAT -s
   exit $?
+fi
+
+#catalog many CDs: cycle mkat, eject, wait for user input
+if [ $CYCLE_CATALOG ]; then
+  while : ; do
+    $MKAT && sleep $AUTOFS_DELAY && eject
+    read -p "Press Enter when ready..."
+    [ $? -eq 0 ] || exit
+  done
 fi
 
 #catalog the CD
