@@ -29,6 +29,15 @@ RCFILE=mkatrc
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
+#construct lockfile name following this template: ".$FILE.lock"
+ISO_DIR="${ISO_IMAGE%/*}"
+[ "$ISO_IMAGE" = "$ISO_DIR" ] && ISO_DIR=
+LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
+
+#define constants
+RET='
+'
+
 function usage {
   echo "usage: $0 [options] <label> <file>..."
   echo "  -n		    print estimated image size, exit"
@@ -75,8 +84,7 @@ if [ -z $SKIP_MKIMAGE ] && [ "$#" -lt 2 ]; then
 fi
 
 set -e
-IFS='
-'
+IFS=$RET
 
 #MAKE ISO IMAGE
 if [ -z $SKIP_MKIMAGE ]; then
@@ -94,6 +102,15 @@ elif [ -z $SKIP_MKIMAGE ]; then
   echo "making ISO image"
   eval "debug \"$MKIMAGE_CMD\""
   if [ -z $SIMULATE ]; then
+    debug "checking for lockfile $LOCKFILE"
+    set +e
+    dotlockfile -c $LOCKFILE
+    if [ $? -eq 0 ]; then
+      echo "$ISO_IMAGE is locked, probably being burned now"
+      exit 1
+    fi
+    set -e
+
     [ -d "$TMP" ] || mkdir "$TMP"
     eval "$MKIMAGE_CMD"
   fi
@@ -106,9 +123,14 @@ fi
 echo "BURN!"
 unset IFS
 cmd="cdrecord $CDREC_OPTS $ISO_IMAGE"; debug "$cmd"
-[ -z $SIMULATE ] && $cmd
-IFS='
-'
+if [ -z $SIMULATE ]; then
+  debug "creating lock file before burning"
+  dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
+  $cmd
+  debug "releasing lock file"
+  dotlockfile -u $LOCKFILE && trap - EXIT
+fi
+IFS=$RET
 
 #CATALOG
 if [ ! $SKIP_CATALOG ] && [ $CD ]; then
