@@ -12,8 +12,11 @@ NO_PREFIX='--no'
 MACROS=(
 '=FOO' 'FOO="$2"'
 '@FOO'
-'[ `expr index "$o" ,` -ne 0 ] && IFS=,;
-  FOO=("${FOO[@]}" $2); unset IFS;'
+'if [ "_${o#*,}" != "_$o" ]; then
+   IFS=,; FOO=("${FOO[@]}" $2); unset IFS;
+ else
+   FOO="$2";
+ fi'
 '*FOO' '_s=${1#-}; let "FOO += ${#_s}"'
 '?FOO' '[ "${1:0:${#NO_PREFIX}}" != $NO_PREFIX ] && FOO=1'
 )
