@@ -12,7 +12,7 @@ NO_PREFIX='--no'
 MACROS=(
 '=FOO' 'FOO="$2"'
 '@FOO'
-'if [ `expr index "$1" ,` -ne 0 ] && [ `expr index "$2" ,` -ne 0 ]; then
+'if [ `expr index "$o" ,` -ne 0 ] && [ `expr index "$2" ,` -ne 0 ]; then
   IFS=",";
   for foo in $2; do FOO[${#FOO[@]}]="$foo"; done;
   unset IFS;
@@ -58,6 +58,9 @@ function process_options {
     while [ `expr index "$o" '|'` -ne 0 ]; do
       found=${o%%|*}
       if [ "${found%=*}" = "$1" ]; then
+	#add =VALUE to short option if long is --o=VALUE
+	[ `expr index "$o" =` -ne 0 ] && \
+	  [ ${1:0:2} != '--' ] && [ ! -z ${o#*=} ] && found="$found=${o#*=}"
 	o=$found; break
       fi
       o=${o#*|}
@@ -74,7 +77,7 @@ function process_options {
       local pos=`expr index "$o" =`
       #make sure that $2 is a param if option requires one
       if [ $pos -ne 0 ]; then
-	[ ${2:0:1} != '-' ] || \
+	([ "$2" ] && [ ${2:0:1} != '-' ]) || \
 	  { echo "option $o requires parameter"; exit 1; }
       fi
       #execute action associated with the option
