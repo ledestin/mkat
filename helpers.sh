@@ -7,10 +7,19 @@ function debug {
 }
 
 NO_PREFIX='--no'
+#\n is ignored later on, so please write as if \n's weren't present,
+#i.e. with ';'s everywhere
 MACROS=(
 '=FOO' 'FOO="$2"'
-'@FOO' 'FOO[${#FOO}]="$2"'
-'*FOO' 'cnt=${1##-}; let "FOO += $cnt"'
+'@FOO'
+'if [ `expr index "$2" ,` -ne 0 ]; then
+  IFS=",";
+  for foo in $2; do FOO[${#FOO[@]}]="$foo"; done;
+  unset IFS;
+else
+  FOO[${#FOO[@]}]="$2";
+fi'
+'*FOO' '_s=${1#-}; let "FOO += ${#_s}"'
 '?FOO' '[ "${1:0:${#NO_PREFIX}}" != $NO_PREFIX ] && FOO=1'
 )
 
@@ -45,6 +54,7 @@ function process_options {
   local i=0 pos
   while [ ${#*} -gt 0 ]; do
     local o=${OPTIONS[$i]}
+    #deal with -h|--help like options
     while [ `expr index "$o" '|'` -ne 0 ]; do
       found=${o%%|*}
       if [ "${found%=*}" = "$1" ]; then
@@ -52,7 +62,13 @@ function process_options {
       fi
       o=${o#*|}
     done
-    if [ "${o%=*}" = "$1" ]; then
+    #allow repitition for short options w/o parameters
+    cur_opt="$1"
+    local s=${1:1}
+    [ "${s:0:1}" != '-' ] && [ `expr index "$s" =` -eq 0 ] && \
+      [ ${#s} -gt 1 ] && [ -z "${s//${s:0:1}/}" ] && \
+	cur_opt="-${s:0:1}"
+    if [ "${o%=*}" = "$cur_opt" ] || [ "--no${o%=*}" = "$cur_opt" ]; then
       #debug "found argument: $1"
       local pos=`expr index "$o" =`
       #make sure that $2 is a param if option requires one
@@ -88,14 +104,33 @@ function process_options {
   done
 }
 
+function assert {
+  text="$1 || { echo >&2 assert failed: \$2; exit 1; }"
+  #debug "$text"
+  eval "$text"
+}
+
 function test_helpers {
   DEBUG=1
   OPTIONS=(\
   -f force '?FORCE' \
-  --rc=RCFILE 'read this config file' 'CONFIG=$2')
-  process_options -f --rc file.conf
-  [ $FORCE ] && echo OK
-  [ $CONFIG = 'file.conf' ] && echo OK
+  --rc=RCFILE 'read this config file' 'CONFIG=$2'
+  -t=TAG 'multiple times option' '@TAGS'
+  -r 'boolean option' '?RECURSIVE'
+  -v 'verbose' '*VERBOSE_LEVEL'
+  )
+  cmd='process_options -f --rc file.conf -v -vv -t tag1 -t tag2,tag3 --no-r'
+  echo $cmd; eval "$cmd"
+
+  assert '[ $FORCE ]' '-f option specified, but FORCE is not set'
+  assert '[ $CONFIG = file.conf ]' \
+    "config file isn't the one specified with --rc option"
+  assert '[ ${#TAGS[@]} -eq 3 ] && [ ${TAGS[0]} = tag1 ] && \
+    [ ${TAGS[1]} = tag2 ] && [ ${TAGS[2]} = tag3 ]' \
+      "3 -t options specified, but ${#TAGS} found"
+  assert '[ -z $RECURSIVE ]' '--no-r should yield non-existing $RECURSIVE'
+  assert '[ $VERBOSE_LEVEL -eq 3 ]' \
+    "verbose option was specified 2 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
   echo "usage:"; print_usage "${OPTIONS[@]}"
 }
 if [ ${0##*/} = helpers.sh ]; then
