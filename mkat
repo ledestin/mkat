@@ -84,7 +84,7 @@ fi
 
 #catalog the CD
 LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
-[ -z "$LABEL" ] && { echo "could not obtain CD label"; exit 1; }
+[ -z "$LABEL" ] && { echo "could not obtain CD label"; LABEL="NO_LABEL"; }
 DEST="$LISTDIR/$LABEL.list"
 { [ _$1 != _"-f" ] \
   && [ -e "$DEST" ] ; } && \
