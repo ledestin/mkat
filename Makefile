@@ -4,14 +4,16 @@ MAN := $(PREFIX)/usr/local/man
 MAN1 := $(MAN)1
 MAN5 := $(MAN)5
 DOC := $(PREFIX)/usr/local/share/doc/mkat
-DEST := $(BIN) $(MAN1) $(MAN5) $(DOC)
+SHARE := $(PREFIX)/usr/local/share/mkat
+DEST := $(BIN) $(MAN1) $(MAN5) $(DOC) $(SHARE)
 
 #files to be copied
 BIN_S := $(shell ls burn* mkat*)
 MAN1_S := $(shell ls man/*.1)
 MAN5_S := $(shell ls man/*.5)
 DOC_S := README LICENSE
-SRC := $(BIN_S),$(MAN1_S),$(MAN5_S),$(DOC_S)
+SHARE_S := helpers.sh
+SRC := $(BIN_S),$(MAN1_S),$(MAN5_S),$(DOC_S),$(SHARE_S)
 
 install:
 	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
