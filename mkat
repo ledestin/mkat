@@ -23,13 +23,13 @@ if [ _$1 = _"-y" ]; then
   while : ; do
     mkat && sleep $AUTOFS_DELAY && eject
     read -p "Press Enter when ready..."
-    [ $? -ne 0 ] && exit
+    [ $? -eq 0 ] || exit
   done
 fi
+#search by md5 sum of a file
 if [ _"$1" = _"-m" ]; then
-  shift; md5sum "$@"\
-    | ruby -e 'a=[]; while gets; a.push($_.split[0]); end; puts a.join("|")'\
-    | xargs $0 -s 
+  shift
+  md5sum "$@" | awk '{ printf "%s|", $1 }' | sed 's/|$/\n/' | xargs $0 -s 
   exit
 fi
 
