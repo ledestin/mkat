@@ -112,7 +112,7 @@ set -e
 
 #MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
-  str=`mkisofs -print-size -graft-points "${FILES[@]}"`
+  str=`mkisofs -print-size $MKISO_OPTS "${FILES[@]}"`
   echo "$str"
   size=`echo $str | tail -1`
   echo $(($size*2048/1024**2))Mb
