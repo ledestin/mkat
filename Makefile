@@ -47,7 +47,8 @@ uninstall:
 
 #make distribution tarball
 dist: changelog
-	tar --exclude CVS --exclude test --exclude \*.swp --exclude TODO -czf $(TARBALL) .
+	echo $(TARBALL)
+	tar --exclude CVS --exclude test --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
 	-gpg --default-key 2FFCC6ED -b $(TARBALL)
 
 #I need this dependency so that changelog would be remade only when
@@ -62,5 +63,9 @@ clean:
 deploy:
 	scp $(TARBALL) monster.amur.ru:~/public_html/mkat/files
 	scp README monster.amur.ru:~/public_html/mkat/files
+
+upload_savannah:
+	curl -T $(TARBALL) ftp://savannah.gnu.org/incoming/savannah/mkat/
+	curl -T $(TARBALL).sig ftp://savannah.gnu.org/incoming/savannah/mkat/
 
 .PHONY: clean install uninstall dist deploy
