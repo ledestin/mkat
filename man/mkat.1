@@ -47,11 +47,24 @@ If a file with the same name as the CD label already exists in $LISTDIR,
 .B \-f
 overwrite list file
 .TP
+.B \-t <tag[,tag]...>
+image making program
+.TP
 .B \-s \fI<regex>\fR
 search the CD database
 .TP
+.B \-nt
+don't search tags with -s (no tags)
+.TP
+.B \-to \fI<tag[,tag]...>\fR
+search within tags only
+.TP
 .B \-m \fI<file>...\fR
 make md5 sum(s) and search for them in the db
+.TP
+.B \-p \fI<path>\fR
+catalog path instead of a CD. List file name will be path with the leading \
+'/' removed and the rest of '/'s replaced with '.'
 .TP
 .B \-\-md5dir\fI[dir]\fR
 print files in the dir recursively that aren't in the db (using mkat -m).

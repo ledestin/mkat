@@ -46,6 +46,7 @@ function usage {
   echo "  -o		    add '-overburn -dao' to cdrecord parameters"
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
   echo "  -iMKIMG_OPTS	    pass parameters to image making program"
+  echo "  -mMKAT_OPTS       pass parameters to mkat"
   echo "      --noimg	    don't create image, just burn"
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
@@ -78,6 +79,7 @@ while [ $found ]; do
        *) unset found ;;
   esac
   [ "${1:0:2}" = "-r" ] && { CDREC_OPTS="$CDREC_OPTS ${1:2}"; found=1; }
+  [ "${1:0:2}" = "-m" ] && { MKAT_OPTS="${1:2}"; found=1; }
   [ "${1:0:2}" = "-i" ] && { MKISO_OPTS="$MKISO_OPTS ${1:2}"; found=1; }
   [ "${1:0:2}" = "-s" ] && { CDREC_OPTS="$CDREC_OPTS speed=${1:2}"; found=1; }
   [ $found ] && shift;
@@ -166,14 +168,18 @@ if [ -z $SIMULATE ]; then
   debug "releasing lock file"
   dotlockfile -u $LOCKFILE && trap - EXIT
 fi
-IFS=$RET
 
 #CATALOG
 if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   echo "Catalog..."
-  [ -z $SIMULATE ] && mkat
+  if [ $SIMULATE ]; then
+    echo "mkat $MKAT_OPTS"
+  else
+    mkat $MKAT_OPTS
+  fi
 fi
 
+IFS=$RET
 #AFTERBURN CHECK
 if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
