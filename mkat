@@ -31,8 +31,8 @@ OPTIONS=(\
   -p=PATH "catalog path instead of a CD" 'CATALOG_PATH=${2%%/}' \
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -s=REGEX "search the catalog database" 'REGEX=$2' \
+  -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
   -nt "don't search tags with -s (no tags)" 'FILTER_TAGS=1' \
-  -to=TAG1,TAG2	"search within tags only" 'TAG_REGEX="(${2//,/|/})"' \
   -at "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
   -m=FILE "make file md5 sum and search for it in the db" \
     'MD5FILE=$2' \
@@ -82,11 +82,18 @@ if [ "$DIR" ]; then
   exit
 fi
 
-#tag search (-to)
+#tag search (-S)
 if [ "$TAG_REGEX" ]; then
   set -f
   cmd="grep $GREP_PARAMS -i -E ^tags:.+$TAG_REGEX $LISTDIR/*.list"
-  debug $cmd; set +f; $cmd
+  if [ ${#TAG_REGEX[@]} -gt 1 ]; then
+    i=1
+    while [ $i -lt ${#TAG_REGEX[@]} ]; do
+      cmd="$cmd | grep ${TAG_REGEX[$i]}"
+      let "i += 1"
+    done
+  fi
+  debug $cmd; eval "set +f; $cmd"
   exit $?
 fi
 
