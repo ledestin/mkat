@@ -30,7 +30,7 @@ OPTIONS=(\
   -f "overwrite list file" 'FORCE_OVERWRITE=1' \
   -p=PATH "catalog path instead of a CD" 'CATALOG_PATH=${2%%/}' \
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
-  -s=REGEX "search the catalog database" 'REGEX=$2' \
+  -s=REGEX1,REGEX2 "search the catalog database" '@REGEX' \
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
   -nt "don't search tags with -s (no tags)" 'FILTER_TAGS=1' \
   -at "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
@@ -63,6 +63,8 @@ debug "reading rc file: $CONFIG"
 [ -f $CONFIG ] && source $CONFIG
 
 MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
+GREP_PARAMS="${GREP_PARAMS:+$GREP_PARAMS }-i -E"
+GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
 
 if [ $SHOW_AVAILABLE_TAGS ]; then
   grep -h ^tags: $LISTDIR/*.list | awk -F: '{ print $2 }'\
@@ -85,11 +87,11 @@ fi
 #tag search (-S)
 if [ "$TAG_REGEX" ]; then
   set -f
-  cmd="grep $GREP_PARAMS -i -E ^tags:.+$TAG_REGEX $LISTDIR/*.list"
+  cmd="$GREP ^tags:.+$TAG_REGEX $LISTDIR/*.list"
   if [ ${#TAG_REGEX[@]} -gt 1 ]; then
     i=1
     while [ $i -lt ${#TAG_REGEX[@]} ]; do
-      cmd="$cmd | grep ${TAG_REGEX[$i]}"
+      cmd="$cmd | $GREP ${TAG_REGEX[$i]}"
       let "i += 1"
     done
   fi
@@ -100,10 +102,16 @@ fi
 #search the database with grep (-s option)
 if [ "$REGEX" ]; then
   IFS=''
-  cmd="grep $GREP_PARAMS -i -E "$REGEX" "$LISTDIR"/*.list"
-  [ $FILTER_TAGS ] && cmd="$cmd | grep -v -E '(^|:)tags:'"
-  debug "$cmd"
-  eval $cmd
+  cmd="$GREP "$REGEX" "$LISTDIR"/*.list"
+  [ $FILTER_TAGS ] && cmd="$cmd | $GREP -v '(^|:)tags:'"
+  if [ ${#REGEX[@]} -gt 1 ]; then
+    i=1
+    while [ $i -lt ${#REGEX[@]} ]; do
+      cmd="$cmd | $GREP ${REGEX[$i]}"
+      let "i += 1"
+    done
+  fi
+  debug $cmd; eval "set +f; $cmd"
   exit $?
 fi
 
