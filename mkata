@@ -33,4 +33,5 @@ if [ -f $LIST ]; then
 else
   > $LIST
 fi
-[ ! $CHECK_ONLY ] && echo "$entry" >> $LIST
+[ ! $CHECK_ONLY ] && \
+  { echo "adding the CD to the database..."; echo "$entry" >> $LIST; }
