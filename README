@@ -3,17 +3,19 @@ MKAT
 
 MKAT is a set of command line tools to burn, catalog audio or data CD-R[W]s
 and then search the catalog database.
-It uses mkisofs and cdrecord to create iso and burn CDs, -r option allows 
-to pass through options to cdrecord. Catalog tools are mkat and mkata,
+
+It uses mkisofs and cdrecord to create iso image and burn CDs, -r option allows 
+to pass through options to cdrecord. Cdrecord and mkisofs options can be
+configured in /etc/mkatrc and ~/.mkatrc. Catalog tools are mkat and mkata,
 burn tools are burn and burna, with trailing `a' standing for `audio'.
 
 It has been made because I was tired of specifying parameters to mkisofs and
 cdrecord, and I also wanted a database of my CD collection that could be
 simple, easy to read and searchable with grep.
 
-NOTE: I use autofs to mount cdrom for checking and cataloguing, actually, I
-just don't mount it explicitly and eject after sleep'ing $AUTOFS_DELAY seconds.
-Set unmount timout for autofs to $AUTOFS_DELAY seconds or CD won't eject after 
+NOTE: I use autofs to mount Cd-ROM for checking and cataloguing, actually, I
+just don't mount it explicitly and eject after sleeping $AUTOFS_DELAY seconds.
+Set unmount timeout for autofs to $AUTOFS_DELAY seconds or CD won't eject after 
 everything's done. Also, it's useful to look at created iso image before 
 burning, I have the following lines in my /etc/auto.misc:
 iso             -fstype=iso9660,ro,sync,nodev,nosuid,loop :/home/ledestin/cdimage.iso
@@ -25,10 +27,10 @@ so I can just say `ls /misc/iso' and see the contents of the iso image.
 INSTALLATION
 
 `make install' if you're a not Debian user, apt-get otherwise.
-`make uninstall' is available.
+`make uninstall' is also available.
 
 MKAT depends on cdrecord, mkisofs, sed, awk, cdparanoia, cd-discid present,
-latest two only required for work with audio CDs.
+the last two only required for work with audio CDs.
 
 CONFIGURATION
 
