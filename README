@@ -1,8 +1,8 @@
 MKAT
 ------
 
-MKAT is a set of command line tools to burn, catalog audio or data CD-R[W]s
-and then search the catalog database.
+MKAT is a set of command line tools to burn and catalog data, audio CDs
+or arbitrary directories and then search the catalog database.
 
 It uses mkisofs and cdrecord to create iso image and burn CDs, -r option allows 
 to pass through options to cdrecord. Cdrecord and mkisofs options can be
@@ -29,8 +29,8 @@ INSTALLATION
 `make install' if you're a not Debian user, apt-get otherwise.
 `make uninstall' is also available.
 
-MKAT depends on cdrecord, mkisofs, sed, awk, cdparanoia, cd-discid present,
-the last two only required for work with audio CDs.
+MKAT depends on cdrecord, mkisofs, sed, awk, dotlockfile, cdparanoia,
+cd-discid present, the last two only required for work with audio CDs.
 
 CONFIGURATION
 
@@ -40,13 +40,13 @@ CONFIGURATION
 On a Debian system I use debconf and a config will be created automatically
 after you answer questions. But if you install from a tarball you need to
 edit config file before running anything. I provide a sample config file 
-in examples/mkatrc.
+in examples/mkatrc, which is copied to /etc/mkatrc on install.
 
-See manual pages for more info.
+See manual page mkatrc(5) for more info.
 
 DESCRIPTION
 
-mkat creates a file in $LISTDIR (see mkatrc) named after CD label with
+mkat creates a file in $LISTDIR (see mkatrc(5)) named after CD label with
 first line being a label, consecutive lines listing CD contents, e.g.
 FMP2 1-4
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_04.avi:175M:b43e0fd3bd7f3afc97b47a75810276d3
@@ -80,7 +80,7 @@ List existing tags with "mkat -a".
 
 GETTING A NEW VERSION
 
-This project is hosted at http://www.amur.ru/~ledestin/mkat/
+This project is hosted at https://savannah.nongnu.org/projects/mkat/
 
 FEEDBACK
 
@@ -92,7 +92,7 @@ LICENSE
 Mkat is released under GPL, see LICENSE for more info.
 
 --
-/Dmitry Maksyoma <ledestin@amur.ru>, Fri, 25 Feb 2005 23:03:29 +0900
+/Dmitry Maksyoma <ledestin@amur.ru>, Fri, 28 Feb 2005 23:03:29 +0900
 
 Copyright 2004, 2005 Dmitry Maksyoma
 Copying and distribution of this file, with or without modification,
