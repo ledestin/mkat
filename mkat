@@ -36,11 +36,14 @@ function usage {
 }
 
 case "$1" in
-"-h"|"--help") usage 0 ;;
-"--md5dir") DIR="$2" ;;
+  "-h"|"--help") usage 0 ;;
+  "--md5dir")
+    DIR="$2"
+    [ -z "$DIR" ] && DIR=. ;;
 esac
 
-if [ $DIR ]; then
+#process --md5dir option
+if [ "$DIR" ]; then
   IFS=:
   for f in `find "$DIR" -type f -printf '%p:'`; do
     mkat -m "$f" > /dev/null;

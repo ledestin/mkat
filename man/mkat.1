@@ -53,8 +53,9 @@ search the CD database
 .B \-m \fI<file>\fR
 make md5 sum(s) and search for them in the db
 .TP
-.B \-\-md5dir\fI<dir>\fR
-print files in the dir and its subdirs that aren't in the db (using mkat -m)
+.B \-\-md5dir\fI[dir]\fR
+print files in the dir recursively that aren't in the db (using mkat -m).
+The dir defaults to "." (current dir).
 .TP
 .B \-y
 cycle { mkat; eject; }
