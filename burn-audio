@@ -13,7 +13,6 @@ if [ $# -lt 1 ]; then
   exit 1
 fi
 
-set -u #unset var is an error
 set -e
 echo "Burning audioCD..."
 [ ! $SKIP_BURN ] && cdrecord -v -dao -speed=4 -audio "$@"

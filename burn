@@ -17,6 +17,7 @@ function usage {
   echo "  -c		    add 'blank=fast' to cdrecord parameters"
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
   echo "     --skip	    skip catalog and check"
+  echo "  -h		    print this help"
   exit $1
 }
 
