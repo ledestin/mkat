@@ -127,4 +127,5 @@ if [ ! $SKIP_CHECK ] && [ $CD ]; then
   fi
 fi
 
+debug "going to sleep for $AUTOFS_DELAY seconds and eject"
 [ -z $SIMULATE ] && sleep $AUTOFS_DELAY && eject
