@@ -6,6 +6,17 @@ function debug {
   [ -z $DEBUG ] || echo "$@"
 }
 
+function error {
+  echo >&2 error: "$@"
+}
+
+function make_dir {
+  if [ ! -d $1 ]; then
+    mkdir -p $1 >/dev/null 2>&1
+    [ $? -eq 0 ] || exit 1
+  fi
+}
+
 NO_PREFIX='--no'
 #\n is ignored later on, so please write as if \n's weren't present,
 #i.e. with ';'s everywhere

@@ -60,6 +60,15 @@ CONFIG=${CONFIG:-~/.$RCFILE}
 debug "reading rc file: $CONFIG"
 [ -f $CONFIG ] && source $CONFIG
 
+#check that essential variables are defined
+ESSENTIAL_VARS=(CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE)
+for v in ${ESSENTIAL_VARS[@]}; do
+  eval "[ -z \"\$$v\" ] && 
+    { error '"$v" variable must be defined (see mkatrc(5))'; exit 1; }"
+done
+
+make_dir "$LISTDIR"
+
 MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
 GREP_PARAMS="${GREP_PARAMS:+$GREP_PARAMS }-i -E"
 GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
@@ -132,6 +141,7 @@ fi
 
 #catalog the CD
 if [ -z "$CATALOG_PATH" ]; then
+  [ -z `which isoinfo` ] && { error 'binary not found: isoinfo'; exit 1; }
   LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
   [ -z "$LABEL" ] && { echo "could not obtain CD label"; LABEL="NO_LABEL"; }
 else
@@ -147,6 +157,8 @@ else
   FNAME=$LABEL
   TAGS="$TAGS cd"; TAGS=${TAGS# }
 fi
+[ -d "$CD" ] || { error "directory doesn't exist: $CD.\
+  Edit 'CD' variable in config."; exit 1; }
 DEST="$LISTDIR/$FNAME.list"
 { [ -z $FORCE_OVERWRITE ] \
   && [ -e "$DEST" ] ; } && \

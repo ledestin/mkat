@@ -37,6 +37,11 @@ CONFIGURATION
 /etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
 .mkatrc settings override global settings from /etc/mkatrc.
 
+On a Debian system I use debconf and a config will be created automatically
+after you answer questions. But if you install from a tarball you need to
+edit config file before running anything. I provide a sample config file 
+in examples/mkatrc.
+
 See manual pages for more info.
 
 DESCRIPTION

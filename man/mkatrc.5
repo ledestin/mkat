@@ -30,17 +30,21 @@ sh/bash scripts. First \fI/etc/mkatrc\fR sourced and then
 settings from \fI/etc/mkatrc\fR.
 Neither of config files is required, the variables could be, in principle,
 defined in .bashrc.
+See a sample config file in /usr/[local/]share/doc/mkat/examples
 
 .nf
 The following variables must be set:
 DRIVE="/dev/sr0" #physical CD drive
 CD="/misc/cd"	 #mounted CD drive (autofs mounted in my case)
-LISTDIR="/home/ledestin/.stuff/mkat" #where to place catalog database
-TMP=/home/ledestin #where to place temporary files, can be used, for example,
-		   #to grab wav files from newly burned audio CD to compare
-		   #with the files CD was burned from.
-MKISO_OPTS='-J -file-mode 444 -graft-points' #parameters for an image creation
-					     #program, mkisofs in this case
+#where to place catalog database
+LISTDIR="/home/ledestin/.stuff/mkat"
+#where to place temporary files, can be used,
+#for example, to grab wav files from newly burned audio CD to compare
+#with the files CD was burned from.
+TMP=/home/ledestin
+#parameters for an image creation
+#program, mkisofs in this case
+MKISO_OPTS='-J -file-mode 444 -graft-points'
 CDREC_OPTS='-v' #parameters for cdrecord
 
 #options for control freaks
