@@ -12,6 +12,7 @@ function print_usage {
   local i=0
   while [ ${#OPTIONS[@]} -ge $i ] ; do
     local opt="${OPTIONS[$i]}"; local desc="${OPTIONS[$(($i+1))]}"
+    opt=${opt//=/ }
     printf '  %-15s%-25s\n' "${opt//|/,}" "$desc"
     i=$(($i+3))
   done
