@@ -12,7 +12,7 @@ NO_PREFIX='--no'
 MACROS=(
 '=FOO' 'FOO="$2"'
 '@FOO'
-'if [ `expr index "$2" ,` -ne 0 ]; then
+'if [ `expr index "$1" ,` -ne 0 ] && [ `expr index "$2" ,` -ne 0 ]; then
   IFS=",";
   for foo in $2; do FOO[${#FOO[@]}]="$foo"; done;
   unset IFS;
@@ -68,6 +68,7 @@ function process_options {
     [ "${s:0:1}" != '-' ] && [ `expr index "$s" =` -eq 0 ] && \
       [ ${#s} -gt 1 ] && [ -z "${s//${s:0:1}/}" ] && \
 	cur_opt="-${s:0:1}"
+    #process argument
     if [ "${o%=*}" = "$cur_opt" ] || [ "--no${o%=*}" = "$cur_opt" ]; then
       #debug "found argument: $1"
       local pos=`expr index "$o" =`

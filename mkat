@@ -32,10 +32,10 @@ OPTIONS=(\
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -s=REGEX1,REGEX2 "search the catalog database" '@REGEX' \
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
-  -nt "don't search tags with -s (no tags)" 'FILTER_TAGS=1' \
-  -at "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
+  -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
+  -a "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
   -m=FILE "make file md5 sum and search for it in the db" \
-    'MD5FILE=$2' \
+    '@MD5FILES' \
   -md5dir=DIR "print files with md5 sums not present in the db" \
     'DIR="$2"; [ -z "$DIR" ] && DIR=.' \
   -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1' \
@@ -116,8 +116,9 @@ if [ "$REGEX" ]; then
 fi
 
 #search by md5 sum of a file
-if [ "$MD5FILE" ]; then
-  cmd="md5sum \"$MD5FILE\" | awk '{ printf \"%s\n\", \$1 }' | xargs $MKAT -s"
+if [ "$MD5FILES" ]; then
+  cmd="md5sum \"\${MD5FILES[@]}\" | awk '{ printf \"%s|\", \$1 }'\
+    | sed 's/|$/\n/' | xargs -ivar $MKAT -s \'var\'"
   debug $cmd; eval $cmd
   exit $?
 fi
