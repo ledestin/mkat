@@ -43,6 +43,7 @@ function usage {
   echo "  -n		    print estimated image size, exit"
   echo "  -sSPEED	    add 'speed=SPEED' to cdrecord parameters"
   echo "  -c		    add 'blank=fast' to cdrecord parameters"
+  echo "  -o		    add '-overburn -dao' to cdrecord parameters"
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
   echo "      --noimg	    don't create image, just burn"
   echo "      --nocat	    skip catalog"
