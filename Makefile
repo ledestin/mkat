@@ -48,6 +48,7 @@ uninstall:
 #make distribution tarball
 dist: changelog
 	tar --exclude CVS --exclude test --exclude \*.swp --exclude TODO -czf $(TARBALL) .
+	-gpg --default-key 2FFCC6ED -b $(TARBALL)
 
 #I need this dependency so that changelog would be remade only when
 #files it depends on change
