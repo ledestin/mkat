@@ -10,7 +10,7 @@ DEST := $(BIN) $(MAN1) $(MAN5) $(DOC)
 BIN_S := $(shell ls burn* mkat*)
 MAN1_S := $(shell ls man/*.1)
 MAN5_S := $(shell ls man/*.5)
-DOC_S := README
+DOC_S := README LICENSE
 SRC := $(BIN_S),$(MAN1_S),$(MAN5_S),$(DOC_S)
 
 install:
