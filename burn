@@ -18,21 +18,26 @@ function usage {
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
   echo "      --yes	    don't ask questions"
+  echo "      --simulate    print only, --debug implied"
+  echo "      --debug	    how stuff works"
   echo "  -h, --help	    print this help"
   exit $1
 }
 
-case "$1" in
-"-h"|"--help") usage 0 ;;
-esac
+function debug {
+  [ -z $DEBUG ] || echo "$1"
+}
 
 found=1
 while [ $found ]; do
   case "$1" in
+    "-h"|"--help") usage 0 ;;
     "-n") PRINT_ONLY=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
     "--yes") NO_QUESTIONS=1 ;;
+    "--simulate") SIMULATE=1; DEBUG=1 ;;
+    "--debug") DEBUG=1 ;;
     "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
        *) unset found ;;
   esac
@@ -47,8 +52,6 @@ if [ "$#" -lt 2 ]; then
   usage 1
 fi
 
-[ $DEBUG ] && echo $CDREC_OPTS
-
 #making ISO image
 IFS='
 '
@@ -59,8 +62,12 @@ if [ $PRINT_ONLY ]; then
   echo `echo "($size*2048)/1024^2" | bc`Mb
   exit
 else
-  [ -d "$TMP" ] || mkdir "$TMP" || exit 1
-  eval "$MKIMAGE_CMD"
+  echo "making ISO image"
+  eval "debug \"$MKIMAGE_CMD\""
+  if [ -z $SIMULATE ]; then
+    [ -d "$TMP" ] || mkdir "$TMP" || exit 1
+    eval "$MKIMAGE_CMD"
+  fi
 fi
 
 #BURN
@@ -69,22 +76,27 @@ if [ -z $NO_QUESTIONS ]; then
   read -p "Press Enter to proceed to burn or Control-C to abort"
 fi
 echo "BURN!"
-unset IFS; cdrecord $CDREC_OPTS "$ISO_IMAGE"; IFS='
+unset IFS
+cmd="cdrecord $CDREC_OPTS $ISO_IMAGE"; debug "$cmd"
+[ -z $SIMULATE ] && $cmd
+IFS='
 '
 
 #CATALOG
 if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   echo "Catalog..."
-  mkat
+  [ -z $SIMULATE ] && mkat
 fi
 
 #AFTERBURN CHECK
 if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
   echo "Afterburn check..."
-  for f in $*; do
-    cmp "$f" "$CD/`basename $f`"
-  done
+  if [ -z $SIMULATE ]; then
+    for f in $*; do
+      cmp "$f" "$CD/`basename $f`"
+    done
+  fi
 fi
 
-sleep $AUTOFS_DELAY && eject
+[ -z $SIMULATE ] && sleep $AUTOFS_DELAY && eject
