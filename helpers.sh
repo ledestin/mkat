@@ -20,6 +20,9 @@
 #shellscript helper functions
 #including Ruby optparse-like option handling
 
+RET='
+'
+
 function debug {
   [ -z $DEBUG ] || echo "$@"
 }

@@ -92,8 +92,9 @@ fi
 
 #tag search (-S)
 if [ "$TAG_REGEX" ]; then
-  set -f
-  cmd="$GREP ^tags:.+$TAG_REGEX $LISTDIR/*.list"
+  debug "grep for tags (-S)"
+  FILES="$LISTDIR/*.list"
+  cmd="$GREP ^tags:.+$TAG_REGEX \$FILES"
   if [ ${#TAG_REGEX[@]} -gt 1 ]; then
     i=1
     while [ $i -lt ${#TAG_REGEX[@]} ]; do
@@ -101,14 +102,23 @@ if [ "$TAG_REGEX" ]; then
       let "i += 1"
     done
   fi
-  debug $cmd; eval "set +f; $cmd"
-  exit $?
+  debug $cmd; RES=`eval "$cmd"`
+  #exit if -s isn't present, else RES will be further processed by -s
+  #handler
+  if [ -z "$REGEX" ]; then
+    echo "$RES"
+    exit $?
+  fi
 fi
 
 #search the database with grep (-s option)
 if [ "$REGEX" ]; then
-  IFS=''
-  cmd="$GREP "$REGEX" "$LISTDIR"/*.list"
+  IFS=''; 
+  if [ "$RES" ]; then
+    cmd="echo -e ${RES//$RET/\\\\n} | $GREP $REGEX"
+  else
+    cmd="$GREP "$REGEX" "$LISTDIR"/*.list"
+  fi
   [ $FILTER_TAGS ] && cmd="$cmd | $GREP -v '(^|:)tags:'"
   if [ ${#REGEX[@]} -gt 1 ]; then
     i=1
@@ -117,7 +127,7 @@ if [ "$REGEX" ]; then
       let "i += 1"
     done
   fi
-  debug $cmd; eval "set +f; $cmd"
+  debug "command: $cmd"; eval "set +f; $cmd"
   exit $?
 fi
 
