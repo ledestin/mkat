@@ -23,8 +23,8 @@ mkat \- catalog a CD or filesystem path, then search database by file name, tags
 .RI [ options ]
 
 .SH DESCRIPTION
-\fBmkat\fR can catalog a CD or a "local" filesystem directory. \fBmkat\fR
-creates a .list file in $LISTDIR which contans data about CD or directory you want
+\fBmkat\fR can catalog a CD or a filesystem directory. It
+creates a .list file in $LISTDIR which contans data about files you want
 cataloged.
 
 The .list file name is named after the CD label or NO_LABEL if label 
@@ -37,8 +37,8 @@ If you catalog a CD, its data should reside at $CD, if you catalog a
 directory, path you specified with \fB-p\fR option is used.
 
 \fB-t\fR (tag) option can be given to assign tags, which later
-can be used in search with \fB-to\fR (tags only) option or ignored
-with \fB-nt, -s\fR (no tags) option. The 'cd' tag will be automatically added
+can be used in search with \fB-S\fR (tags only) option or ignored
+with \fB-T, -s\fR (no tags) option. The 'cd' tag will be automatically added
 when cataloging a CD and 'filesystem' tag will be added when cataloging a
 filesystem path.
 
@@ -47,7 +47,7 @@ may contain "tags line"
 as the second line, the consecutive lines contain directories and files. 
 A tag line has the following format \fBtags: tag1 tag2 tagN\fR.
 A file entry looks like this: \fBfilename:size:md5\fR.
-Those files can be searched with a regexp using \fB-s\fR or \fB-to\fR option.
+Those files can be searched with a regexp using \fB-s\fR or \fB-S\fR option.
 Also, mkat can obtain a md5 sum of an existing file and grep for that 
 sum (\fB-m\fR option).
 
@@ -59,6 +59,12 @@ If a file with the same name as the CD label already exists in $LISTDIR,
 \fB-f\fR option can be used to overwrite the file.
 
 .SH OPTIONS
+When an option is specified several times then either the last 
+specified value is used (think mkat -p) or both are
+used (as in \fBmkat -S movie -S comedy\fR). If an option parameter is described as
+a comma-separated list (as in \fB-S \fI<tag[,tag]...>\fR), then
+parameters can be specified comma-separated (as in \fBmkat -S movie,comedy\fR).
+
 .TP
 .B \-f
 overwrite list file
@@ -71,20 +77,22 @@ catalog path instead of a CD. List file name will be path with the leading \
 assign tags to the .list file
 .TP
 .B \-s \fI<regex>\fR
-search the CD database
+search the database
 .TP
-.B \-nt
-don't search tags with -s (no tags)
+.B \-T
+don't search tags with -s
 .TP
-.B \-to \fI<tag[,tag]...>\fR
+.B \-S \fI<tag[,tag]...>\fR
 search within tags only
 .TP
-.B \-m \fI<file>...\fR
-make md5 sum(s) and search for them in the db
+.B \-a
+show what tags can be searched with -S
 .TP
-.B \-\-md5dir\fI[dir]\fR
+.B \-m \fI<file>\fR
+make md5 sum and search for it in the db
+.TP
+.B \-\-md5dir\fI<dir>\fR
 print files in the dir recursively that aren't in the db (using mkat -m).
-The dir defaults to "." (current dir).
 .TP
 .B \-y
 cycle { mkat; eject; }
@@ -92,11 +100,14 @@ cycle { mkat; eject; }
 .B \-q
 be quiet
 .TP
+.B \-d, \-\-debug
+Print debug output
+.TP
 .B \-h, \-\-help
 Show summary of options.
 
 .SH EXIT CODES
-When given \fB-s\fR, \fB-to\fR or \fB-m\fR option mkat exit code is zero if something was
+When given \fB-s\fR, \fB-S\fR or \fB-m\fR option mkat exit code is zero if something was
 found and nonzero otherwise. Actually, exit code returned by grep(1) is
 returned here.
 
@@ -111,10 +122,10 @@ Catalog a filesystem path
 mkat -s 'Fruits Basket 1.+'
 Search list files contents using grep regular expression
 .TP
-mkat -to music
+mkat -S music
 Find .list files with the 'music' tag
 .TP
-mkat -s music -nt
+mkat -s music -T
 Find .list files containing 'music', exclude tags from search
 .TP
 mkat -m unknown_stuff.avi

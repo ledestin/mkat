@@ -48,6 +48,7 @@ AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
 #meed the image creation program
 MKIMAGE_CMD='mkisofs $MKISO_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
 ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with mkisofs
+MKAT_LIBPATH=/usr/share/mkat
 .fi
 
 .SH SEE ALSO
