@@ -17,6 +17,7 @@ function usage {
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
+  echo "      --yes	    don't ask questions"
   echo "  -h, --help	    print this help"
   exit $1
 }
@@ -31,6 +32,7 @@ while [ $found ]; do
     "-n") PRINT_ONLY=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
+    "--yes") NO_QUESTIONS=1 ;;
     "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
        *) unset found ;;
   esac
@@ -63,7 +65,9 @@ fi
 
 #BURN
 set -e
-read -p "Press Enter to proceed to burn or Control-C to abort"
+if [ -z $NO_QUESTIONS ]; then
+  read -p "Press Enter to proceed to burn or Control-C to abort"
+fi
 echo "BURN!"
 unset IFS; cdrecord $CDREC_OPTS "$ISO_IMAGE"; IFS='
 '
