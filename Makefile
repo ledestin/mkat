@@ -3,6 +3,10 @@
 #are permitted in any medium without royalty provided the copyright
 #notice and this notice are preserved.
 
+RELEASE_VERSION := 0.3
+RELEASE_DIR ?= ..
+TARBALL := $(RELEASE_DIR)/mkat_$(RELEASE_VERSION).tgz
+
 #destination directories
 BIN := $(PREFIX)/usr/local/bin
 ETC := $(PREFIX)/etc
@@ -40,3 +44,21 @@ uninstall:
 	  let "i=$$i+1";\
 	done;
 	@rmdir $(DOC) $(SHARE)
+
+#make distribution tarball
+dist: changelog
+	tar --exclude CVS --exclude test --exclude \*.swp --exclude TODO -czf $(TARBALL) .
+
+#I need this dependency so that changelog would be remade only when
+#files it depends on change
+changelog: $(shell find . -type f -maxdepth 1 -not -name changelog -not -name \*.swp)
+	@-cvs2cl -t --stdout > changelog
+
+clean:
+	-rm changelog
+
+deploy:
+	scp $(TARBALL) monster.amur.ru:~/public_html/mkat/files
+	scp README monster.amur.ru:~/public_html/mkat/files
+
+.PHONY: clean install uninstall dist deploy
