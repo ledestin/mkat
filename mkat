@@ -33,6 +33,7 @@ OPTIONS=(\
   -s=REGEX "search the catalog database" 'REGEX=$2' \
   -nt "don't search tags with -s (no tags)" 'FILTER_TAGS=1' \
   -to=TAG1,TAG2	"search within tags only" 'TAG_REGEX="(${2//,/|/})"' \
+  -at "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
   -m=FILE "make file md5 sum and search for it in the db" \
     'MD5FILE=$2' \
   -md5dir=DIR "print files with md5 sums not present in the db" \
@@ -62,6 +63,12 @@ debug "reading rc file: $CONFIG"
 [ -f $CONFIG ] && source $CONFIG
 
 MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
+
+if [ $SHOW_AVAILABLE_TAGS ]; then
+  grep -h ^tags: $LISTDIR/*.list | awk -F: '{ print $2 }'\
+    | awk 'BEGIN{ RS="\n| "}; { if ($0 ~ /^./) print $0 }' | sort -u
+  exit
+fi
 
 #process --md5dir option
 if [ "$DIR" ]; then
