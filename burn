@@ -8,7 +8,6 @@
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
-#set -u #unset var is an error
 
 function usage {
   echo "usage: $0 [options] <label> <file>..."
@@ -46,21 +45,21 @@ done
 #making ISO image
 IFS='
 '
-LABEL="$1"; shift
+LABEL="$1"; shift; FILES=("$@") #vars needed for $MKIMAGE_CMD
 if [ $PRINT_ONLY ]; then
   str=`mkisofs ${PRINT_ONLY:+'-print-size'} -graft-points "$@"`; echo "$str"
   size=`echo $str | tail -1`
   echo `echo "($size*2048)/1024^2" | bc`Mb
   exit
 else
-  mkisofs -J -file-mode 444 -graft-points -V "$LABEL" -o "$ISO_IMAGE" "$@"
+  eval "$MKIMAGE_CMD"
 fi
 
 #BURN
 set -e
 read -p "Press Enter to proceed to burn or Control-C to abort"
 echo "BURN!"
-unset IFS; cdrecord $CDREC_OPTS -v "$ISO_IMAGE"; IFS='
+unset IFS; cdrecord $CDREC_OPTS "$ISO_IMAGE"; IFS='
 '
 
 #CATALOG
