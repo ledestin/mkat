@@ -34,13 +34,11 @@ OPTIONS=(\
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
   -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
   -a "show what tags can be searched for" 'SHOW_AVAILABLE_TAGS=1' \
-  -m=FILE "make file md5 sum and search for it in the db" \
-    '@MD5FILES' \
-  -md5dir=DIR "print files with md5 sums not present in the db" \
-    'DIR="$2"; [ -z "$DIR" ] && DIR=.' \
+  -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
+  --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
   -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1' \
-  -rc=FILE "read FILE instead of the default config (~/.$RCFILE)"\
-    'CONFIG="$2"; CHILD_PARAMS=$CHILD_PARAMS\ -rc\ $CONFIG' \
+  '-c|--config=FILE' "read FILE instead of the default config (~/.$RCFILE)"\
+    'CONFIG="$2"; CHILD_PARAMS=$CHILD_PARAMS\ -c\ \"$CONFIG\"' \
   -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
   '-d|--debug'  "debug output" 'DEBUG=1; CHILD_PARAMS=$CHILD_PARAMS\ -d' \
   '-h|--help' "print this help screen" 'usage 0')
