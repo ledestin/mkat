@@ -1,0 +1,52 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BURN-AUDIO 1 "May 31, 2004"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+burn-audio \- burn audio CD from wav files, compare a CD with wav files
+
+.SH SYNOPSIS
+\fBburn-audio\fR
+.RI "[-s] <wav file>..."
+
+.SH DESCRIPTION
+\fBburn-audio\fR uses cdrecord(1) to burn audio CD from wav files. The
+burned CD can be checked against original wav files, which is done by 
+ripping the CD with cdparanoia(1) and comparing original and just ripped 
+wav files. If you just want to compare CD with wav files, use \fB-s\fR 
+option. Note that the ripped files are placed into $TMP (see cdlistrc(5)).
+
+A CD is also catalogued by calling cdlist-audio(1).
+
+.SH OPTIONS
+.TP
+.B \-s
+skip burn, only compare a CD with wav files
+.TP
+.B \-h
+Show summary of options.
+
+.SH FILES
+.TP
+.B /etc/cdlistrc, ~/.cdlistrc
+config files where $TMP, $CD, $DRIVE, etc. are defined
+
+.SH SEE ALSO
+\fIcdlist-audio(1), cdlistrc(5)\fR
+
+.SH AUTHOR
+This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,
+for the Debian project (but may be used by others).

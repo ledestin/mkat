@@ -1,23 +1,33 @@
 #!/bin/bash
 
+#1. burn audio CD from wav files
+#2. rip the CD back and compare with the original wav files
+#choose both or either of those
+
 RCFILE=cdlistrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
-[ _$1 = _"-s" ] && { shift; SKIP_BURN=1; }
-if [ $# -lt 1 ]; then
+function usage {
   echo >&2 "missing arguments"
   echo "usage: $0 [-s] <wav file>..."
   echo "  -s	skip burn, only compare a CD with wav files"
+  echo "  -h    print this help"
   echo "mission: white an audio CD, rip it back and compare with the original"
-  exit 1
-fi
+  exit $1
+}
+
+[ _"$1" = _'-h' ] && usage 0
+[ _$1 = _"-s" ] && { shift; SKIP_BURN=1; }
+[ $# -lt 1 ] && usage 1
 
 set -e
-echo "Burning audioCD..."
-[ ! $SKIP_BURN ] && cdrecord -v -dao -speed=4 -audio "$@"
+if [ ! $SKIP_BURN ]; then
+  echo "Burning audio CD..."
+  cdrecord -v -dao -speed=4 -audio "$@"
+fi
 
-echo "Ripping the burned CD..."
+echo "Ripping CD..."
 TMP=`mktemp -p "$TMP" -d`; cd "$TMP"
 trap "rm -rf $TMP" EXIT
 cdparanoia -Bw

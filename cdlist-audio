@@ -1,19 +1,36 @@
 #!/bin/sh
 
+#1. obtain audio CD id info
+#2. grep audiocd.list for match
+#3. report whether CD is in the db
+#4. add to collection unless -c option specified
+
 RCFILE=cdlistrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
-set -u #unset var is an error
+
+function usage() {
+  echo "  -c	     check if the CD is in database"
+  echo "  -h	     print this help"
+  exit $1
+}
+
+#process options
+case $1 in
+  "-c") CHECK_ONLY=1 ;;
+  "-h") usage 0 ;;
+esac
 
 LIST=$LISTDIR/audiocd.list
 entry=`cd-discid $DRIVE`
 if [ -f $LIST ]; then
   grep "$entry" $LIST > /dev/null
   case $? in
-  0) echo -e >&2 "the CD already exists in the database:\n$entry"; exit 1 ;;
-  2) echo >&2 "grep error"; exit 1 ;;
+    0) echo -e >&2 "the CD already exists in the database:\n$entry"; exit 1 ;;
+    2) echo >&2 "grep error"; exit 1 ;;
+    *) echo "the CD isn't in the database" ;;
   esac
 else
   > $LIST
 fi
-echo "$entry" >> $LIST
+[ ! $CHECK_ONLY ] && echo "$entry" >> $LIST
