@@ -67,6 +67,7 @@ else
   if [ -z $SIMULATE ]; then
     [ -d "$TMP" ] || mkdir "$TMP" || exit 1
     eval "$MKIMAGE_CMD"
+    [ $? -ne 0 ] && exit 1
   fi
 fi
 
