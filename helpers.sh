@@ -92,7 +92,7 @@ function process_options {
       #make sure that $2 is a param if option requires one
       if [ $REQUIRES_PARAM ]; then
 	([ "$2" ] && [ ${2:0:1} != '-' ]) || \
-	  { echo "option $o requires parameter"; exit 1; }
+	  { echo "option ${o//=/ } requires parameter"; exit 1; }
       fi
       #execute action associated with the option
       local varname=''; local action=''
