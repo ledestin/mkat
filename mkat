@@ -28,7 +28,7 @@ function usage {
   echo "  -f			overwrite list file"
   echo "  -p <path>		catalog path instead of a CD"
   echo "  -t <tag[,tag]...>     write list file with 'tags:' string"
-  echo "  -s <regex>		search the CD database"
+  echo "  -s <regex>		search the catalog database"
   echo "  -nt			don't search tags with -s (no tags)"
   echo "  -to <tag[,tag]...>	search within tags only (tags only)"
   echo "  -m <file>...		make md5 sum(s) and search for them in the db"
