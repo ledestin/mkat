@@ -55,6 +55,7 @@ if [ $PRINT_ONLY ]; then
   echo `echo "($size*2048)/1024^2" | bc`Mb
   exit
 else
+  [ -d "$TMP" ] || mkdir "$TMP" || exit 1
   eval "$MKIMAGE_CMD"
 fi
 

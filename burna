@@ -28,6 +28,7 @@ if [ ! $SKIP_BURN ]; then
 fi
 
 echo "Ripping CD..."
+[ -d "$TMP" ] || mkdir "$TMP" || exit 1
 TMP=`mktemp -p "$TMP" -d`; cd "$TMP"
 trap "rm -rf $TMP" EXIT
 cdparanoia -Bw
