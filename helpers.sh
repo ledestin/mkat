@@ -49,10 +49,21 @@ function print_usage {
 #process a program's arguments, which means,
 #execute code attached to an option with eval
 function process_options {
-  local i=0 found REQUIRES_PARAM
+  local i=0 found REQUIRES_PARAM SHORT_OPTION cur_opt
   while [ ${#*} -gt 0 ]; do
     local o=${OPTIONS[$i]}
     unset REQUIRES_PARAM; [ `expr index "$o" =` -ne 0 ] && REQUIRES_PARAM=1
+    unset SHORT_OPTION; [ "_${1:0:2}" != '_--' ] && SHORT_OPTION=1
+    #split short option to several short options if $o.len > 2, e.g. -vd
+    if [ $SHORT_OPTION ] && [ ${#1} -gt 2 ]; then
+      cur_opt=$1; local j=2;
+      while [ ${#1} -gt $j ]; do
+	expd=(${expd[@]} -${1:$j:1})
+	let "j += 1"
+      done
+      shift; set - ${cur_opt:0:2} "$@" ${expd[@]}
+    fi
+    
     #deal with -h|--help like options
     while [ `expr index "$o" '|'` -ne 0 ]; do
       found=${o%%|*}
@@ -64,14 +75,8 @@ function process_options {
       fi
       o=${o#*|}
     done
-    #allow repitition for short options w/o parameters
-    #(cut -vvv to -v (defined form) and assign to cur_opt)
-    cur_opt="$1"
-    local s=${1:1}
-    [ "${s:0:1}" != '-' ] && [ -z $REQUIRES_PARAM ] && \
-      [ ${#s} -gt 1 ] && [ -z "${s//${s:0:1}/}" ] && cur_opt="-${s:0:1}"
     #process cur_opt
-    if [ "${o%=*}" = "$cur_opt" ] || [ "--no${o}" = "$cur_opt" ]; then
+    if [ "${o%=*}" = "$1" ] || [ "--no${o}" = "$1" ]; then
       #debug "found argument: $1"
       #make sure that $2 is a param if option requires one
       if [ $REQUIRES_PARAM ]; then
@@ -120,8 +125,9 @@ function test_helpers {
   -t=TAG1,TAG2 'multiple times option' '@TAGS'
   -r 'boolean option' '?RECURSIVE'
   -v 'verbose' '*VERBOSE_LEVEL'
+  -d 'debug' '*DEBUG_LEVEL'
   )
-  cmd='process_options -f --rc file.conf -v -vv -t tag1 -t tag2,tag3 --no-r'
+  cmd='process_options -f --rc file.conf -v -vvd -t tag1 -t tag2,tag3 --no-r'
   echo $cmd; eval "$cmd"
 
   assert '[ $FORCE ]' '-f option specified, but FORCE is not set'
@@ -132,6 +138,8 @@ function test_helpers {
   assert '[ -z $RECURSIVE ]' '--no-r should yield non-existing $RECURSIVE'
   assert '[ $VERBOSE_LEVEL -eq 3 ]' \
     "verbose option was specified 3 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
+  assert '[ $DEBUG_LEVEL -eq 1 ]' \
+    "debug option was specified 1 times, but \$DEBUG_LEVEL is $DEBUG_LEVEL"
   echo "usage:"; print_usage "${OPTIONS[@]}"
 }
 if [ ${0##*/} = helpers.sh ]; then
