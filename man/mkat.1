@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKAT 1 "May 30, 2004"
+.TH MKAT 1 "Feb 11, 2005"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,22 +16,38 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-mkat \- catalog CDs and then search database by file name or md5 sum
+mkat \- catalog a CD or filesystem path, then search database by file name, tags or md5 sum
 
 .SH SYNOPSIS
 \fBmkat\fR
 .RI [ options ]
 
 .SH DESCRIPTION
-If called without options \fBmkat\fR tries to read files at $CD (see
-\fImkatrc(5)\fR) and creates a .list file in $LISTDIR named after the CD label obtained
-from the physical $DRIVE. Thus, it expects CD data to be available at $CD
-and physical drive to be at $DRIVE.
+\fBmkat\fR can catalog a CD or a "local" filesystem directory. \fBmkat\fR
+creates a .list file in $LISTDIR which contans data about CD or directory you want
+cataloged.
 
-A .list file contains CD label as first line, consecutive lines contain
-CD directories and files. A file entry looks like this: 
-\fBfilename:size:md5\fR.
-Those files can be searched with a regexp using \fB-s\fR option.
+The .list file name is named after the CD label or NO_LABEL if label 
+could not be obtained
+if \fBmkat\fR is called without \fB-p\fR option, or path with the leading '/'
+stripped and the rest of '/'s replaced with '.'s if \fB-p\fR option is used.
+The CD label is obtained from $DRIVE, which should be a cdrom device
+(see \fImkatrc(5)\fR).
+If you catalog a CD, its data should reside at $CD, if you catalog a
+directory, path you specified with \fB-p\fR option is used.
+
+\fB-t\fR (tag) option can be given to assign tags, which later
+can be used in search with \fB-to\fR (tags only) option or ignored
+with \fB-nt, -s\fR (no tags) option. The 'cd' tag will be automatically added
+when cataloging a CD and 'filesystem' tag will be added when cataloging a
+filesystem path.
+
+A .list file contains CD label or filesystem path as the first line,
+may contain "tags line"
+as the second line, the consecutive lines contain directories and files. 
+A tag line has the following format \fBtags: tag1 tag2 tagN\fR.
+A file entry looks like this: \fBfilename:size:md5\fR.
+Those files can be searched with a regexp using \fB-s\fR or \fB-to\fR option.
 Also, mkat can obtain a md5 sum of an existing file and grep for that 
 sum (\fB-m\fR option).
 
@@ -47,8 +63,12 @@ If a file with the same name as the CD label already exists in $LISTDIR,
 .B \-f
 overwrite list file
 .TP
-.B \-t <tag[,tag]...>
-image making program
+.B \-p \fI<path>\fR
+catalog path instead of a CD. List file name will be path with the leading \
+'/' removed and the rest of '/'s replaced with '.'
+.TP
+.B \-t \fI<tag[,tag]...>\fR
+assign tags to the .list file
 .TP
 .B \-s \fI<regex>\fR
 search the CD database
@@ -61,10 +81,6 @@ search within tags only
 .TP
 .B \-m \fI<file>...\fR
 make md5 sum(s) and search for them in the db
-.TP
-.B \-p \fI<path>\fR
-catalog path instead of a CD. List file name will be path with the leading \
-'/' removed and the rest of '/'s replaced with '.'
 .TP
 .B \-\-md5dir\fI[dir]\fR
 print files in the dir recursively that aren't in the db (using mkat -m).
@@ -80,14 +96,26 @@ be quiet
 Show summary of options.
 
 .SH EXIT CODES
-When given \fB-s\fR or \fB-m\fR option mkat exit code is zero if something was
+When given \fB-s\fR, \fB-to\fR or \fB-m\fR option mkat exit code is zero if something was
 found and nonzero otherwise. Actually, exit code returned by grep(1) is
 returned here.
 
 .SH EXAMPLES
 .TP
+mkat -t anime,drama,comedy,school
+Catalog a Fruits Basket CD with the specified tags
+.TP
+mkat -p ~/music/ -t music,western
+Catalog a filesystem path
+.TP
 mkat -s 'Fruits Basket 1.+'
-Find files using grep regular expressions
+Search list files contents using grep regular expression
+.TP
+mkat -to music
+Find .list files with the 'music' tag
+.TP
+mkat -s music -nt
+Find .list files containing 'music', exclude tags from search
 .TP
 mkat -m unknown_stuff.avi
 Find out if the specified file exists in the catalog using its md5 sum
