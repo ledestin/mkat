@@ -6,6 +6,26 @@ function debug {
   [ -z $DEBUG ] || echo "$@"
 }
 
+NO_PREFIX='--no'
+MACROS=(
+'=FOO' 'FOO="$2"'
+'@FOO' 'FOO[${#FOO}]="$2"'
+'*FOO' 'cnt=${1##-}; let "FOO += $cnt"'
+'?FOO' '[ "${1:0:${#NO_PREFIX}}" != $NO_PREFIX ] && FOO=1'
+)
+
+function get_macro {
+  i=0
+  while [ ! -z "${MACROS[$i]}" ]; do
+    if [ "$1" = "${MACROS[$i]}" ]; then
+      echo ${MACROS[$(($i+1))]}
+      return 0
+    fi
+    let "i += 1"
+  done
+  return 1
+}
+
 #print_usage($options)
 #print usage: screen for passed CLI options
 function print_usage {
@@ -41,7 +61,21 @@ function process_options {
 	  { echo "option $o requires parameter"; exit 1; }
       fi
       #execute action associated with the option
-      eval "${OPTIONS[$(($i+2))]}"
+      local varname=''; local action=''
+      for word in ${OPTIONS[$(($i+2))]}; do
+	letter_one=${word:0:1};
+	case $letter_one in
+	  '='|'@'|'*'|'?') varname=${word:1} ;;
+	esac
+	if [ $varname ]; then
+	  macro=$(get_macro "${letter_one}FOO")
+	  action="$action ${macro//FOO/$varname}"
+	else
+	  action="$action $word"
+	fi
+      done
+      debug "action: $action"
+      eval "$action"
       if [ $pos -ne 0 ]; then
 	shift 2
       else
@@ -57,10 +91,11 @@ function process_options {
 function test_helpers {
   DEBUG=1
   OPTIONS=(\
-  -f force FORCE=1 \
+  -f force '?FORCE' \
   --rc=RCFILE 'read this config file' 'CONFIG=$2')
   process_options -f --rc file.conf
-   [ $CONFIG = 'file.conf' ] && echo OK
+  [ $FORCE ] && echo OK
+  [ $CONFIG = 'file.conf' ] && echo OK
   echo "usage:"; print_usage "${OPTIONS[@]}"
 }
 if [ ${0##*/} = helpers.sh ]; then
