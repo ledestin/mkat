@@ -1,4 +1,3 @@
-#!/bin/bash
 # vim: set filetype=sh:
 #shellscript helper functions
 
