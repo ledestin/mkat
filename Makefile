@@ -1,3 +1,8 @@
+#Copyright 2004, 2005 Dmitry Maksyoma
+#Copying and distribution of this file, with or without modification,
+#are permitted in any medium without royalty provided the copyright
+#notice and this notice are preserved.
+
 #destination directories
 BIN := $(PREFIX)/usr/local/bin
 ETC := $(PREFIX)/etc

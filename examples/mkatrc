@@ -1,3 +1,4 @@
+#this file is public domain
 DRIVE="/dev/sr0"
 CD="/misc/cd"
 LISTDIR="$HOME/.mkat"
