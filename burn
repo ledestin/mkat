@@ -131,6 +131,23 @@ elif [ -z $SKIP_MKIMAGE ]; then
     fi
     set -e
 
+    #possible security issue when using existing directory
+    #I check that current UID is the owner and the directory isn't world
+    #writable
+    if [ -d "$TMP" ]; then
+      stat=(`stat -c '%u %A' "$TMP"`)
+      [ ${stat[0]} = $EUID ] || \
+	{ echo >&2 "error: $TMP isn't owned by current UID: $UID"; exit 1;}
+      [ ${stat[1]:$((-2)):1} = "-" ] || \
+        { echo >&2 "error: $TMP is world writable"; exit 1;}
+    else
+      #set umask=0022 only if $TMP resides in /tmp
+      saved_umask=`umask`
+      expr match "$TMP" /tmp
+      [ $? -eq 0 ] && umask 0022
+      mkdir "$TMP"
+      umask $saved_umask
+    fi
     eval "$MKIMAGE_CMD"
   fi
 fi
