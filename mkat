@@ -22,20 +22,21 @@
 
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
-[ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
 function usage {
   echo "usage: $0 [option]";
   echo "  -f			overwrite list file"
+  echo "  -p <path>		catalog path instead of a CD"
   echo "  -t <tag[,tag]...>     write list file with 'tags:' string"
   echo "  -s <regex>		search the CD database"
   echo "  -nt			don't search tags with -s (no tags)"
   echo "  -to <tag[,tag]...>	search within tags only (tags only)"
   echo "  -m <file>...		make md5 sum(s) and search for them in the db"
   echo "      --md5dir <dir>	print files with md5 sums not present in the db"
-  echo "  -p <path>		catalog path instead of a CD"
   echo "  -y			cycle { mkat; eject; }"
   echo "  -q			be quiet"
+  echo "  --rc <file>		read file instead of default (~/.$RCFILE)"
+  echo "  -d, --debug		debug output"
   echo "  -h, --help		print this help"
   exit $1
 }
@@ -48,12 +49,18 @@ function check_option {
   fi
 }
 
+function debug {
+  [ -z $DEBUG ] || echo "$@"
+}
+
 #process parameters
 found=1
-while [ $found ]; do
+while [ $found ] && [ ${#*} -ne 0 ] ; do
   case "$1" in
     "-f") FORCE_OVERWRITE=1 ;;
+    "-rc") CONFIG="$2"; check_option $*; shift ;;
     "-h"|"--help") usage 0 ;;
+    "-d"|"--debug") DEBUG=1 ;;
     "-q") CHILD_PARAMS="-q"; GREP_PARAMS="-q" ;;
     "-y") CYCLE_CATALOG=1 ;;
     "-p") CATALOG_PATH=$2
@@ -73,6 +80,18 @@ while [ $found ]; do
   esac
   [ $found ] && shift
 done
+
+if [ -z $found ]; then
+  echo >&2 "unknown options: $*"; usage 1
+fi
+
+#source rc file
+#-rc specified config must exist
+[ "$CONFIG" ] && \
+  ([ -f "$CONFIG" ] || { echo >&2 "file not found: $CONFIG"; exit 1; })
+CONFIG=${CONFIG:-~/.$RCFILE}
+debug "reading rc file: $CONFIG"
+[ -f $CONFIG ] && source $CONFIG
 
 MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
 
@@ -95,14 +114,11 @@ fi
 #search the database with grep (-s option)
 if [ "$REGEX" ]; then
   IFS=''
-  res=`grep $GREP_PARAMS -i -E "$REGEX" "$LISTDIR"/*.list`
-  if [ $? -eq 0 ]; then
-    if [ $FILTER_TAGS ]; then
-      echo $res | grep -v -E "(^|:)tags:"; exit $?
-    else
-      echo $res; exit 0
-    fi
-  fi
+  cmd="grep $GREP_PARAMS -i -E "$REGEX" "$LISTDIR"/*.list"
+  [ $FILTER_TAGS ] && cmd="$cmd | grep -v -E '(^|:)tags:'"
+  debug "$cmd"
+  eval $cmd
+  exit $?
 fi
 
 #search by md5 sum of a file
