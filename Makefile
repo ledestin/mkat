@@ -22,6 +22,8 @@ install:
 	  cp $${src[$$i]} $$dir;\
 	  let "i=$$i+1";\
 	done;
+	grep -q MKAT_LIBPATH /etc/mkatrc || \
+	  echo MKAT_LIBPATH=$(SHARE) >> /etc/mkatrc
 
 uninstall:
 	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
