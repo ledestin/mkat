@@ -31,6 +31,7 @@ uninstall:
 	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
 	for dir in $(DEST); do\
 	  files="`echo $${src[$$i]} | sed 's,[^/ ]*/,,g'`";\
-	  cd $$dir && rm -f $${files[@]} && cd ~-;\
+	  cd $$dir && rm -rf $${files[@]} && cd ~-;\
 	  let "i=$$i+1";\
 	done;
+	@rmdir $(DOC) $(SHARE)
