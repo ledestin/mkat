@@ -12,13 +12,8 @@ NO_PREFIX='--no'
 MACROS=(
 '=FOO' 'FOO="$2"'
 '@FOO'
-'if [ `expr index "$o" ,` -ne 0 ] && [ `expr index "$2" ,` -ne 0 ]; then
-  IFS=",";
-  for foo in $2; do FOO[${#FOO[@]}]="$foo"; done;
-  unset IFS;
-else
-  FOO[${#FOO[@]}]="$2";
-fi'
+'[ `expr index "$o" ,` -ne 0 ] && IFS=,;
+  FOO=("${FOO[@]}" $2); unset IFS;'
 '*FOO' '_s=${1#-}; let "FOO += ${#_s}"'
 '?FOO' '[ "${1:0:${#NO_PREFIX}}" != $NO_PREFIX ] && FOO=1'
 )
@@ -119,7 +114,7 @@ function test_helpers {
   OPTIONS=(\
   -f force '?FORCE' \
   --rc=RCFILE 'read this config file' 'CONFIG=$2'
-  -t=TAG 'multiple times option' '@TAGS'
+  -t=TAG1,TAG2 'multiple times option' '@TAGS'
   -r 'boolean option' '?RECURSIVE'
   -v 'verbose' '*VERBOSE_LEVEL'
   )
@@ -129,9 +124,9 @@ function test_helpers {
   assert '[ $FORCE ]' '-f option specified, but FORCE is not set'
   assert '[ $CONFIG = file.conf ]' \
     "config file isn't the one specified with --rc option"
-  assert '[ ${#TAGS[@]} -eq 3 ] && [ ${TAGS[0]} = tag1 ] && \
-    [ ${TAGS[1]} = tag2 ] && [ ${TAGS[2]} = tag3 ]' \
-      "3 -t options specified, but ${#TAGS} found"
+  assert '[ ${#TAGS[@]} -eq 3 ]' "3 -t options specified, but ${#TAGS} found"
+  assert '[ ${TAGS[0]} = tag1 ] && \
+    [ ${TAGS[1]} = tag2 ] && [ ${TAGS[2]} = tag3 ]' "tag names are wrong"
   assert '[ -z $RECURSIVE ]' '--no-r should yield non-existing $RECURSIVE'
   assert '[ $VERBOSE_LEVEL -eq 3 ]' \
     "verbose option was specified 2 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
