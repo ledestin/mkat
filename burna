@@ -13,13 +13,12 @@ function usage {
   echo "usage: $0 [-s] <wav file>..."
   echo "  -s		skip burn, only compare a CD with wav files"
   echo "  -h, --help    print this help"
-  echo "mission: white an audio CD, rip it back and compare with the original"
   exit $1
 }
 
 case "$1" in
-"-h"|"--help") usage 0 ;;
-"-s") shift; SKIP_BURN=1 ;;
+  "-h"|"--help") usage 0 ;;
+  "-s") shift; SKIP_BURN=1 ;;
 esac
 
 [ $# -lt 1 ] && usage 1
@@ -31,23 +30,23 @@ if [ ! $SKIP_BURN ]; then
 fi
 
 echo "Ripping CD..."
-[ -d "$TMP" ] || mkdir "$TMP" || exit 1
-TMP=`mktemp -p "$TMP" -d`; cd "$TMP"
+[ -d "$TMP" ] || mkdir "$TMP"
+TMP=`mktemp -p "$TMP" -d`
 trap "rm -rf $TMP" EXIT
-cdparanoia -Bw
-WRITTEN=(`ls -1`)
+cd "$TMP" && cdparanoia -Bw
+RIPPED_WAVS=(`ls -1`)
 
-PARAMS=("$@"); i=0
 cd ~-
 set +e
 echo "Comparing ripped files with the original..."
-BROKEN_RECORD=0
+PARAMS=("$@"); i=0; BROKEN_TRACK=0
 while [ $# -gt $i ]; do
-  cmp "${PARAMS[$i]}" "$TMP/${WRITTEN[$i]}"
-  [ $? -eq 1 ] && BROKEN_RECORD=1
+  cmp "${PARAMS[$i]}" "$TMP/${RIPPED_WAVS[$i]}"
+  [ $? -eq 1 ] && BROKEN_TRACK=1
   i=$(($i+1))
 done
-if [ ! $BROKEN_RECORD ]; then
+
+if [ ! $BROKEN_TRACK ]; then
   echo "Catalog the CD..."
   mkata
 fi
