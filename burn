@@ -57,7 +57,7 @@ function usage {
 }
 
 function debug {
-  [ -z $DEBUG ] || echo "$1"
+  [ -z $DEBUG ] || echo "$@"
 }
 
 found=1
@@ -70,7 +70,7 @@ while [ $found ]; do
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
     "--dbcheck") DB_CHECK=1 ;;
-    "-y|--yes") NO_QUESTIONS=1 ;;
+    "-y"|"--yes") NO_QUESTIONS=1 ;;
     "--simulate") SIMULATE=1; DEBUG=1 ;;
     "--debug") DEBUG=1 ;;
     "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
@@ -119,7 +119,7 @@ if [ $PRINT_ONLY ]; then
   exit
 elif [ -z $SKIP_MKIMAGE ]; then
   echo "making ISO image"
-  eval "debug \"$MKIMAGE_CMD\""
+  eval "debug $MKIMAGE_CMD"
   if [ -z $SIMULATE ]; then
     debug "checking for lockfile $LOCKFILE"
     set +e
