@@ -1,0 +1,80 @@
+CDLIST is a set of command line tools to burn, catalog audio or data CD-R[W]s
+and then search the catalog database.
+It uses mkisofs and cdrecord to create iso and burn CDs, -r option allows 
+to pass through options to cdrecord. Catalog tools can be used separately 
+from burn tools.
+
+It has been made because I was tired of specifying parameters to mkisofs and
+cdrecord, and I also wanted a database of my CD collection that could be
+simple, easy to read and searchable with grep.
+
+NOTE: I use autofs to mount cdrom for checking and cataloguing, actually, I
+just don't mount it explicitly and eject after sleep'ing $AUTOFS_DELAY seconds.
+Set unmount timout for autofs to $AUTOFS_DELAY seconds or CD won't eject after 
+everything's done. Also, it's useful to look at created iso image before 
+burning, I have the following lines in my /etc/auto.misc:
+iso             -fstype=iso9660,ro,sync,nodev,nosuid,loop :/home/ledestin/cdimage.iso
+cd              -fstype=iso9660,ro,sync,nodev,nosuid,speed=32   :/dev/sr0
+I also have a symlink
+lrwxrwxrwx    1 root     root           17 2004-04-21 13:13 /misc -> /var/autofs/misc/
+so I can just say `ls /misc/iso' and see the contents of the iso image.
+
+SYNOPSIS
+
+burn uses mkisofs and cdrecord to create and burn a CD.
+usage: ./burn [options] <label> <file>...
+  -n		    print estimated image size, exit
+  -sSPEED	    add 'speed=SPEED' to cdrecord parameters
+  -c		    add 'blank=fast' to cdrecord parameters
+  -rCDREC_OPTS	    pass parameters to cdrecord
+     --skip	    skip catalog and check
+
+
+cdlist creates a file in $LISTDIR (see cdlistrc) named after CD label with
+first line being a label, consecutive lines listing CD contents, e.g.
+Futurama 11-13
+Futurama.S02E13.A_Bicyclops_build_for_two.ANiVCD.ShareReacto.mpg:219M:985bf57d355353ad09d41f6b4d2a
+aaae
+Futurama.S02E12.Raging_Bender.ANiVCD.ShareReactor.mpg:218M:5b168653b617f172a54091eb20609e24
+Futurama.S02E11.Lesser_of_two_evils.ANiVCD.ShareReactor.mpg:218M:be7883ec0e1658744bab7370ec515c71
+
+That is file description consists of the file name, size, md5 sum.
+
+usage ./cdlist [-s|-f|-c|-y|-h]
+  -f  overwrite list file
+  -s  search the CD database
+  -m  make md5 sum(s) and search for them in the db
+  -y  cycle { cdlist; eject; }
+  -h  print this help
+
+EXAMPLES
+
+Find out how much space files would take:
+$burn -n 'Fruits Basket 10-13' Fruits\ Basket\ \(1[0-3]*
+
+Burn a CDRW with 4x max speed and already having data on it
+(since it's a CDRW I also don't need catalog):
+$burn -s4 -c --skip 'Fruits Basket 10-13' Fruits\ Basket\ \(1[0-3]*
+
+Burn a CD-R in dummy mode:
+$burn -r'-dummy' 'Fruits Basket 10-13' Fruits\ Basket\ \(1[0-3]*
+
+CONFIGURATION
+
+/etc/cdlistrc and ~/.cdlistrc are sourced by the tools in that order,
+.cdlistrc settings override global settings from /etc/cdlistrc.
+
+The following variables must be set:
+DRIVE="/dev/sr0" #physical CD drive
+CD="/misc/cd"	 #mounted CD drive (autofs mounted in my case)
+LISTDIR="/home/ledestin/.stuff/cdlist" #where to place catalog database
+TMP=/home/ledestin #where to place temporary files, can be used, for example,
+		   #to grab wav files from newly burned audio CD to compare
+		   #with the files CD was burned from.
+ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with mkisofs
+AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
+
+
+Fri May 28 10:31:12 YAKST 2004
+--
+Dmitry Maksyoma
