@@ -51,6 +51,28 @@ FMP2 1-4
 
 That is file description consists of the file name, size, md5 sum.
 
+TAGS
+
+If you wish to categorize your collection, use tags like 'movie', 'anime',
+'comedy', 'adventure', etc. (e.g. 
+http://animenfo.com/animetitle,114,tzoabg,cowboy_bebop.html).
+
+You can specify tags when burning:
+burn '-m-t anime,comedy,adventure' 'Cowboy Bebop' .
+
+or when you wish to catalog already burned:
+mkat -t anime,comedy,adventure
+
+Or, if you have a .list file already, edit it, adding
+"tags: anime comedy adventure" as the *SECOND* line.
+$vi ~/.mkat/Cowboy\ Bebop.list
+
+"mkat -S anime" will print all list files with "anime" tag,
+"mkat -S movie,romance" will print files containing both "movie" and
+"romance" tags.
+
+List existing tags with "mkat -a".
+
 GETTING A NEW VERSION
 
 This project is hosted at http://www.amur.ru/~ledestin/mkat/
