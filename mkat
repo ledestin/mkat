@@ -28,7 +28,7 @@ function usage {
   echo "usage: $0 [option]";
   echo "  -f			overwrite list file"
   echo "  -s <regex>		search the CD database"
-  echo "  -m <file>		make md5 sum(s) and search for them in the db"
+  echo "  -m <file>...		make md5 sum(s) and search for them in the db"
   echo "      --md5dir <dir>	print files with md5 sums not present in the db"
   echo "  -y			cycle { mkat; eject; }"
   echo "  -q			be quiet"
