@@ -15,13 +15,15 @@ function usage {
   echo "  -sSPEED	    add 'speed=SPEED' to cdrecord parameters"
   echo "  -c		    add 'blank=fast' to cdrecord parameters"
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
-  echo "     --nocat	    skip catalog"
-  echo "     --nocheck	    skip afterburn check"
-  echo "  -h		    print this help"
+  echo "      --nocat	    skip catalog"
+  echo "      --nocheck	    skip afterburn check"
+  echo "  -h, --help	    print this help"
   exit $1
 }
 
-[ _"$1" = _"-h" ] && usage 0
+case "$1" in
+"-h"|"--help") usage 0 ;;
+esac
 
 found=1
 while [ $found ]; do

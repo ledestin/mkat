@@ -10,15 +10,15 @@ RCFILE=mkatrc
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
 function usage() {
-  echo "  -c	     check if the CD is in database"
-  echo "  -h	     print this help"
+  echo "  -c		check if the CD is in database"
+  echo "  -h, --help	print this help"
   exit $1
 }
 
 #process options
 case $1 in
   "-c") CHECK_ONLY=1 ;;
-  "-h") usage 0 ;;
+  "-h"|"--help") usage 0 ;;
 esac
 
 LIST=$LISTDIR/audiocd.list

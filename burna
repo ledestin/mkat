@@ -11,14 +11,17 @@ RCFILE=mkatrc
 function usage {
   echo >&2 "missing arguments"
   echo "usage: $0 [-s] <wav file>..."
-  echo "  -s	skip burn, only compare a CD with wav files"
-  echo "  -h    print this help"
+  echo "  -s		skip burn, only compare a CD with wav files"
+  echo "  -h, --help    print this help"
   echo "mission: white an audio CD, rip it back and compare with the original"
   exit $1
 }
 
-[ _"$1" = _'-h' ] && usage 0
-[ _$1 = _"-s" ] && { shift; SKIP_BURN=1; }
+case "$1" in
+"-h"|"--help") usage 0 ;;
+"-s") shift; SKIP_BURN=1 ;;
+esac
+
 [ $# -lt 1 ] && usage 1
 
 set -e

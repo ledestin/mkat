@@ -4,15 +4,19 @@ RCFILE=mkatrc
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
-[ _$1 = _"-h" ] && {
+function usage {
   echo "usage: $0 [option]";
-  echo "  -f	     overwrite list file"
-  echo "  -s <regex> search the CD database"
-  echo "  -m <file>  make md5 sum(s) and search for them in the db"
-  echo "  -y	     cycle { mkat; eject; }"
-  echo "  -h	     print this help"
-  exit;
+  echo "  -f		 overwrite list file"
+  echo "  -s <regex>	 search the CD database"
+  echo "  -m <file>	 make md5 sum(s) and search for them in the db"
+  echo "  -y		 cycle { mkat; eject; }"
+  echo "  -h, --help     print this help"
+  exit $1
 }
+
+case "$1" in
+"-h"|"--help") usage 0 ;;
+esac
 
 [ _$1 = _"-s" ] && { grep -i -E "$2" "$LISTDIR"/*.list; exit; }
 if [ _$1 = _"-y" ]; then
