@@ -1,0 +1,80 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BURN 1 "May 30, 2004"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+burn \- create iso image, burn it to a CD-R[W], catalog burned CD, compare
+CD data with the files iso were made from.
+
+.SH SYNOPSIS
+\fBburn\fR
+.RI\ [ options ]\ <label>\ <file>...
+
+.SH DESCRIPTION
+\fBburn\fR creates iso, burns and catalogs it using mkisofs(8), cdrecord(1) and
+cdlist(1) respectively.
+
+Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
+options control burn speed and if the CD needs to be blanked (in case of
+CD-RW) by passing a parameter to cdrecord. \fB-r\fR option allows to pass any 
+option through to cdrecord (e.g. -dummy).
+
+If you don't want to catalog your CDs with cdlist(1), use \fB--skip\fR
+option.
+
+.SH OPTIONS
+.TP
+.B \-n
+print estimated iso image size
+.TP
+.B \-s \fI<SPEED>\fR
+add 'speed=SPEED' to cdrecord parameters
+.TP
+.B \-c
+add 'blank=fast' to cdrecord parameters
+.TP
+.B \-r \fI<CDREC_OPTS>\fR
+pass parameters to cdrecord
+.TP
+.B \-\-skip
+skip catalog and check
+.TP
+.B \-h
+Show summary of options.
+
+.SH EXAMPLES
+.TP
+burn -n 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
+Find out how much space files would take
+.TP
+burn -s4 -c --skip 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
+Burn a CDRW with 4x max speed, blanking it since it already has data on it,
+skip catalog since it's a CDRW, so new data will probably be written soon.
+.TP
+burn -r'-dummy' 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
+Burn a CD-R in dummy mode
+
+.SH FILES
+.TP
+.B /etc/cdlistrc, ~/.cdlistrc
+config files where $CD, $DRIVE, etc. are defined
+
+.SH SEE ALSO
+\fIcdlist(1), cdlistrc(5)\fR
+
+.SH AUTHOR
+This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,
+for the Debian project (but may be used by others).

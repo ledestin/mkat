@@ -1,0 +1,51 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH CDLISTRC 1 "May 30, 2004"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+cdlistrc \- config file for CDLIST tools
+
+.SH SYNOPSIS
+\fB/etc/cdlistrc\fR
+.P
+\fB~/.cdlistrc\fR
+
+.SH DESCRIPTION
+These files are sourced by CDLIST tools, so, they are, naturally,
+sh/bash scripts. First \fI/etc/cdlistrc\fR sourced and then
+\fI~/.cdlistrc\fR is sourced, so \fI.cdlistrc\fR settings override global 
+settings from \fI/etc/cdlistrc\fR.
+Neither of config files is required, the variables could be, in principle,
+defined in .bashrc.
+
+.nf
+The following variables must be set:
+DRIVE="/dev/sr0" #physical CD drive
+CD="/misc/cd"	 #mounted CD drive (autofs mounted in my case)
+LISTDIR="/home/ledestin/.stuff/cdlist" #where to place catalog database
+TMP=/home/ledestin #where to place temporary files, can be used, for example,
+		   #to grab wav files from newly burned audio CD to compare
+		   #with the files CD was burned from.
+ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with mkisofs
+AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
+.fi
+
+.SH SEE ALSO
+\fIburn(1), cdlist(1)\fR
+
+.SH AUTHOR
+This manual page was written by Dmitry Maksyoma <ledestin@amur.ru>,
+for the Debian project (but may be used by others).
