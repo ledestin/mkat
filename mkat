@@ -61,7 +61,7 @@ debug "reading rc file: $CONFIG"
 [ -f $CONFIG ] && source $CONFIG
 
 #check that essential variables are defined
-ESSENTIAL_VARS=(CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE)
+ESSENTIAL_VARS=(CD LISTDIR)
 for v in ${ESSENTIAL_VARS[@]}; do
   eval "[ -z \"\$$v\" ] && 
     { error '"$v" variable must be defined (see mkatrc(5))'; exit 1; }"
