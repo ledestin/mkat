@@ -52,7 +52,8 @@ dist: changelog
 #I need this dependency so that changelog would be remade only when
 #files it depends on change
 changelog: $(shell find . -type f -maxdepth 1 -not -name changelog -not -name \*.swp)
-	@-cvs2cl -t --stdout > changelog
+	@-cvs2cl -t -R '^[^#]+$$$$' --stdout > changelog && \
+	echo "This file is public domain" >> changelog
 
 clean:
 	-rm changelog
