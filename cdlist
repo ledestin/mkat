@@ -5,21 +5,28 @@ RCFILE=cdlistrc
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
 [ _$1 = _"-h" ] && {
-  echo "usage $0 [-s|-f|-c|-h]";
+  echo "usage $0 [-s|-f|-c|-y|-h]";
   echo "-f  overwrite list file"
   echo "-s  search the CD database"
-  echo "-c  cycle { cdlist; eject; }"
+  echo "-c  make md5 sum(s) and search for them in the db"
+  echo "-y  cycle { cdlist; eject; }"
   echo "-h  print this help"
   exit;
 }
 
-[ _$1 = _"-s" ] && { grep -i "$2" "$LISTDIR"/*.list; exit; }
-if [ _$1 = _"-c" ]; then
+[ _$1 = _"-s" ] && { grep -i -E "$2" "$LISTDIR"/*.list; exit; }
+if [ _$1 = _"-y" ]; then
   while : ; do
     cdlist && sleep 6 && eject
     read -p "Press Enter when ready..."
     [ $? -ne 0 ] && exit
   done
+fi
+if [ _"$1" = _"-c" ]; then
+  shift; md5sum "$@"\
+    | ruby -e 'a=[]; while gets; a.push($_.split[0]); end; puts a.join("|")'\
+    | xargs $0 -s 
+  exit
 fi
 
 #catalog the CD

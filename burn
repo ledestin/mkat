@@ -11,8 +11,9 @@ RCFILE=cdlistrc
 #set -u #unset var is an error
 
 function usage {
-  echo "usage: $0 [-n] <label> <file>..."
+  echo "usage: $0 [-n] [-rCDREC_OPTS] <label> <file>..."
   echo "  -n  print estimated image size, exit"
+  echo "  -r  pass parameters to cdrecord"
   exit $1
 }
 
@@ -24,6 +25,10 @@ if [ "$#" -lt 2 ]; then
 fi
 
 [ "$1" = "-n" ] && { PRINT_ONLY=1; shift; }
+if [ ${1:0:2} = "-r" ]; then
+  CDREC_OPTS="${1:2}"
+  shift
+fi
 
 IFS='
 '
@@ -40,8 +45,8 @@ fi
 set -e
 read -p "Press Enter to proceed to burn or Control-C to abort"
 echo "BURN!"
-cdrecord -v "$ISO_IMAGE"
-
+unset IFS; cdrecord $CDREC_OPTS -v "$ISO_IMAGE"; IFS='
+'
 echo "Catalog..."
 cdlist
 
