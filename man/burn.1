@@ -30,9 +30,11 @@ mkat(1) respectively.
 Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
 options control burn speed and if the CD needs to be blanked (in case of
 CD-RW) by passing a parameter to cdrecord. \fB-r\fR option allows to pass any 
-option through to cdrecord (e.g. -dummy).
+option through to cdrecord (e.g. -dummy). To check if the files you are
+burning are in the mkat db, use \fB--dbcheck\fR option, if some are it will ask
+you if you still want to burn the CD.
 
-If you don't want to catalog your CDs with mkat(1), use \fB--skip\fR
+If you don't want to catalog your CDs with mkat(1), use \fB--nocat\fR
 option.
 
 .SH OPTIONS
@@ -62,6 +64,10 @@ skip catalog
 .B \-\-nocheck
 skip afterburn check
 .TP
+.B \-\-dbcheck
+check if the files are already in mkat db (i.e. you have them burned
+already)
+.TP
 .B \-\-yes
 don't ask for user input, just burn it
 .TP
@@ -79,7 +85,7 @@ Show summary of options.
 burn -n 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Find out how much space files would take
 .TP
-burn -s4 -c --skip 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
+burn -s4 -c --nocat 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Burn a CDRW with 4x max speed, blanking it since it already has data on it,
 skip catalog since it's a CDRW, so new data will probably be written soon.
 .TP

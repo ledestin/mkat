@@ -47,6 +47,7 @@ function usage {
   echo "      --noimg	    don't create image, just burn"
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
+  echo "      --dbcheck	    check if the files are in mkat db"
   echo "      --yes	    don't ask questions"
   echo "      --simulate    print only, --debug implied"
   echo "      --debug	    how stuff works"
@@ -67,6 +68,7 @@ while [ $found ]; do
     "--noimg") SKIP_MKIMAGE=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
+    "--dbcheck") DB_CHECK=1 ;;
     "--yes") NO_QUESTIONS=1 ;;
     "--simulate") SIMULATE=1; DEBUG=1 ;;
     "--debug") DEBUG=1 ;;
@@ -78,21 +80,36 @@ while [ $found ]; do
   [ $found ] && shift;
 done
 
-#label and files must be provided
-if [ -z $SKIP_MKIMAGE ] && [ "$#" -lt 2 ]; then
-  echo >&2 "not enough parameters"
-  usage 1
-fi
-
-set -e
 IFS=$RET
 
-#MAKE ISO IMAGE
+#label and files must be provided
 if [ -z $SKIP_MKIMAGE ]; then
+  [ "$#" -lt 2 ] && {
+    echo >&2 "not enough parameters"
+    usage 1
+  }
   #vars needed for $MKIMAGE_CMD
   LABEL="$1"; shift; FILES=("$@")
 fi
 
+#Check if files you're about to write are already archived (i.e. exist
+#in mkat database)
+if [ $DB_CHECK ]; then
+  echo "Checking if the files are in mkat db"
+  for f in "${FILES[@]}"; do
+    mkat -m "$f"
+    [ $? -eq 0 ] && ALREADY_IN_DB=1
+  done
+  if [ $ALREADY_IN_DB ]; then
+    echo "Some files you are about to write are already in the mkat database." 
+    read -p "Press Enter to write anyway or Control-C to abort"
+    [ $? -ne 0 ] && exit
+  fi
+fi
+
+set -e
+
+#MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
   str=`mkisofs -print-size -graft-points "${FILES[@]}"`
   echo "$str"
@@ -144,8 +161,8 @@ if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
   echo "Afterburn check..."
   if [ -z $SIMULATE ]; then
-    for f in $*; do
-      cmp "$f" "$CD/`basename $f`"
+    for f in "$@"; do
+      cmp "$f" "$CD/`basename "$f"`"
     done
   fi
 fi
