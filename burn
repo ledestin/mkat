@@ -121,6 +121,7 @@ elif [ -z $SKIP_MKIMAGE ]; then
   echo "making ISO image"
   eval "debug $MKIMAGE_CMD"
   if [ -z $SIMULATE ]; then
+    [ -d "$TMP" ] || mkdir "$TMP"
     debug "checking for lockfile $LOCKFILE"
     set +e
     dotlockfile -c $LOCKFILE
@@ -130,7 +131,6 @@ elif [ -z $SKIP_MKIMAGE ]; then
     fi
     set -e
 
-    [ -d "$TMP" ] || mkdir "$TMP"
     eval "$MKIMAGE_CMD"
   fi
 fi
