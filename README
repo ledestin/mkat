@@ -34,6 +34,11 @@ FMP2 1-4
 
 That is file description consists of the file name, size, md5 sum.
 
+INSTALLATION
+
+`make install' if you're a not Debian user, apt-get otherwise.
+`make uninstall' is available.
+
 CONFIGURATION
 
 /etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
