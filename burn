@@ -48,7 +48,7 @@ function usage {
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
   echo "      --dbcheck	    check if the files are in mkat db"
-  echo "      --yes	    don't ask questions"
+  echo "  -y, --yes	    don't ask questions"
   echo "      --simulate    print only, --debug implied"
   echo "      --debug	    how stuff works"
   echo "  -h, --help	    print this help"
@@ -69,7 +69,7 @@ while [ $found ]; do
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
     "--dbcheck") DB_CHECK=1 ;;
-    "--yes") NO_QUESTIONS=1 ;;
+    "-y|--yes") NO_QUESTIONS=1 ;;
     "--simulate") SIMULATE=1; DEBUG=1 ;;
     "--debug") DEBUG=1 ;;
     "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
@@ -161,7 +161,7 @@ if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
   echo "Afterburn check..."
   if [ -z $SIMULATE ]; then
-    for f in "$@"; do
+    for f in "${FILES[@]}"; do
       cmp "$f" "$CD/`basename "$f"`"
     done
   fi
