@@ -52,27 +52,27 @@ if [ "$#" -lt 2 ]; then
   usage 1
 fi
 
+set -e
 #making ISO image
 IFS='
 '
 LABEL="$1"; shift; FILES=("$@") #vars needed for $MKIMAGE_CMD
 if [ $PRINT_ONLY ]; then
-  str=`mkisofs ${PRINT_ONLY:+'-print-size'} -graft-points "$@"`; echo "$str"
+  str=`mkisofs -print-size -graft-points "$@"`
+  echo "$str"
   size=`echo $str | tail -1`
-  echo `echo "($size*2048)/1024^2" | bc`Mb
+  echo $(($size*2048/1024**2))Mb
   exit
 else
   echo "making ISO image"
   eval "debug \"$MKIMAGE_CMD\""
   if [ -z $SIMULATE ]; then
-    [ -d "$TMP" ] || mkdir "$TMP" || exit 1
+    [ -d "$TMP" ] || mkdir "$TMP"
     eval "$MKIMAGE_CMD"
-    [ $? -ne 0 ] && exit 1
   fi
 fi
 
 #BURN
-set -e
 if [ -z $NO_QUESTIONS ]; then
   read -p "Press Enter to proceed to burn or Control-C to abort"
 fi
