@@ -40,7 +40,8 @@ directory, path you specified with \fB-p\fR option is used.
 can be used in search with \fB-S\fR (tags only) option or ignored
 with \fB-T, -s\fR (no tags) option. The 'cd' tag will be automatically added
 when cataloging a CD and 'filesystem' tag will be added when cataloging a
-filesystem path.
+filesystem path. If you forgot to tag something, use \fB-w\fR option, but you
+need to specify files you want to tag.
 
 A .list file contains CD label or filesystem path as the first line,
 may contain "tags line"
@@ -87,6 +88,9 @@ search within tags only
 .TP
 .B \-a
 show what tags can be searched with -S
+.TP
+.B \-w \fI<file[,file]...>\fR
+write tags: line to existing files (use with -t)
 .TP
 .B \-m \fI<file>\fR
 make md5 sum and search for it in the db

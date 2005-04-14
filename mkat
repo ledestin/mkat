@@ -33,6 +33,7 @@ OPTIONS=(\
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
   -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
   -a "show what tags can be searched with -S" 'SHOW_AVAILABLE_TAGS=1' \
+  -w=FILES "write tag line into existing files (use with -t)" '@RETAG_FILES' \
   -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
   --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
   -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1' \
@@ -51,8 +52,8 @@ function usage {
 #process parameters
 process_options "$@"
 
-#source rc file
-#-rc specified config must exist
+#read configs
+#source rc file (-rc specified config must exist)
 [ "$CONFIG" ] && \
   ([ -f "$CONFIG" ] || { echo >&2 "file not found: $CONFIG"; exit 1; })
 CONFIG=${CONFIG:-~/.$RCFILE}
@@ -72,9 +73,22 @@ MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
 GREP_PARAMS="${GREP_PARAMS:+$GREP_PARAMS }-i -E"
 GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
 
+#OPTION PROCESSING PART
 if [ $SHOW_AVAILABLE_TAGS ]; then
   grep -h ^tags: $LISTDIR/*.list | awk -F: '{ print $2 }'\
     | awk 'BEGIN{ RS="\n| "}; { if ($0 ~ /^./) print $0 }' | sort -u
+  exit
+fi
+
+if [ "$RETAG_FILES" ]; then
+  [ -z "$TAGS" ] && \
+    { error "use -t option to specify tags" && usage && exit 1; }
+  #write new tags line in RETAG_FILES 
+  for f in "${RETAG_FILES[@]}"; do
+    grep -v ^tags: "$f" | sed -n "2 { i\
+tags: ${TAGS[@]}
+}; p"
+  done
   exit
 fi
 
