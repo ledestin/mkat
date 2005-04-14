@@ -80,14 +80,18 @@ if [ $SHOW_AVAILABLE_TAGS ]; then
   exit
 fi
 
+#tag list files
 if [ "$RETAG_FILES" ]; then
   [ -z "$TAGS" ] && \
     { error "use -t option to specify tags" && usage && exit 1; }
   #write new tags line in RETAG_FILES 
   for f in "${RETAG_FILES[@]}"; do
-    grep -v ^tags: "$f" | sed -n "2 { i\
+    debug "adding tag line to $f"
+    sed -i -n "/^tags:/ c\
 tags: ${TAGS[@]}
-}; p"
+2 i\
+tags: ${TAGS[@]}
+p" "$f"
   done
   exit
 fi
