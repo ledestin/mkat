@@ -85,6 +85,7 @@ if [ "$RETAG_FILES" ]; then
   [ -z "$TAGS" ] && \
     { error "use -t option to specify tags" && usage && exit 1; }
   #write new tags line in RETAG_FILES 
+  debug "${#RETAG_FILES[@]} files to process"
   for f in "${RETAG_FILES[@]}"; do
     debug "adding tag line to $f"
     sed -i "2 {

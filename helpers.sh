@@ -47,7 +47,12 @@ MACROS=(
 'if [ "_${o#*,}" != "_$o" ]; then
    IFS=,; FOO=("${FOO[@]}" $2); unset IFS;
  else
-   FOO=("${FOO[@]}" "$2");
+   PARAMS="$2"; local i=1;
+   for p in "$@"; do
+     [ $i -gt 2 ] && [ "_${p:0:1}" != "_-" ] && PARAMS=("${PARAMS[@]}" "$p");
+     let "i=$i+1";
+   done;
+   FOO=("${FOO[@]}" "${PARAMS[@]}");
  fi'
 '*FOO' '_s=${1#-}; let "FOO += ${#_s}"'
 '?FOO' '[ "${1:0:${#NO_PREFIX}}" != $NO_PREFIX ] && FOO=1'
@@ -134,6 +139,10 @@ function process_options {
       shift
       #shift parameter as well if option has one
       [ $REQUIRES_PARAM ] && shift
+      #allow for multiple parameters for array (@) option
+      if [ "$letter_one" = '@' ]; then
+        while [ ${#*} -gt 0 ] && [ "_${1:0:1}" != "_-" ]; do shift; done;
+      fi
       #will process the next positional argument, so OPTIONS will be cycled
       #from the start, hence i=0
       i=0; continue
@@ -155,11 +164,12 @@ function test_helpers {
   -f force '?FORCE' \
   --rc=RCFILE 'read this config file' 'CONFIG=$2'
   -t=TAG1,TAG2 'multiple times option' '@TAGS'
+  -s=TERMS 'search terms' '@TERMS'
   -r 'boolean option' '?RECURSIVE'
   -v 'verbose' '*VERBOSE_LEVEL'
   -d 'debug' '*DEBUG_LEVEL'
   )
-  cmd='process_options -f --rc file.conf -v -vvd -t tag1 -t tag2,tag3 --no-r'
+  cmd='process_options -f --rc file.conf -v -vvd -t tag1 -t tag2,tag3 -s movie comedy --no-r'
   echo $cmd; eval "$cmd"
 
   assert '[ $FORCE ]' '-f option specified, but FORCE is not set'
@@ -172,6 +182,8 @@ function test_helpers {
     "verbose option was specified 3 times, but \$VERBOSE_LEVEL is $VERBOSE_LEVEL"
   assert '[ $DEBUG_LEVEL -eq 1 ]' \
     "debug option was specified 1 times, but \$DEBUG_LEVEL is $DEBUG_LEVEL"
+  assert '[ ${#TERMS[@]} -eq 2 ]' \
+    "-s options gives 2 terms, but there are ${#TERMS[@]}"
   echo "usage:"; print_usage "${OPTIONS[@]}"
 }
 if [ ${0##*/} = helpers.sh ]; then
