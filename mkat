@@ -87,11 +87,16 @@ if [ "$RETAG_FILES" ]; then
   #write new tags line in RETAG_FILES 
   for f in "${RETAG_FILES[@]}"; do
     debug "adding tag line to $f"
-    sed -i -n "/^tags:/ c\
+    sed -i "2 {
+    /^tags:/ {
+    c\
 tags: ${TAGS[@]}
-2 i\
+    n
+    }
+
+    i\
 tags: ${TAGS[@]}
-p" "$f"
+}" "$f"
   done
   exit
 fi
