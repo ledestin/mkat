@@ -33,7 +33,7 @@ OPTIONS=(\
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
   -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
   -a "show what tags can be searched with -S" 'SHOW_AVAILABLE_TAGS=1' \
-  -w=FILES "write tag line into existing files (use with -t)" '@RETAG_FILES' \
+  -w "write tag line into existing files (use with -t)" 'RETAG_FILES=1' \
   -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
   --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
   -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1' \
@@ -44,7 +44,7 @@ OPTIONS=(\
   '-h|--help' "print this help screen" 'usage 0')
 
 function usage {
-  echo "usage: $0 [option]"
+  echo "usage: $0 [option] [-w <file>...]"
   print_usage
   exit $1
 }
@@ -85,8 +85,9 @@ if [ "$RETAG_FILES" ]; then
   [ -z "$TAGS" ] && \
     { error "use -t option to specify tags" && usage && exit 1; }
   #write new tags line in RETAG_FILES 
-  debug "${#RETAG_FILES[@]} files to process"
-  for f in "${RETAG_FILES[@]}"; do
+  debug "${#ARGUMENTS[@]} files to process"
+  for f in "${ARGUMENTS[@]}"; do
+    [ -f "$f" ] || { "file not found: $f"; exit 1; }
     debug "adding tag line to $f"
     sed -i "2 {
     /^tags:/ {

@@ -20,7 +20,10 @@ mkat \- catalog a CD or filesystem path, then search database by file name, tags
 
 .SH SYNOPSIS
 \fBmkat\fR
-.RI [ options ]
+[ options ]
+
+\fBmkat\fR
+-t <tag>... -w <file>...
 
 .SH DESCRIPTION
 \fBmkat\fR can catalog a CD or a filesystem directory. It
@@ -137,6 +140,9 @@ Find .list files containing 'music', exclude tags from search
 .TP
 mkat -m unknown_stuff.avi
 Find out if the specified file exists in the catalog using its md5 sum
+.TP
+mkat -t anime,drama,school -w ~/.mkat/Fruits\ Basket*
+Retag the specified list files
 
 .SH FILES
 .TP
