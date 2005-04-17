@@ -44,7 +44,9 @@ OPTIONS=(\
   '-h|--help' "print this help screen" 'usage 0')
 
 function usage {
-  echo "usage: $0 [option] [-w <file>...]"
+  local SCRIPT=`basename $0`
+  echo "usage: $SCRIPT [option]"
+  echo "usage: $SCRIPT -w -t <tag1,tag2> <file>..."
   print_usage
   exit $1
 }
