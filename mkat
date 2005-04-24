@@ -142,7 +142,7 @@ fi
 if [ "$REGEX" ]; then
   IFS=''; 
   if [ "$RES" ]; then
-    cmd="echo -e ${RES//$RET/\\\\n} | $GREP $REGEX"
+    cmd="echo -e \"${RES//$RET/\\\\n}\" | $GREP $REGEX"
   else
     cmd="$GREP "\'$REGEX\'" "$LISTDIR"/*.list"
   fi
