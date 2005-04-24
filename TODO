@@ -1,2 +1,3 @@
-write tests
-update man pages
+Make `mkat --show-tags -s casablanca` possible. This would show how
+Casablanca is tagged.
+If you just want to do something, try to read and improve code.
