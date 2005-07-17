@@ -46,6 +46,7 @@ function usage {
   echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
   echo "  -iMKIMG_OPTS	    pass parameters to image making program"
   echo "  -mMKAT_OPTS       pass parameters to mkat"
+  echo "  -d  --dvd	    burn a DVD"
   echo "      --noimg	    don't create image, just burn"
   echo "      --nocat	    skip catalog"
   echo "      --nocheck	    skip afterburn check"
@@ -67,6 +68,7 @@ while [ $found ]; do
     "-h"|"--help") usage 0 ;;
     "-n") PRINT_ONLY=1 ;;
     "-o") CDREC_OPTS="$CDREC_OPTS -overburn -dao" ;;
+    "-d"|"--dvd") BURN_DVD=1 ;;
     "--noimg") SKIP_MKIMAGE=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
     "--nocheck") SKIP_CHECK=1 ;;
@@ -80,7 +82,12 @@ while [ $found ]; do
   [ "${1:0:2}" = "-r" ] && { CDREC_OPTS="$CDREC_OPTS ${1:2}"; found=1; }
   [ "${1:0:2}" = "-m" ] && { MKAT_OPTS="${1:2}"; found=1; }
   [ "${1:0:2}" = "-i" ] && { MKISO_OPTS="$MKISO_OPTS ${1:2}"; found=1; }
-  [ "${1:0:2}" = "-s" ] && { CDREC_OPTS="$CDREC_OPTS speed=${1:2}"; found=1; }
+  if [ "${1:0:2}" = "-s" ]; then
+    SPEED=${1:2}
+    CDREC_OPTS="$CDREC_OPTS speed=$SPEED"
+    DVDREC_OPTS="${DVDREC_OPTS:+$DVDREC_OPTS }-speed=$SPEED"
+    found=1
+  fi
   [ $found ] && shift;
 done
 
@@ -159,7 +166,17 @@ if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
 fi
 echo "BURN!"
 unset IFS
-cmd="cdrecord $CDREC_OPTS $ISO_IMAGE"; debug "$cmd"
+if [ -z $BURN_DVD ]; then
+  cmd="cdrecord $CDREC_OPTS $ISO_IMAGE"; debug "$cmd"
+else
+  if [ -z "$DVD_DRIVE" ]; then
+    echo >&2 "DVD_DRIVE isn't defined (see /etc/mkatrc)"
+    exit 1
+  fi
+  eval "cmd=\"$DVD_BURN_CMD\""
+fi
+
+debug "$cmd"
 if [ -z $SIMULATE ]; then
   debug "creating lock file before burning"
   dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT

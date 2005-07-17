@@ -1,11 +1,13 @@
 #this file is public domain
 DRIVE="/dev/sr0"
+DVD_DRIVE="/dev/dvd"
 CD="/misc/cd"
 LISTDIR="$HOME/.mkat"
 TMP=/tmp/$LOGIN
 AUTOFS_DELAY=6
 MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
 CDREC_OPTS='-v'
+DVD_BURN_CMD='growisofs $DVDREC_OPTS -Z "$DVD_DRIVE"="$ISO_IMAGE"'
 
 #options for the control freaks
 MKIMAGE_CMD="mkisofs -V \"\$LABEL\" -o \"\$ISO_IMAGE\" \$MKIMAGE_OPTS \"\${FILES[@]}\""
