@@ -1,3 +1,7 @@
+WISHLIST:
 Make `mkat --show-tags -s casablanca` possible. This would show how
 Casablanca is tagged.
 If you just want to do something, try to read and improve code.
+
+BUGS:
+burn is coupled with cdrecord and growisofs
