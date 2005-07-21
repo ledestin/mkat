@@ -7,7 +7,7 @@ TMP=/tmp/$LOGIN
 AUTOFS_DELAY=6
 MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
 CDREC_OPTS='-v'
-DVD_BURN_CMD='growisofs $DVDREC_OPTS -Z "$DVD_DRIVE"="$ISO_IMAGE"'
+DVD_BURN_CMD='growisofs $DVDREC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
 
 #options for the control freaks
 MKIMAGE_CMD="mkisofs -V \"\$LABEL\" -o \"\$ISO_IMAGE\" \$MKIMAGE_OPTS \"\${FILES[@]}\""
