@@ -42,6 +42,7 @@ LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 #define constants
 RET='
 '
+DVD_FREE_BLOCKS=2295104
 
 function usage {
   echo "usage: $0 [options] <label> <file>..."
@@ -139,6 +140,11 @@ if [ $PRINT_ONLY ]; then
   echo "$str"
   size=`echo $str | tail -1`
   echo $(($size*2048/1024**2))Mb
+  #complain if doesn't fit on a DVD
+  if [ $size -gt $DVD_FREE_BLOCKS ]; then 
+    echo "won't fit on a DVD: a DVD size is $DVD_FREE_BLOCKS blocks, but $size blocks are to be written."
+    echo "diff: $(($size-$DVD_FREE_BLOCKS)) blocks or $((($size-$DVD_FREE_BLOCKS)*2048/1024**2))Mb"
+  fi
   exit
 elif [ -z $SKIP_MKIMAGE ]; then
   echo "making ISO image"
