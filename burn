@@ -42,6 +42,7 @@ LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 #define constants
 RET='
 '
+CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
 
 function usage {
@@ -140,10 +141,16 @@ if [ $PRINT_ONLY ]; then
   echo "$str"
   size=`echo $str | tail -1`
   echo $(($size*2048/1024**2))Mb
-  #complain if doesn't fit on a DVD
-  if [ $size -gt $DVD_FREE_BLOCKS ]; then 
-    echo "won't fit on a DVD: a DVD size is $DVD_FREE_BLOCKS blocks, but $size blocks are to be written."
-    echo "diff: $(($size-$DVD_FREE_BLOCKS)) blocks or $((($size-$DVD_FREE_BLOCKS)*2048/1024**2))Mb"
+  [ $BURN_DVD ] && FREE_BLOCKS=$DVD_FREE_BLOCKS || FREE_BLOCKS=$CD_FREE_BLOCKS
+  #complain if doesn't fit on media
+  if [ $size -gt $FREE_BLOCKS ]; then 
+    echo "won't fit: media size is $FREE_BLOCKS blocks, but $size blocks are to be written."
+    diff=$(($size-$FREE_BLOCKS)) 
+    echo "diff: $diff blocks or $(($diff*2048/1024**2))Mb"
+  #suggest how much can be added to fill space
+  elif [ $size -lt $FREE_BLOCKS ]; then
+    diff=$(($FREE_BLOCKS-$size))
+    echo "$diff more blocks or $(($diff*2048/1024**2))Mb could be added to fill space"
   fi
   exit
 elif [ -z $SKIP_MKIMAGE ]; then
