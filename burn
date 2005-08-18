@@ -29,9 +29,12 @@ RCFILE=mkatrc
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
 #these vars must be defined
-for v in DRIVE DVD_DRIVE DVD_BURN_CMD CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD CDREC_OPTS ISO_IMAGE; do
+for v in DRIVE DVD_DRIVE DVD_BURN_CMD CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE; do
   eval "var=\"\$$v\""
-  [ -z "$var" ] && { echo >&2 "variable not defined: $v"; exit 1; }
+  if [ -z "$var" ]; then 
+    echo >&2 "variable not defined: $v. Edit /etc/mkatrc or ~/.mkatrc"
+    exit 1
+  fi
 done
 
 #construct lockfile name following this template: ".$FILE.lock"
@@ -48,11 +51,11 @@ DVD_FREE_BLOCKS=2295104
 function usage {
   echo "usage: $0 [options] <label> <file>..."
   echo "  -n		    print estimated image size, exit"
-  echo "  -sSPEED	    add 'speed=SPEED' to cdrecord parameters"
+  echo "  -sSPEED	    set burning speed"
   echo "  -c		    add 'blank=fast' to cdrecord parameters"
   echo "  -a  --append      multisession disk"
-  echo "  -o		    add '-overburn -dao' to cdrecord parameters"
-  echo "  -rCDREC_OPTS	    pass parameters to cdrecord"
+  echo "  -o		    overburn"
+  echo "  -rREC_OPTS	    pass parameters to burning program"
   echo "  -iMKIMG_OPTS	    pass parameters to image making program"
   echo "  -mMKAT_OPTS       pass parameters to mkat"
   echo "  -d  --dvd	    burn a DVD"
@@ -77,7 +80,7 @@ while [ $found ]; do
     "-h"|"--help") usage 0 ;;
     "-a"|"--append") MULTISESSION=1 ;; 
     "-n") PRINT_ONLY=1 ;;
-    "-o") CDREC_OPTS="$CDREC_OPTS -overburn -dao" ;;
+    "-o") OVERBURN=1 ;;
     "-d"|"--dvd") BURN_DVD=1 ;;
     "--noimg") SKIP_MKIMAGE=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
@@ -86,27 +89,47 @@ while [ $found ]; do
     "-y"|"--yes") NO_QUESTIONS=1 ;;
     "--simulate") SIMULATE=1; DEBUG=1 ;;
     "--debug") DEBUG=1 ;;
-    "-c") CDREC_OPTS="$CDREC_OPTS blank=fast" ;;
+    "-c") BLANK_MEDIA=1;;
        *) unset found ;;
   esac
-  [ "${1:0:2}" = "-r" ] && { CDREC_OPTS="$CDREC_OPTS ${1:2}"; found=1; }
+  [ "${1:0:2}" = "-r" ] && { REC_OPTS="$REC_OPTS ${1:2}"; found=1; }
   [ "${1:0:2}" = "-m" ] && { MKAT_OPTS="${1:2}"; found=1; }
   [ "${1:0:2}" = "-i" ] && { MKISO_OPTS="$MKISO_OPTS ${1:2}"; found=1; }
   if [ "${1:0:2}" = "-s" ]; then
     SPEED=${1:2}
-    CDREC_OPTS="$CDREC_OPTS speed=$SPEED"
-    DVDREC_OPTS="${DVDREC_OPTS:+$DVDREC_OPTS }-speed=$SPEED"
     found=1
   fi
   [ $found ] && shift;
 done
 
-if [ "$MULTISESSION" ]; then
-  CDREC_OPTS="$CDREC_OPTS -multi"
-  DVDREC_OPTS="$DVDREC_OPTS -M"
-else
-  DVDREC_OPTS="$DVDREC_OPTS -Z"
-fi
+[ -z $MULTISESSION ] && SINGLESESSION=1
+[ -z $BURN_DVD ] && [ $CDREC_OPTS ] && REC_OPTS="$REC_OPTS $CDREC_OPTS"
+
+OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
+CD_OPTS=("OVERBURN" "-overburn -dao" "BLANK_MEDIA" "blank=fast" "SPEED" "speed=$SPEED" "MULTISESSION" "-multi")
+DVD_OPTS=("OVERBURN" "-overburn" "SPEED" "-speed=$SPEED" "MULTISESSION" "-M" "SINGLESESSION" "-Z")
+
+function getopt() {
+  name=$1; var=$2
+  eval arr=("\"\${$name[@]}\"")
+  i=0
+  for o in "${arr[@]}"; do
+    if [ "$o" == "$var" ]; then
+      echo ${arr[$(($i+1))]}
+      return
+    fi
+    i=$(($i+1))
+  done
+}
+
+[ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
+for o in $OPTIONS; do
+  eval OPTION_CHECKED="\$$o"
+  if [ "$OPTION_CHECKED" ]; then
+    val=`getopt $OPTS $o`
+    [ "$val" ] && REC_OPTS="$REC_OPTS $val"
+  fi
+done
 
 #label and files must be provided
 if [ -z $SKIP_MKIMAGE ]; then
@@ -195,12 +218,8 @@ fi
 echo "BURN!"
 unset IFS
 if [ -z $BURN_DVD ]; then
-  cmd="cdrecord $CDREC_OPTS $ISO_IMAGE"
+  cmd="cdrecord $REC_OPTS $ISO_IMAGE"
 else
-  if [ -z "$DVD_DRIVE" ]; then
-    echo >&2 "DVD_DRIVE isn't defined (see /etc/mkatrc)"
-    exit 1
-  fi
   eval "cmd=\"$DVD_BURN_CMD\""
 fi
 debug "$cmd"
