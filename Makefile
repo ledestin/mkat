@@ -30,7 +30,16 @@ install:
 	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
 	for dir in $(DEST); do\
 	  mkdir -p $$dir;\
-	  cp $${src[$$i]} $$dir;\
+	  if [ "$$dir" = "$(ETC)" ]; then\
+	    s=$${src[$$i]}; f=$${s#*/}; t="$$dir/$$f";\
+	    [ -f "$$t" ] && local=`grep -A 1000 "^#####DEFAULTS END HERE" "$$t" | sed -n '2,$$p'`;\
+	    [ -z "$$local" ] && local=`cat $$t`;\
+	    cat "$$s" > "$$t";\
+	    echo "#####DEFAULTS END HERE#####" >> "$$t";\
+	    echo "$$local" >> "$$t";\
+	  else\
+	    cp $${src[$$i]} $$dir;\
+	  fi;\
 	  let "i=$$i+1";\
 	done;
 	@grep -q MKAT_LIBPATH /etc/mkatrc 2>/dev/null || \
