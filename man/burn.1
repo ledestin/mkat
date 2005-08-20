@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BURN 1 "Feb 25, 2005"
+.TH BURN 1 "Aug 20, 2005"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,23 +16,23 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-burn \- create iso image, burn it to a CD-R[W], catalog burned CD, compare
-CD data with the files iso were made from.
+burn \- create iso image, burn it to a CD/DVD, catalog burned media, compare
+burned data with the files iso were made from.
 
 .SH SYNOPSIS
 \fBburn\fR
 .RI\ [ options ]\ <label>\ <file>...
 
 .SH DESCRIPTION
-\fBburn\fR creates iso, burns and catalogs it using mkisofs(8), cdrecord(1) and
-mkat(1) respectively.
+\fBburn\fR creates iso, burns and catalogs it using mkisofs(8),
+cdrecord(1)/growisofs(1) and mkat(1) respectively.
 
 Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
 options control burn speed and if the CD needs to be blanked (in case of
-CD-RW) by passing a parameter to cdrecord. \fB-r\fR option allows to pass any 
-option through to cdrecord (e.g. -dummy). To check if the files you are
-burning are in the mkat db, use \fB--dbcheck\fR option, if some are it will ask
-you if you still want to burn the CD.
+CD-RW) by passing a parameter to the burning program. \fB-r\fR option allows
+to pass any option through to the burning program (e.g. -dummy for cdrecord).
+To check if the files you are burning are in the mkat db, use \fB--dbcheck\fR option,
+if some of them are, it will ask you if you still want to burn the CD.
 
 If you don't want to catalog your CDs with mkat(1), use \fB--nocat\fR
 option.
@@ -43,25 +43,28 @@ option.
 print estimated iso image size
 .TP
 .B \-s \fI<SPEED>\fR
-add 'speed=SPEED' to cdrecord parameters
+set burning speed
 .TP
 .B \-c
-clean the CR-RW (add 'blank=fast' to cdrecord parameters)
+blank rewritable media
 .TP
 .B \-a, \-\-append
 burn a multisession disk (cdrecord -multi, growisofs -M)
 .TP
 .B \-o
-overburn (add '-overburn -dao' to cdrecord parameters)
+overburn
 .TP
 .B \-r \fI<CDREC_OPTS>\fR
-pass parameters to cdrecord
+pass parameters to burning program
 .TP
 .B \-i \fI<MKIMG_OPTS>\fR
 pass parameters to image making program
 .TP
 .B \-m \fI<MKAT_OPTS>\fR
 pass parameters to mkat
+.TP
+.B \-d, \-\-dvd
+burn a DVD (by default a CD is burned)
 .TP
 .B \-\-noimg
 don't create image, useful when you already have an image. Label and files 

@@ -24,12 +24,21 @@
 #3. Add the burned CD to the catalog
 #4. Compare files on the CD with the original files
 
+#Sensible defaults for necessary constants
+CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
+DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
+
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 
+#these options/variables, if defined, will be translated to parameters
+#to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
+#DVD_OPTS
+OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
+
 #these vars must be defined
-for v in DRIVE DVD_DRIVE DVD_BURN_CMD CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE; do
+for v in DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE; do
   eval "var=\"\$$v\""
   if [ -z "$var" ]; then 
     echo >&2 "variable not defined: $v. Edit /etc/mkatrc or ~/.mkatrc"
@@ -52,7 +61,7 @@ function usage {
   echo "usage: $0 [options] <label> <file>..."
   echo "  -n		    print estimated image size, exit"
   echo "  -sSPEED	    set burning speed"
-  echo "  -c		    add 'blank=fast' to cdrecord parameters"
+  echo "  -c		    blank rewritable media"
   echo "  -a  --append      multisession disk"
   echo "  -o		    overburn"
   echo "  -rREC_OPTS	    pass parameters to burning program"
@@ -103,11 +112,6 @@ while [ $found ]; do
 done
 
 [ -z $MULTISESSION ] && SINGLESESSION=1
-[ -z $BURN_DVD ] && [ $CDREC_OPTS ] && REC_OPTS="$REC_OPTS $CDREC_OPTS"
-
-OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
-CD_OPTS=("OVERBURN" "-overburn -dao" "BLANK_MEDIA" "blank=fast" "SPEED" "speed=$SPEED" "MULTISESSION" "-multi")
-DVD_OPTS=("OVERBURN" "-overburn" "SPEED" "-speed=$SPEED" "MULTISESSION" "-M" "SINGLESESSION" "-Z")
 
 function getopt() {
   name=$1; var=$2
@@ -127,7 +131,7 @@ for o in $OPTIONS; do
   eval OPTION_CHECKED="\$$o"
   if [ "$OPTION_CHECKED" ]; then
     val=`getopt $OPTS $o`
-    [ "$val" ] && REC_OPTS="$REC_OPTS $val"
+    [ "$val" ] && eval val="\"$val\"" && REC_OPTS="$REC_OPTS $val"
   fi
 done
 
@@ -218,7 +222,7 @@ fi
 echo "BURN!"
 unset IFS
 if [ -z $BURN_DVD ]; then
-  cmd="cdrecord $REC_OPTS $ISO_IMAGE"
+  eval "cmd=\"$CD_BURN_CMD\""
 else
   eval "cmd=\"$DVD_BURN_CMD\""
 fi
