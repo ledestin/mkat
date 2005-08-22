@@ -103,7 +103,7 @@ while [ $found ]; do
   esac
   [ "${1:0:2}" = "-r" ] && { REC_OPTS="$REC_OPTS ${1:2}"; found=1; }
   [ "${1:0:2}" = "-m" ] && { MKAT_OPTS="${1:2}"; found=1; }
-  [ "${1:0:2}" = "-i" ] && { MKISO_OPTS="$MKISO_OPTS ${1:2}"; found=1; }
+  [ "${1:0:2}" = "-i" ] && { MKIMAGE_OPTS="$MKIMAGE_OPTS ${1:2}"; found=1; }
   if [ "${1:0:2}" = "-s" ]; then
     SPEED=${1:2}
     found=1
@@ -111,6 +111,7 @@ while [ $found ]; do
   [ $found ] && shift;
 done
 
+[ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
 function getopt() {
@@ -126,6 +127,7 @@ function getopt() {
   done
 }
 
+#TRANSLATE OPTIONS (e.g. -o => -overburn)
 [ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
 for o in $OPTIONS; do
   eval OPTION_CHECKED="\$$o"
@@ -164,7 +166,7 @@ set -e
 
 #MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
-  str=`mkisofs -print-size $MKISO_OPTS "${FILES[@]}"`
+  str=`mkisofs -print-size $MKIMAGE_OPTS "${FILES[@]}"`
   echo "$str"
   size=`echo $str | tail -1`
   echo $(($size*2048/1024**2))Mb
