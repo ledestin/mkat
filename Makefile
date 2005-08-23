@@ -3,7 +3,7 @@
 #are permitted in any medium without royalty provided the copyright
 #notice and this notice are preserved.
 
-RELEASE_VERSION := 0.3
+RELEASE_VERSION := 0.4
 RELEASE_DIR ?= ..
 TARBALL := $(RELEASE_DIR)/mkat_$(RELEASE_VERSION).tgz
 
