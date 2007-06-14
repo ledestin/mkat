@@ -31,6 +31,7 @@ OPTIONS=(\
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -s=REGEX "search the catalog database" '@REGEX' \
   -S=TAG1,TAG2	"search within tags only" '@TAG_REGEX' \
+  -E "use extended regular expressions" '?EXTENDED_REGEX' \
   -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
   -a "show what tags can be searched with -S" 'SHOW_AVAILABLE_TAGS=1' \
   -w "write tag line into existing files (use with -t)" 'RETAG_FILES=1' \
@@ -72,7 +73,12 @@ done
 make_dir "$LISTDIR"
 
 MKAT="$0${CHILD_PARAMS:+ $CHILD_PARAMS}"
-GREP_PARAMS="${GREP_PARAMS:+$GREP_PARAMS }-i -E"
+GREP_PARAMS="${GREP_PARAMS:+$GREP_PARAMS }-i"
+if [ "$EXTENDED_REGEX" ]; then
+  GREP_PARAMS="$GREP_PARAMS -E"
+else
+  GREP_PARAMS="$GREP_PARAMS -F"
+fi
 GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
 
 #OPTION PROCESSING PART
