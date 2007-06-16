@@ -27,6 +27,7 @@
 #Sensible defaults for necessary constants
 CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
 DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
+ISO_OPTS=('QUIET' '-quiet')
 
 # getopt(array_name, var_name)
 # arran_name - name of variable containing array of NAME, VALUE pairs.
@@ -81,6 +82,7 @@ function usage {
   echo "  -c		    blank rewritable media"
   echo "  -a  --append      multisession disk"
   echo "  -o		    overburn"
+  echo "  -p  --pipe	    pipe image directly to burning program"
   echo "  -rREC_OPTS	    pass parameters to burning program"
   echo "  -iMKIMG_OPTS	    pass parameters to image making program"
   echo "  -mMKAT_OPTS       pass parameters to mkat"
@@ -107,6 +109,7 @@ while [ $found ]; do
     "-a"|"--append") MULTISESSION=1 ;; 
     "-n") PRINT_ONLY=1 ;;
     "-o") OVERBURN=1 ;;
+    "-p") PIPE_MKIMAGE=1; NO_QUESTIONS=1 ;;
     "-d"|"--dvd") BURN_DVD=1 ;;
     "--noimg") SKIP_MKIMAGE=1 ;;
     "--nocat") SKIP_CATALOG=1 ;;
@@ -129,6 +132,15 @@ while [ $found ]; do
 done
 
 [ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
+if [ -z $PIPE_MKIMAGE ]; then
+  MKIMAGE_OPTS="$MKIMAGE_OPTS -o $ISO_IMAGE"
+else
+  opt=`getopt ISO_OPTS QUIET`
+  [ -n "$opt" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $opt"
+  # Image will be piped directly to a burning program. So it should read its
+  # stdin.
+  ISO_IMAGE=/dev/stdin
+fi
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
 #TRANSLATE OPTIONS (e.g. -o => -overburn)
@@ -186,7 +198,7 @@ if [ $PRINT_ONLY ]; then
     echo "$diff more blocks or $(($diff*2048/1024**2))Mb could be added to fill space"
   fi
   exit
-elif [ -z $SKIP_MKIMAGE ]; then
+elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
   echo "making ISO image"
   eval "debug $MKIMAGE_CMD"
   if [ -z $SIMULATE ]; then
@@ -227,19 +239,32 @@ if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
 fi
 echo "BURN!"
 unset IFS
+
 if [ -z $BURN_DVD ]; then
-  eval "cmd=\"$CD_BURN_CMD\""
+  BURN_CMD="$CD_BURN_CMD"
 else
-  eval "cmd=\"$DVD_BURN_CMD\""
+  BURN_CMD="$DVD_BURN_CMD"
 fi
-debug "$cmd"
+
+if [ $PIPE_MKIMAGE ]; then
+  cmd="$MKIMAGE_CMD | $BURN_CMD"
+else
+  cmd="$BURN_CMD"
+fi
+
+eval "cmd_debug=\"$cmd\""
+debug "$cmd_debug"
 
 if [ -z $SIMULATE ]; then
-  debug "creating lock file before burning"
-  dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
-  $cmd
-  debug "releasing lock file"
-  dotlockfile -u $LOCKFILE && trap - EXIT
+  if [ -z $PIPE_MKIMAGE ]; then
+    debug "creating lock file before burning"
+    dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
+  fi
+  eval $cmd
+  if [ -z $PIPE_MKIMAGE ]; then
+    debug "releasing lock file"
+    dotlockfile -u $LOCKFILE && trap - EXIT
+  fi
 fi
 
 #CATALOG
