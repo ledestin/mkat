@@ -28,6 +28,23 @@
 CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
 DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
 
+# getopt(array_name, var_name)
+# arran_name - name of variable containing array of NAME, VALUE pairs.
+# var_name   - NAME part of the sought NAME, VALUE pair.
+# Returns VALUE for specified var_name from array array_name.
+function getopt() {
+  name=$1; var=$2
+  eval arr=("\"\${$name[@]}\"")
+  i=0
+  for o in "${arr[@]}"; do
+    if [ "$o" == "$var" ]; then
+      echo ${arr[$(($i+1))]}
+      return
+    fi
+    i=$(($i+1))
+  done
+}
+
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
@@ -113,19 +130,6 @@ done
 
 [ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
 [ -z $MULTISESSION ] && SINGLESESSION=1
-
-function getopt() {
-  name=$1; var=$2
-  eval arr=("\"\${$name[@]}\"")
-  i=0
-  for o in "${arr[@]}"; do
-    if [ "$o" == "$var" ]; then
-      echo ${arr[$(($i+1))]}
-      return
-    fi
-    i=$(($i+1))
-  done
-}
 
 #TRANSLATE OPTIONS (e.g. -o => -overburn)
 [ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
