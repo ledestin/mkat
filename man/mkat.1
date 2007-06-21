@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKAT 1 "Feb 25, 2005"
+.TH MKAT 1 "Jun 22, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -51,7 +51,8 @@ may contain "tags line"
 as the second line, the consecutive lines contain directories and files. 
 A tag line has the following format \fBtags: tag1 tag2 tagN\fR.
 A file entry looks like this: \fBfilename:size:md5\fR.
-Those files can be searched with a regexp using \fB-s\fR or \fB-S\fR option.
+Those files can be searched with a regexp (if \fB-E\fR is used) or a literal
+string (default) using \fB-s\fR or \fB-S\fR option.
 Also, mkat can obtain a md5 sum of an existing file and grep for that 
 sum (\fB-m\fR option).
 
@@ -80,8 +81,12 @@ catalog path instead of a CD. List file name will be path with the leading \
 .B \-t \fI<tag[,tag]...>\fR
 assign tags to the .list file
 .TP
-.B \-s \fI<regex>\fR
-search the database
+.B \-s \fI<string>\fR
+search the database. \fI<string>\fR is taken as a literal string unless
+\fB-E\fR option is given
+.TP
+.B \-E
+use extended regular when searching db (default is literal search)
 .TP
 .B \-T
 don't search tags with -s
@@ -126,11 +131,12 @@ Catalog a Fruits Basket CD with the specified tags
 mkat -p ~/music/ -t music,western
 Catalog a filesystem path
 .TP
-mkat -s 'Fruits Basket 1.+'
+mkat -E -s 'Fruits Basket 1.+'
 Search list files contents using grep regular expression
 .TP
 mkat -s 'Fruits Basket' -s 01
-Search using 2 -s options, only string containing both regexps will be shown
+Search using 2 -s options, only string containing both `Fruits Basket' and
+`01' will be shown
 .TP
 mkat -S music
 Find .list files with the 'music' tag
@@ -153,7 +159,7 @@ config files where $CD, $DRIVE, etc. are defined
 \fIburn(1), mkatrc(5)\fR
 
 .SH COPYRIGHT
-Copyright 2004, 2005 Dmitry Maksyoma <ledestin@amur.ru>.
+Copyright 2004, 2005, 2007 Dmitry Maksyoma <ledestin@amur.ru>.
 .br
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
