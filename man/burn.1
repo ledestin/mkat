@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BURN 1 "Aug 20, 2005"
+.TH BURN 1 "Jun 22, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -34,6 +34,13 @@ to pass any option through to the burning program (e.g. -dummy for cdrecord).
 To check if the files you are burning are in the mkat db, use \fB--dbcheck\fR option,
 if some of them are, it will ask you if you still want to burn the CD.
 
+By default, first an image file will be created (takes some time), and then,
+after the image is ready, the file is passed as an argument to a burning
+program. It's also possible to burn image while it's being created by
+piping image to a burning program. Use \fB-p, --pipe\fR option to
+do that. It's faster to burn in that way, however, if somebody deletes files
+you're about to burn, you will end up with a media without those files.
+
 If you don't want to catalog your CDs with mkat(1), use \fB--nocat\fR
 option.
 
@@ -53,6 +60,9 @@ burn a multisession disk (cdrecord -multi, growisofs -M)
 .TP
 .B \-o
 overburn
+.TP
+.B \-p, \-\-pipe
+pipe image to a burning program as it's being created
 .TP
 .B \-r \fI<CDREC_OPTS>\fR
 pass parameters to burning program
@@ -113,7 +123,7 @@ config files where $CD, $DRIVE, etc. are defined
 \fImkat(1), mkatrc(5)\fR
 
 .SH COPYRIGHT
-Copyright 2004, 2005 Dmitry Maksyoma <ledestin@amur.ru>.
+Copyright 2004, 2005, 2007 Dmitry Maksyoma <ledestin@amur.ru>.
 .br
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
