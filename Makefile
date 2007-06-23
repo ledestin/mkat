@@ -56,8 +56,13 @@ uninstall:
 
 #make distribution tarball
 dist: changelog
-	echo $(TARBALL)
-	tar --exclude CVS --exclude test --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
+	@echo "creating $(TARBALL)"
+	if [ ! -e ../mkat ]; then \
+	  CWD=$${PWD##*/}; \
+	  trap 'rm -f ../mkat' EXIT; \
+	  cd .. && ln -s "$$CWD" mkat && cd mkat; \
+	fi; \
+	tar -h --exclude .svn --exclude test --exclude tools --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
 	-gpg --default-key 2FFCC6ED -b $(TARBALL)
 
 #I need this dependency so that changelog would be remade only when
