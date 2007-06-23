@@ -49,6 +49,9 @@ function getopt() {
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
+[ -z "$MKAT_LIBPATH" ] && \
+  { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
+. "$MKAT_LIBPATH/helpers.sh" || exit 1
 
 #these options/variables, if defined, will be translated to parameters
 #to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
@@ -96,10 +99,6 @@ function usage {
   echo "      --debug	    how stuff works"
   echo "  -h, --help	    print this help"
   exit $1
-}
-
-function debug {
-  [ -z $DEBUG ] || echo "$@"
 }
 
 found=1
