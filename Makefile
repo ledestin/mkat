@@ -68,7 +68,7 @@ dist: changelog
 	  cd .. && ln -s "$$CWD" mkat && cd mkat; \
 	fi; \
 	tar -h --exclude .svn --exclude test --exclude tools --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
-	-gpg --default-key 2FFCC6ED -b $(TARBALL)
+	-gpg -b $(TARBALL)
 
 #I need this dependency so that changelog would be remade only when
 #files it depends on change
