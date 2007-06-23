@@ -132,6 +132,16 @@ while [ $found ]; do
 done
 
 [ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
+
+# Exit if `-o file' option is present in MKIMAGE_OPTS or MKIMAGE_CMD.
+for v in MKIMAGE_OPTS MKIMAGE_CMD; do
+  eval "var=\"\$$v\""
+  if [[ "$var" =~ -o ]]; then
+    echo >&2 "$v: please remove -o option from the variable definition. Having -o option is incompatible with this release."
+    exit 1
+  fi
+done;
+
 if [ -z $PIPE_MKIMAGE ]; then
   MKIMAGE_OPTS="$MKIMAGE_OPTS -o $ISO_IMAGE"
 else
