@@ -199,8 +199,9 @@ else
   FNAME=$LABEL
   #CD or DVD?
   media_tag=cd
-  size=`df --block-size=1048576 /misc/cd | tail -1 | awk '{ print $2 }'`
-  [ $size -gt 1024 ] && media_tag=dvd
+  size=`df --block-size=1048576 "$CD" | tail -1 | awk '{ print $2 }'`
+  [ -z "$size" ] && { echo >&2 "$CD: could not get size"; exit 1; }
+  [ "$size" -gt 1024 ] && media_tag=dvd
   TAGS="$TAGS $media_tag"; TAGS=${TAGS# }
 fi
 [ -d "$CD" ] || { error "directory doesn't exist: $CD.\
