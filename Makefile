@@ -32,18 +32,22 @@ install:
 	  mkdir -p $$dir;\
 	  if [ "$$dir" = "$(ETC)" ]; then\
 	    s=$${src[$$i]}; f=$${s#*/}; t="$$dir/$$f";\
-	    [ -f "$$t" ] && local=`grep -A 1000 "^#####DEFAULTS END HERE" "$$t" | sed -n '2,$$p'`;\
-	    [ -z "$$local" ] && local=`cat $$t`;\
+	    if [ -f "$$t" ]; then\
+	      local=`grep -A 1000 "^#####DEFAULTS END HERE" "$$t" | sed -n '2,$$p'`;\
+	      if [ -z "$$local" ]; then\
+	        grep -q '^#####DEFAULTS' "$$t" || local=`cat $$t`;\
+	      fi;\
+	    fi;\
 	    cat "$$s" > "$$t";\
+	    grep -q MKAT_LIBPATH "$$t" 2>/dev/null || \
+	      echo 'MKAT_LIBPATH=$(SHARE)' >> "$$t";\
 	    echo "#####DEFAULTS END HERE#####" >> "$$t";\
-	    echo "$$local" >> "$$t";\
+	    [ "$$local" ] && echo "$$local" >> "$$t";\
 	  else\
 	    cp $${src[$$i]} $$dir;\
 	  fi;\
 	  let "i=$$i+1";\
 	done;
-	@grep -q MKAT_LIBPATH /etc/mkatrc 2>/dev/null || \
-	  echo MKAT_LIBPATH=$(SHARE) >> /etc/mkatrc
 
 uninstall:
 	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
