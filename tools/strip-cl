@@ -1,0 +1,37 @@
+#!/usr/bin/ruby
+
+# Exclude comments from svn2cl output. I.e. log entries starting with `#'.
+
+entries = {}
+time = entry = nil
+
+readlines("\n").each { |l|
+  l.chop!
+  #puts "\"#{l}\""
+  next if l.empty?
+
+  if l =~ /^\d/
+    entries[time = l] = []
+    next
+  end
+
+  if l =~ /^\s+\*/
+    entry = [l]
+    entries[time].push entry
+    next
+  end
+
+  # Ignore comments.
+  if entry.size == 1 && l =~ /^\s+#/
+    entries[time].pop
+  end
+
+  entry.push l
+}
+
+a = nil
+entries.keys.sort { |a, b| b <=> a }.each { |key|
+  if !(a = entries[key]).empty?
+    print key, "\n\n", a.join("\n"), "\n\n"
+  end
+}
