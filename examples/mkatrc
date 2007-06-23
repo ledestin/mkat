@@ -6,7 +6,7 @@ TMP=/tmp/$LOGNAME
 AUTOFS_DELAY=6
 MKIMAGE_OPTS='-J -r -iso-level=3 -file-mode 444 -graft-points' 
 CD_BURN_CMD='cdrecord -v $REC_OPTS "$ISO_IMAGE"'
-DVD_BURN_CMD='growisofs $REC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
+DVD_BURN_CMD='growisofs $REC_OPTS "$DRIVE"="$ISO_IMAGE"'
 
 #options for the control freaks
 MKIMAGE_CMD='mkisofs -V "$LABEL" $MKIMAGE_OPTS "${FILES[@]}"'
