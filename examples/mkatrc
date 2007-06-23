@@ -2,7 +2,7 @@
 DRIVE="/dev/cdrom"
 CD="/misc/cd"
 LISTDIR="$HOME/.mkat"
-TMP=/tmp/$LOGIN
+TMP=/tmp/$LOGNAME
 AUTOFS_DELAY=6
 MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
 CD_BURN_CMD='cdrecord -v $REC_OPTS "$ISO_IMAGE"'
