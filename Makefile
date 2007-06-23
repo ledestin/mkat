@@ -27,22 +27,23 @@ SHARE_S := helpers.sh
 SRC := $(BIN_S),$(ETC_S),$(MAN1_S),$(MAN5_S),$(DOC_S),$(SHARE_S)
 
 install:
-	@IFS=,; src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
+	@IFS=,; CUSTOM_HEADER='###CUSTOM SECTION';\
+	src="$(SRC)"; src=($${src[@]}); unset IFS; i=0;\
 	for dir in $(DEST); do\
 	  mkdir -p $$dir;\
 	  if [ "$$dir" = "$(ETC)" ]; then\
 	    s=$${src[$$i]}; f=$${s#*/}; t="$$dir/$$f";\
 	    if [ -f "$$t" ]; then\
-	      local=`grep -A 1000 "^#####DEFAULTS END HERE" "$$t" | sed -n '2,$$p'`;\
-	      if [ -z "$$local" ]; then\
-	        grep -q '^#####DEFAULTS' "$$t" || local=`cat $$t`;\
-	      fi;\
+	      ACTION="/^$$CUSTOM_HEADER/,\$$p";\
+	      l=`sed -n "$$ACTION" $$t`;\
+	      [ -z "$$l" ] && l="$$CUSTOM_HEADER\n"`cat $$t`;\
+	    else\
+	      l="$$CUSTOM_HEADER";\
 	    fi;\
 	    cat "$$s" > "$$t";\
 	    grep -q MKAT_LIBPATH "$$t" 2>/dev/null || \
 	      echo 'MKAT_LIBPATH=$(SHARE)' >> "$$t";\
-	    echo "#####DEFAULTS END HERE#####" >> "$$t";\
-	    [ "$$local" ] && echo "$$local" >> "$$t";\
+	    echo "$$l" >> "$$t";\
 	  else\
 	    cp $${src[$$i]} $$dir;\
 	  fi;\
