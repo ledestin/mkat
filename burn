@@ -73,6 +73,7 @@ function unlock {
   dotlockfile -u $LOCKFILE && trap - EXIT
 }
 
+# LOAD CONFIGURATION
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
@@ -99,7 +100,7 @@ ISO_DIR="${ISO_IMAGE%/*}"
 [ "$ISO_IMAGE" = "$ISO_DIR" ] && ISO_DIR=
 LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 
-#define constants
+# DEFINE CONSTANTS
 RET='
 '
 CD_FREE_BLOCKS=358400
@@ -199,6 +200,7 @@ if [ -z $SKIP_MKIMAGE ]; then
   LABEL="$1"; shift; FILES=("$@")
 fi
 
+# REAL WORK
 #Check if files you're about to write are already archived (i.e. exist
 #in mkat database)
 if [ $DB_CHECK ]; then
@@ -325,5 +327,6 @@ if [ ! $SKIP_CHECK ] && [ $CD ]; then
   fi
 fi
 
+# EJECT
 debug "going to sleep for $AUTOFS_DELAY seconds and eject"
 [ -z $SIMULATE ] && sleep $AUTOFS_DELAY && eject
