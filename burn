@@ -129,6 +129,9 @@ for v in MKIMAGE_OPTS MKIMAGE_CMD; do
   fi
 done;
 
+# If --noimg is specified, ignore --pipe option.
+[ $PIPE_MKIMAGE ] && [ $SKIP_MKIMAGE ] && PIPE_MKIMAGE=
+
 [ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
 
 # Append `-o' option to MKIMAGE_OPTS where necessary.
@@ -165,8 +168,8 @@ if [ -z $SKIP_MKIMAGE ]; then
 fi
 
 # REAL WORK
-#Check if files you're about to write are already archived (i.e. exist
-#in mkat database)
+# Give choice to quit if files you're about to write are already archived
+# (exist in mkat database).
 if [ $DB_CHECK ]; then
   echo "Checking if the files are in mkat db"
   for f in "${FILES[@]}"; do
