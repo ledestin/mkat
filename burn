@@ -86,11 +86,6 @@ RCFILE=mkatrc
 fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
   MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE"
 
-#these options/variables, if defined, will be translated to parameters
-#to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
-#DVD_OPTS
-OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
-
 #construct lockfile name following this template: ".$FILE.lock"
 ISO_DIR="${ISO_IMAGE%/*}"
 [ "$ISO_IMAGE" = "$ISO_DIR" ] && ISO_DIR=
@@ -99,6 +94,10 @@ LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 # DEFINE CONSTANTS
 CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
+# List of options/variables, which, if set, will be translated as parameters
+# to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
+# DVD_OPTS
+SUPPORTED_OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
 
 function usage {
   echo "usage: $0 [options] <label> <file>..."
@@ -174,9 +173,10 @@ else
 fi
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
-# TRANSLATE OPTIONS (e.g. -o => -overburn)
+# TRANSLATE PARAMETERS TO REC_OPTS
+# e.g. -o => -overburn
 [ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
-for o in $OPTIONS; do
+for o in $SUPPORTED_OPTIONS; do
   eval OPTION_CHECKED="\$$o"
   if [ "$OPTION_CHECKED" ]; then
     val=`getopt $OPTS $o`
