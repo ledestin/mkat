@@ -61,6 +61,12 @@ function lock {
   dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
 }
 
+# print_mb(blocks)
+# Convert blocks to megabytes and print the result.
+function print_mb() {
+  echo $(($1*2048/1024**2))Mb
+}
+
 # Remove lock file
 function unlock {
   debug "releasing lock file..."
@@ -215,17 +221,17 @@ if [ $PRINT_ONLY ]; then
   str=`mkisofs -print-size $MKIMAGE_OPTS "${FILES[@]}"`
   echo "$str"
   size=`echo $str | tail -1`
-  echo $(($size*2048/1024**2))Mb
+  print_mb $size
   [ $BURN_DVD ] && FREE_BLOCKS=$DVD_FREE_BLOCKS || FREE_BLOCKS=$CD_FREE_BLOCKS
   #complain if doesn't fit on media
   if [ $size -gt $FREE_BLOCKS ]; then 
     echo "won't fit: media size is $FREE_BLOCKS blocks, but $size blocks are to be written."
     diff=$(($size-$FREE_BLOCKS)) 
-    echo "diff: $diff blocks or $(($diff*2048/1024**2))Mb"
+    echo "diff: $diff blocks or `print_mb $diff`"
   #suggest how much can be added to fill space
   elif [ $size -lt $FREE_BLOCKS ]; then
     diff=$(($FREE_BLOCKS-$size))
-    echo "$diff more blocks or $(($diff*2048/1024**2))Mb could be added to fill space"
+    echo "$diff more blocks or `print_mb $diff` could be added to fill space"
   fi
   exit
 elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
