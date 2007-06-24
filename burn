@@ -180,7 +180,7 @@ else
 fi
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
-#TRANSLATE OPTIONS (e.g. -o => -overburn)
+# TRANSLATE OPTIONS (e.g. -o => -overburn)
 [ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
 for o in $OPTIONS; do
   eval OPTION_CHECKED="\$$o"
@@ -219,7 +219,7 @@ fi
 set -e
 trap '[ "$OUT" ] && error $OUT' ERR
 
-#MAKE ISO IMAGE
+# MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
   cmd="mkisofs -print-size $MKIMAGE_OPTS "${FILES[@]}""
   debug $cmd
@@ -268,7 +268,7 @@ elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
   fi
 fi
 
-#BURN
+# BURN
 if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
   read -p "Press Enter to proceed to burn or Control-C to abort"
 fi
@@ -305,7 +305,7 @@ if [ -z $SIMULATE ]; then
   [ -z $PIPE_MKIMAGE ] && unlock
 fi
 
-#CATALOG
+# CATALOG
 if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   echo "Catalog..."
   if [ $SIMULATE ]; then
@@ -316,7 +316,7 @@ if [ ! $SKIP_CATALOG ] && [ $CD ]; then
 fi
 
 IFS=$RET
-#AFTERBURN CHECK
+# AFTERBURN CHECK
 if [ ! $SKIP_CHECK ] && [ $CD ]; then
   set +e
   echo "Afterburn check..."
