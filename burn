@@ -86,11 +86,6 @@ RCFILE=mkatrc
 fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
   MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE"
 
-#construct lockfile name following this template: ".$FILE.lock"
-ISO_DIR="${ISO_IMAGE%/*}"
-[ "$ISO_IMAGE" = "$ISO_DIR" ] && ISO_DIR=
-LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
-
 # DEFINE CONSTANTS
 CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
@@ -99,61 +94,33 @@ DVD_FREE_BLOCKS=2295104
 # DVD_OPTS
 SUPPORTED_OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
 
-function usage {
-  echo "usage: $0 [options] <label> <file>..."
-  echo "  -n		    print estimated image size, exit"
-  echo "  -sSPEED	    set burning speed"
-  echo "  -c		    blank rewritable media"
-  echo "  -a  --append      multisession disk"
-  echo "  -o		    overburn"
-  echo "  -p  --pipe	    pipe image directly to burning program"
-  echo "  -rREC_OPTS	    pass parameters to burning program"
-  echo "  -iMKIMG_OPTS	    pass parameters to image making program"
-  echo "  -mMKAT_OPTS       pass parameters to mkat"
-  echo "  -d  --dvd	    burn a DVD"
-  echo "      --noimg	    don't create image, just burn"
-  echo "      --nocat	    skip catalog"
-  echo "      --nocheck	    skip afterburn check"
-  echo "      --dbcheck	    check if the files are in mkat db"
-  echo "  -y, --yes	    don't ask questions"
-  echo "      --simulate    print only, --debug implied"
-  echo "      --debug	    how stuff works"
-  echo "  -h, --help	    print this help"
-  exit $1
-}
+# COMMAND LINE PARAMETER PROCESSING
+BANNERS=("[options] <label> <file>...")
+OPTIONS=(\
+  -n "print estimated image size, exit" 'PRINT_ONLY=1' \
+  -s=SPEED "set burning speed" 'SPEED=$2' \
+  -c "blank rewritable media" 'BLANK_MEDIA=1' \
+  '-a|--append' "multisession disk" 'MULTISESSION=1' \
+  -o "overburn" 'OVERBURN=1' \
+  '-p|--pipe' "pipe image directly to a burning program" \
+    'PIPE_MKIMAGE=1; NO_QUESTIONS=1' \
+  -r=REC_OPTS "pass parameters to burning program" 'REC_OPTS="$REC_OPTS $2"' \
+  -i=MKIMAGE_OPTS "pass parameters to image making program" \
+    'MKIMAGE_OPTS="$MKIMAGE_OPTS $2"' \
+  -m=MKAT_OPTS "pass parameters to mkat" 'MKAT_OPTS=$2' \
+  '-d|--dvd' "burn a DVD" 'BURN_DVD=1' \
+  --noimg "don't create image, just burn" 'SKIP_MKIMAGE=1' \
+  --nocat "skip catalog" 'SKIP_CATALOG=1' \
+  --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
+  --dbcheck "check if the files are in mkat db" 'DB_CHECK=1' \
+  '-y|--yes' "don't ask questions" 'NO_QUESTIONS=1' \
+  --simulate "print only, --debug implied" 'SIMULATE=1; DEBUG=1' \
+  --debug "print debug output" 'DEBUG=1' \
+  '-h|--help' "print available options" 'usage 0')
+process_options "$@"
 
-found=1
-while [ $found ]; do
-  case "$1" in
-    "-h"|"--help") usage 0 ;;
-    "-a"|"--append") MULTISESSION=1 ;; 
-    "-n") PRINT_ONLY=1 ;;
-    "-o") OVERBURN=1 ;;
-    "-p") PIPE_MKIMAGE=1; NO_QUESTIONS=1 ;;
-    "-d"|"--dvd") BURN_DVD=1 ;;
-    "--noimg") SKIP_MKIMAGE=1 ;;
-    "--nocat") SKIP_CATALOG=1 ;;
-    "--nocheck") SKIP_CHECK=1 ;;
-    "--dbcheck") DB_CHECK=1 ;;
-    "-y"|"--yes") NO_QUESTIONS=1 ;;
-    "--simulate") SIMULATE=1; DEBUG=1 ;;
-    "--debug") DEBUG=1 ;;
-    "-c") BLANK_MEDIA=1;;
-       *) unset found ;;
-  esac
-  [ "${1:0:2}" = "-r" ] && { REC_OPTS="$REC_OPTS ${1:2}"; found=1; }
-  [ "${1:0:2}" = "-m" ] && { MKAT_OPTS="${1:2}"; found=1; }
-  [ "${1:0:2}" = "-i" ] && { MKIMAGE_OPTS="$MKIMAGE_OPTS ${1:2}"; found=1; }
-  if [ "${1:0:2}" = "-s" ]; then
-    SPEED=${1:2}
-    found=1
-  fi
-  [ $found ] && shift;
-done
-
-[ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
-
-# Exit if `-o file' option is present in MKIMAGE_OPTS or MKIMAGE_CMD.
+# CHECK PARAMETERS
+# Complain and exit if `-o file' option is present in MKIMAGE_OPTS or MKIMAGE_CMD.
 for v in MKIMAGE_OPTS MKIMAGE_CMD; do
   eval "var=\"\$$v\""
   if [[ "$var" =~ -o ]]; then
@@ -162,6 +129,9 @@ for v in MKIMAGE_OPTS MKIMAGE_CMD; do
   fi
 done;
 
+[ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
+
+# Append `-o' option to MKIMAGE_OPTS where necessary.
 if [ -z $PIPE_MKIMAGE ]; then
   MKIMAGE_OPTS="$MKIMAGE_OPTS -o $ISO_IMAGE"
 else
@@ -184,14 +154,14 @@ for o in $SUPPORTED_OPTIONS; do
   fi
 done
 
-#label and files must be provided
+# Label and files arguments must be provided.
 if [ -z $SKIP_MKIMAGE ]; then
-  [ "$#" -lt 2 ] && {
+  [ ${#ARGUMENTS[@]} -lt 2 ] && {
     echo >&2 "not enough parameters"
     usage 1
   }
-  #vars needed for $MKIMAGE_CMD
-  LABEL="$1"; shift; FILES=("$@")
+  # Vars needed for $MKIMAGE_CMD.
+  LABEL="${ARGUMENTS[0]}"; ARGUMENTS[0]=; FILES=("${ARGUMENTS[@]}")
 fi
 
 # REAL WORK
@@ -212,6 +182,12 @@ fi
 
 set -e
 trap '[ "$OUT" ] && error $OUT' ERR
+
+# Construct lockfile name following this template: ".$FILE.lock".
+ISO_DIR="${ISO_IMAGE%/*}"
+[ "$ISO_IMAGE" = "$ISO_DIR" ] && ISO_DIR=
+LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
+
 
 # MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
