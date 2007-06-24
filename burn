@@ -81,19 +81,15 @@ RCFILE=mkatrc
   { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
 
+# CHECK CONFIGURATION (CONFIG-LOADED)
+# The essential variables must be defined.
+fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
+  MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE"
+
 #these options/variables, if defined, will be translated to parameters
 #to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
 #DVD_OPTS
 OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
-
-#these vars must be defined
-for v in DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE; do
-  eval "var=\"\$$v\""
-  if [ -z "$var" ]; then 
-    echo >&2 "variable not defined: $v. Edit /etc/mkatrc or ~/.mkatrc"
-    exit 1
-  fi
-done
 
 #construct lockfile name following this template: ".$FILE.lock"
 ISO_DIR="${ISO_IMAGE%/*}"
