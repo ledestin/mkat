@@ -29,6 +29,15 @@ CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$
 DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
 ISO_OPTS=('QUIET' '-quiet')
 
+# Complain and exit if $LOCKFILE exists.
+function check_lock() {
+  debug "checking for lockfile $LOCKFILE"
+  if [ `dotlockfile -c $LOCKFILE && echo 0 || echo 1` -eq 0 ]; then
+    error "$ISO_IMAGE: image locked ($LOCKFILE)"
+    exit 1
+  fi
+}
+
 # getopt(array_name, var_name)
 # arran_name - name of variable containing array of NAME, VALUE pairs.
 # var_name   - NAME part of the sought NAME, VALUE pair.
@@ -44,6 +53,18 @@ function getopt() {
     fi
     i=$(($i+1))
   done
+}
+
+# Create lock file to protect $ISO_IMAGE file
+function lock {
+  debug "creating lock file..."
+  dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
+}
+
+# Remove lock file
+function unlock {
+  debug "releasing lock file..."
+  dotlockfile -u $LOCKFILE && trap - EXIT
 }
 
 RCFILE=mkatrc 
@@ -212,14 +233,7 @@ elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
   eval "debug $MKIMAGE_CMD"
   if [ -z $SIMULATE ]; then
     [ -d "$TMP" ] || mkdir -p "$TMP"
-    debug "checking for lockfile $LOCKFILE"
-    set +e
-    dotlockfile -c $LOCKFILE
-    if [ $? -eq 0 ]; then
-      echo "$ISO_IMAGE is locked, probably being burned now"
-      exit 1
-    fi
-    set -e
+    check_lock
 
     #possible security issue when using existing directory
     #I check that current UID is the owner and the directory isn't world
@@ -238,6 +252,7 @@ elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
       mkdir "$TMP"
       umask $saved_umask
     fi
+    lock
     eval "$MKIMAGE_CMD"
   fi
 fi
@@ -265,15 +280,18 @@ eval "cmd_debug=\"$cmd\""
 debug "$cmd_debug"
 
 if [ -z $SIMULATE ]; then
-  if [ -z $PIPE_MKIMAGE ]; then
-    debug "creating lock file before burning"
-    dotlockfile $LOCKFILE && trap "dotlockfile -u $LOCKFILE" EXIT
+  # Lock if image file is used for burning and if image wasn't made (and
+  # locked) at this time run.
+  if [ -z $PIPE_MKIMAGE ] && [ $SKIP_MKIMAGE ]; then
+    # If the $LOCKFILE exists lock() will block. As a result, burn(1) will
+    # just hang doing nothing. To mitigate it, I check if lockfile exists
+    # before calling lock(). There is a race condition here, but it's better
+    # than nothing.
+    check_lock
+    lock
   fi
   eval $cmd
-  if [ -z $PIPE_MKIMAGE ]; then
-    debug "releasing lock file"
-    dotlockfile -u $LOCKFILE && trap - EXIT
-  fi
+  [ -z $PIPE_MKIMAGE ] && unlock
 fi
 
 #CATALOG
