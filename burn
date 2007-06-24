@@ -215,12 +215,15 @@ if [ $DB_CHECK ]; then
 fi
 
 set -e
+trap '[ "$OUT" ] && error $OUT' ERR
 
 #MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
-  str=`mkisofs -print-size $MKIMAGE_OPTS "${FILES[@]}"`
-  echo "$str"
-  size=`echo $str | tail -1`
+  cmd="mkisofs -print-size $MKIMAGE_OPTS "${FILES[@]}""
+  debug $cmd
+  OUT=`$cmd 2>&1`
+  OUT=`echo "$OUT" | grep ^Total`; echo "$OUT"
+  size=${OUT##* }; unset OUT
   print_mb $size
   [ $BURN_DVD ] && FREE_BLOCKS=$DVD_FREE_BLOCKS || FREE_BLOCKS=$CD_FREE_BLOCKS
   #complain if doesn't fit on media
