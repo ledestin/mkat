@@ -1,24 +1,22 @@
 MKAT
-------
+----
 
-MKAT is a set of command line tools to burn and catalog data, audio CD
-or arbitrary directories and then search the catalog database.
+MKAT is a set of command line tools to burn and catalog data CD/DVD, audio
+CD or arbitrary directories and then search the catalog database. Catalog
+tools are mkat and mkata, burn tools are burn and burna, with trailing `a'
+standing for `audio'.
 
-Default configuration uses cdrecord/growisofs for burning CD/DVD. In
-principle, it's possible to redefine CD_OPTS/DVD_OPTS and
-CD_BURN_CMD/DVD_BURN_CMD to use other programs. See burn(1) code for *_OPTS
-definition.
-
-It uses mkisofs and cdrecord to create iso image and burn CD, -r option allows 
-to pass through options to cdrecord. Cdrecord and mkisofs options can be
-configured in /etc/mkatrc and ~/.mkatrc. Catalog tools are mkat and mkata,
-burn tools are burn and burna, with trailing `a' standing for `audio'.
+burn(1) uses mkisofs to create iso image and cdrecord/growisofs to burn
+CD/DVD. It has options that allow to pass arguments to mkisofs, burning and
+cataloging programs. In principle, it's possible to redefine
+CD_OPTS/DVD_OPTS and CD_BURN_CMD/DVD_BURN_CMD in one of the config files to
+use other programs. See burn(1) code for *_OPTS definition.
 
 It has been made because I was tired of specifying parameters to mkisofs and
 cdrecord, and I also wanted a database of my CD collection that could be
 simple, easy to read and searchable with grep.
 
-NOTE: I use autofs to mount CD-ROM for checking and cataloging, actually, I
+NOTE: I use autofs to mount CD-ROM for checking and cataloging. Actually, I
 just don't mount it explicitly and eject after sleeping $AUTOFS_DELAY seconds.
 Set unmount timeout for autofs to $AUTOFS_DELAY seconds or CD won't eject after 
 everything's done. Also, it's useful to look at created iso image before 
@@ -47,10 +45,10 @@ CONFIGURATION
 /etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
 .mkatrc settings override global settings from /etc/mkatrc.
 
-Tarball version installer recognizes #####DEFAULTS END HERE string as the
-end of default section. New options supplied with default config are written
-into default options and locally modified part is written after the defaults
-this way defaults can be easily overrided.
+Both tarball and deb version installers recognize "###CUSTOM SECTION" string
+as the end of the default section. New options supplied with default config
+are written into default options and locally modified part is written after
+the defaults this way defaults can be easily overrided.
 
 On a Debian system I use debconf and a config will be created automatically
 after you answer questions. But if you install from a tarball you need to
@@ -104,10 +102,10 @@ did you use, what was your experience, etc. Write me at ledestin@amur.ru
 
 LICENSE
 
-Mkat is released under GPL, see LICENSE for more info.
+MKAT is released under GPL, see LICENSE for more info.
 
 --
-/Dmitry Maksyoma <ledestin@amur.ru>, Sat, 20 Aug 2005 21:17:50 +1000
+/Dmitry Maksyoma <ledestin@amur.ru>, Wed, 07 Sep 2005 20:06:09 +1000
 
 Copyright 2004, 2005 Dmitry Maksyoma
 Copying and distribution of this file, with or without modification,
