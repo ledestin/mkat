@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKATRC 1 "Feb 25, 2005"
+.TH MKATRC 1 "Sep 7, 2005"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -24,34 +24,35 @@ mkatrc \- config file for MKAT tools
 \fB~/.mkatrc\fR
 
 .SH DESCRIPTION
-These files are sourced by MKAT tools, so, they are, naturally,
-sh/bash scripts. First \fI/etc/mkatrc\fR sourced and then
-\fI~/.mkatrc\fR is sourced, so \fI.mkatrc\fR settings override global 
-settings from \fI/etc/mkatrc\fR.
+These files are sourced by MKAT programs, so, they are, naturally,
+bash scripts. First \fI/etc/mkatrc\fR is sourced, then
+\fI~/.mkatrc\fR, thus user-specific \fI.mkatrc\fR settings
+override global settings from \fI/etc/mkatrc\fR.
 Neither of config files is required, the variables could be, in principle,
 defined in .bashrc.
-See a sample config file in /usr/[local/]share/doc/mkat/examples
+See a sample config file in /usr/[local/]share/doc/mkat/examples/.
 
 .nf
 The following variables must be set:
 DRIVE="/dev/sr0" #physical CD drive
 CD="/misc/cd"	 #mounted CD drive (autofs mounted in my case)
 #where to place catalog database
-LISTDIR="/home/ledestin/.stuff/mkat"
-#where to place temporary files, can be used,
-#for example, to grab wav files from newly burned audio CD to compare
-#with the files CD was burned from.
+LISTDIR="/home/ledestin/.mkat"
+#where to place temporary files (image to burn,
+#grabbed wav files from newly burned audio CD to compare
+#with the files CD was burned from).
 TMP=/home/ledestin
-#parameters for an image creation
-#program, mkisofs in this case
-MKISO_OPTS='-J -file-mode 444 -graft-points'
-CDREC_OPTS='-v' #parameters for cdrecord
+#parameters for image creation (mkisofs)
+MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
+CD_BURN_CMD='cdrecord -v $REC_OPTS "$ISO_IMAGE"'
+DVD_BURN_CMD='growisofs $REC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
 
 #options for control freaks
 AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
 #meed the image creation program
 MKIMAGE_CMD='mkisofs $MKISO_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
 ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with mkisofs
+#path to the library needed for mkat programs (helpers.sh)
 MKAT_LIBPATH=/usr/share/mkat
 .fi
 
