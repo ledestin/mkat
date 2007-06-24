@@ -24,7 +24,7 @@
 #3. Add the burned CD to the catalog
 #4. Compare files on the CD with the original files
 
-#Sensible defaults for necessary constants
+# Sensible defaults for overridable constants
 CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
 DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
 ISO_OPTS=('QUIET' '-quiet')
