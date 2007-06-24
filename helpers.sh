@@ -17,23 +17,60 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 # USA.
 
-#shellscript helper functions
+#This library provides shell helper functions,
 #including Ruby optparse-like option handling
 
 RET='
 '
 
+#load_config(config)
+function load_config {
+  [ -f "$1" ] && . "$1" || return 1
+  #eval variables
+  for v in DRIVE CD LISTDIR TMP ISO_IMAGE; do
+    eval "val=\"\$$v\""; eval "$v=\"$val\""
+  done
+  return 0
+}
+
+#fail_unless_defined(var_names)
+function fail_unless_defined {
+  for v in $@; do
+    eval "[ -z \"\$$v\" ] && 
+      { error '"$v" variable must be defined (see mkatrc(5))'; exit 1; }"
+  done
+}
+
+#usage(exitcode) prints BANNERS, program OPTIONS
+#and exits with exitcode
+function usage {
+  local SCRIPT=`basename $0`
+  for b in "${BANNERS[@]}"; do
+    echo "usage: $SCRIPT $b"
+  done
+  print_usage
+  exit $1
+}
+
+#debug(msg)
 function debug {
   [ -z $DEBUG ] || echo "$@"
 }
 
+#error(msg)
 function error {
   echo >&2 error: "$@"
 }
 
+#quit(msg, exitcode)
+function quit {
+  error $1; exit $2
+}
+
+#make_dir(dir)
 function make_dir {
-  if [ ! -d $1 ]; then
-    mkdir -p $1 >/dev/null 2>&1
+  if [ ! -d "$1" ]; then
+    mkdir -p "$1" >/dev/null 2>&1
     [ $? -eq 0 ] || exit 1
   fi
 }
@@ -78,8 +115,10 @@ function print_usage {
 }
 
 #process_options($*)
-#process a program's arguments, which means,
-#execute code attached to an option with eval
+#Process a program's arguments, which means,
+#execute code attached to an option with eval.
+#After the options with respectable arguments have been processed, the
+#non-option parameters are stored into the ARGUMENTS array.
 function process_options {
   local i=0 found REQUIRES_PARAM SHORT_OPTION cur_opt
   while [ ${#*} -gt 0 ]; do
@@ -98,12 +137,16 @@ function process_options {
     unset REQUIRES_PARAM; [ `expr index "$o" =` -ne 0 ] && REQUIRES_PARAM=1
     unset SHORT_OPTION; [ "_${1:0:2}" != '_--' ] && SHORT_OPTION=1
     #split short option to several short options if $o.len > 2, e.g. -vd
-    if [ $SHORT_OPTION ] && [ ${#1} -gt 2 ]; then
+    if [ $SHORT_OPTION ] && [ "_${o:0:2}" = "_${1:0:2}" ] && [ ${#1} -gt 2 ]; then
       cur_opt=$1; local j=2;
-      while [ ${#1} -gt $j ]; do
-	expd=(${expd[@]} -${1:$j:1})
-	let "j += 1"
-      done
+      if [ $REQUIRES_PARAM ]; then
+	expd[0]=${1:2}
+      else
+	while [ ${#1} -gt $j ]; do
+	  expd=(${expd[@]} -${1:$j:1})
+	  let "j += 1"
+	done
+      fi
       shift; set - ${cur_opt:0:2} ${expd[@]} "$@" 
     fi
     
