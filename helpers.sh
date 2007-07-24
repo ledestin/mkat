@@ -164,11 +164,6 @@ function process_options {
     #process cur_opt
     if [ "${o%=*}" = "$1" ] || [ "--no${o}" = "$1" ]; then
       #debug "found argument: $1"
-      #make sure that $2 is a param if option requires one
-      if [ $REQUIRES_PARAM ]; then
-	([ "$2" ] && [ ${2:0:1} != '-' ]) || \
-	  { echo "option ${o//=/ } requires parameter"; exit 1; }
-      fi
       #execute action associated with the option
       local varname=''; local action=''
       for word in ${OPTIONS[$(($i+2))]}; do
