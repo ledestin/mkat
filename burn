@@ -135,14 +135,16 @@ done;
 [ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
 
 # Append `-o' option to MKIMAGE_OPTS where necessary.
-if [ -z $PIPE_MKIMAGE ]; then
-  MKIMAGE_OPTS="$MKIMAGE_OPTS -o $ISO_IMAGE"
-else
-  opt=`getopt ISO_OPTS QUIET`
-  [ -n "$opt" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $opt"
-  # Image will be piped directly to a burning program. So it should read its
-  # stdin.
-  ISO_IMAGE=/dev/stdin
+if [ -z $PRINT_ONLY ]; then
+  if [ -z $PIPE_MKIMAGE ]; then
+    MKIMAGE_OPTS="$MKIMAGE_OPTS -o $ISO_IMAGE"
+  else
+    opt=`getopt ISO_OPTS QUIET`
+    [ -n "$opt" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $opt"
+    # Image will be piped directly to a burning program. So it should read its
+    # stdin.
+    ISO_IMAGE=/dev/stdin
+  fi
 fi
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
