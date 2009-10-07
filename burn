@@ -297,7 +297,11 @@ if [ ! $SKIP_CHECK ] && [ $CD ]; then
   echo "Afterburn check..."
   if [ -z $SIMULATE ]; then
     for f in "${FILES[@]}"; do
-      cmp "$f" "$CD/`basename "$f"`"
+      if [ -d "$f" ]; then
+	find "$f" -type f -printf "%P\n" | xargs -ivar -n1 cmp var "$CD"/var
+      else
+	cmp "$f" "$CD/`basename "$f"`"
+      fi
     done
   fi
 fi
