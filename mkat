@@ -52,7 +52,7 @@ process_options "$@"
 
 # LOAD USER-LEVEL CONFIG
 if [ "$CONFIG" -a ! -f "$CONFIG" ]; then
-  error "\`$CONFIG': no such file (you specified non-existing config -c)"
+  error "\`$CONFIG': no such file (you specified non-existing config with -c)"
   exit 1
 fi
 CONFIG=${CONFIG:-~/.$RCFILE}
