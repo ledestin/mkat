@@ -27,6 +27,9 @@ RCFILE=mkatrc
   { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
 
+# UNSET INTERNAL VARIABLES (so that environment variables wouldn't interfere)
+unset CONFIG
+
 # COMMAND LINE PARAMETER PROCESSING
 BANNERS=("[options]" "-w -t <tag1,tag2> <file>...")
 OPTIONS=(\
