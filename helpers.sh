@@ -62,6 +62,10 @@ function error {
   echo >&2 ERROR: "$@"
 }
 
+function hint {
+  echo >&2 "Hint: $@"
+}
+
 #quit(msg, exitcode)
 function quit {
   error $1; exit $2
