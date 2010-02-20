@@ -171,7 +171,7 @@ if [ $CYCLE_CATALOG ]; then
   done
 fi
 
-#catalog the CD
+# CATALOG THE $CD
 if [ -z "$CATALOG_PATH" ]; then
   [ -z `which isoinfo` ] && { error 'binary not found: isoinfo'; exit 1; }
   LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
@@ -185,7 +185,22 @@ if [ "$CATALOG_PATH" ]; then
   FNAME=${FNAME//\//.}
   CD=$CATALOG_PATH
   TAGS="$TAGS filesystem"; TAGS=${TAGS# }
-else
+fi
+
+# If automount -g is used, the following problems happen if $CD is not
+# mounted:
+# * df can't determine size of $CD media (CD or DVD?);
+# * find doesn't find all the files on media.
+# To resolve the problems above, ensure that $CD is mounted.
+if [ ! -d "$CD" ]; then
+  error "\`$CD': no such directory"
+  [ -z "$CATALOG_PATH" ] && \
+    echo "Hint: Set 'CD' variable in mkatrc(5) to a valid directory."
+  exit 1
+fi
+cd "$CD" || exit 1
+
+if [ -z "$CATALOG_PATH" ]; then
   FNAME=$LABEL
   #CD or DVD?
   media_tag=cd
@@ -194,8 +209,6 @@ else
   [ "$size" -gt 1024 ] && media_tag=dvd
   TAGS="$TAGS $media_tag"; TAGS=${TAGS# }
 fi
-[ -d "$CD" ] || { error "directory doesn't exist: $CD.\
-  Edit 'CD' variable in config."; exit 1; }
 DEST="$LISTDIR/$FNAME.list"
 { [ -z $FORCE_OVERWRITE ] \
   && [ -e "$DEST" ] ; } && \
