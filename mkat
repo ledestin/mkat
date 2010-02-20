@@ -51,11 +51,13 @@ OPTIONS=(\
 process_options "$@"
 
 # LOAD USER-LEVEL CONFIG
-[ "$CONFIG" ] && \
-  ([ -f "$CONFIG" ] || { echo >&2 "file not found: $CONFIG"; exit 1; })
+if [ "$CONFIG" -a ! -f "$CONFIG" ]; then
+  error "\`$CONFIG': no such file (you specified non-existing config -c)"
+  exit 1
+fi
 CONFIG=${CONFIG:-~/.$RCFILE}
 debug "reading rc file: $CONFIG"
-[ -f $CONFIG ] && source $CONFIG
+[ -f "$CONFIG" ] && . "$CONFIG"
 
 # CHECK CONFIGURATION (CONFIG-LOADED)
 fail_unless_defined "CD LISTDIR"
