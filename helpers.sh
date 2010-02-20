@@ -59,7 +59,7 @@ function debug {
 
 #error(msg)
 function error {
-  echo >&2 error: "$@"
+  echo >&2 ERROR: "$@"
 }
 
 #quit(msg, exitcode)
