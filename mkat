@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# COPYRIGHT {{{1
 # This file is part of Mkat
 #
 # Copyright (C) 2004, 2005 Dmitry Maksyoma <ledestin at gmail.com>.
@@ -19,18 +20,19 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 # USA.
 
-# LOAD CONFIGURATION (all but ~/.mkatrc). It's loaded later because -c,
-# --config option allows to specify config name.
+# LOAD GLOBAL CONFIG {{{1
+# User config is loaded later because -c option allows to specify config name.
 RCFILE=mkatrc
 [ -f "/etc/$RCFILE" ] && . "/etc/$RCFILE"
 [ -z "$MKAT_LIBPATH" ] && \
   { echo >&2 "ERROR: MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
 
-# UNSET INTERNAL VARIABLES (so that environment variables wouldn't interfere)
+# UNSET INTERNAL VARIABLES {{{1
+# (so that environment variables wouldn't interfere)
 unset CONFIG
 
-# COMMAND LINE PARAMETER PROCESSING
+# CLI ARGUMENTS {{{1 
 BANNERS=("[options]" "-w -t <tag1,tag2> <file>...")
 OPTIONS=(\
   -a "show what tags can be searched with -S" 'SHOW_AVAILABLE_TAGS=1' \
@@ -53,7 +55,7 @@ OPTIONS=(\
 
 process_options "$@"
 
-# LOAD USER-LEVEL CONFIG
+# LOAD USER-LEVEL CONFIG {{{1
 if [ -n "$CONFIG" ]; then
   debug "reading rc file: \`$CONFIG'"
   . "$CONFIG" || {
@@ -68,7 +70,7 @@ else
   fi
 fi
 
-# CHECK CONFIGURATION (CONFIG-LOADED)
+# CHECK CONFIGURATION (CONFIG-LOADED) {{{1
 fail_unless_defined "CD LISTDIR"
 
 make_dir "$LISTDIR"
@@ -82,14 +84,15 @@ else
 fi
 GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
 
-#OPTION PROCESSING PART
+# OPTION PROCESSING PART {{{1
+# Show tags (-a) {{{2
 if [ $SHOW_AVAILABLE_TAGS ]; then
   grep -h ^tags: $LISTDIR/*.list | awk -F: '{ print $2 }'\
     | awk 'BEGIN{ RS="\n| "}; { if ($0 ~ /^./) print $0 }' | sort -u
   exit
 fi
 
-#tag list files
+# Tag list files {{{2
 if [ "$RETAG_FILES" ]; then
   [ -z "$TAGS" ] && \
     { error "use -t option to specify tags" && usage && exit 1; }
@@ -112,7 +115,7 @@ tags: ${TAGS[@]}
   exit
 fi
 
-#process --md5dir option
+# Process --md5dir option {{{2
 if [ "$DIR" ]; then
   IFS=:; FILES=(`find "$DIR" -type f -printf '%p:'`)
   unset IFS; 
@@ -124,7 +127,7 @@ if [ "$DIR" ]; then
   exit
 fi
 
-#tag search (-S)
+# Tag search (-S) {{{2
 if [ "$TAG_REGEX" ]; then
   debug "grep for tags (-S)"
   FILES="$LISTDIR/*.list"
@@ -145,7 +148,7 @@ if [ "$TAG_REGEX" ]; then
   fi
 fi
 
-#search the database with grep (-s option)
+# Search the database with grep (-s option) {{{2
 if [ "$REGEX" ]; then
   IFS=''; 
   if [ "$RES" ]; then
@@ -165,7 +168,7 @@ if [ "$REGEX" ]; then
   exit $?
 fi
 
-#search by md5 sum of a file
+# Search by md5 sum of a file {{{2
 if [ "$MD5FILES" ]; then
   cmd="md5sum \"\${MD5FILES[@]}\" | awk '{ printf \"%s|\", \$1 }'\
     | sed 's/|$/\n/' | xargs -ivar $MKAT -s \'var\'"
@@ -173,7 +176,7 @@ if [ "$MD5FILES" ]; then
   exit $?
 fi
 
-#catalog many CDs: cycle mkat, eject, wait for user input
+# Catalog many CDs (-y): loop mkat, eject, wait for user input {{{2
 if [ $CYCLE_CATALOG ]; then
   while : ; do
     $MKAT && sleep $AUTOFS_DELAY && eject
@@ -182,7 +185,7 @@ if [ $CYCLE_CATALOG ]; then
   done
 fi
 
-# CATALOG THE $CD
+# CATALOG THE $CD {{{1
 if [ -z "$CATALOG_PATH" ]; then
   [ -z `which isoinfo` ] && { error 'binary not found: isoinfo'; exit 1; }
   LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
