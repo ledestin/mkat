@@ -88,7 +88,7 @@ GREP="grep${GREP_PARAMS:+ $GREP_PARAMS}"
 # Show tags (-a) {{{2
 if [ -n "$SHOW_AVAILABLE_TAGS" ]; then
   grep -h ^tags: "$LISTDIR"/*.list | awk -F: '{ print $2 }'\
-    | awk 'BEGIN { RS="\n| " }; { if (length > 0) print }' | sort -u
+    | awk 'BEGIN { RS="\n| " }; { if (length > 0 && $0 !~ /^#/) print }' | sort -u
   exit
 fi
 
