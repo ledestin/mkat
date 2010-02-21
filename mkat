@@ -33,23 +33,23 @@ unset CONFIG
 # COMMAND LINE PARAMETER PROCESSING
 BANNERS=("[options]" "-w -t <tag1,tag2> <file>...")
 OPTIONS=(\
-  -f "overwrite list file" 'FORCE_OVERWRITE=1' \
-  -p=PATH "catalog path instead of a CD" 'CATALOG_PATH=${2%%/}' \
-  -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
-  -s=REGEX "search the catalog database" '@REGEX' \
-  -S=TAG1,TAG2	"search within tags only" 'TAG_REGEX=$2; EXTENDED_REGEX=1' \
-  -E "use extended regular expressions" '?EXTENDED_REGEX' \
-  -T "don't search tags with -s (no tags)" '?FILTER_TAGS' \
   -a "show what tags can be searched with -S" 'SHOW_AVAILABLE_TAGS=1' \
-  -w "write tag line into existing files (use with -t)" 'RETAG_FILES=1' \
-  -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
-  --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
-  -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1' \
   '-c|--config=FILE' "read FILE instead of the default config (~/.$RCFILE)"\
     'CONFIG="$2"; CHILD_PARAMS=$CHILD_PARAMS\ -c\ \"$CONFIG\"' \
-  -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
   '-d|--debug'  "debug output" 'DEBUG=1; CHILD_PARAMS=$CHILD_PARAMS\ -d' \
-  '-h|--help' "print this help screen" 'usage 0')
+  -E "use extended regular expressions" '?EXTENDED_REGEX' \
+  -f "overwrite list file" 'FORCE_OVERWRITE=1' \
+  '-h|--help' "print this help screen" 'usage 0' \
+  -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
+  --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
+  -p=PATH 'catalog custom path instead of $CD' 'CATALOG_PATH=${2%%/}' \
+  -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
+  -s=REGEX "search the catalog database" '@REGEX' \
+  -S=TAG1,TAG2  "search within tags only" 'TAG_REGEX=$2; EXTENDED_REGEX=1' \
+  -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
+  -T "don't search within tags with -s (no tags)" '?FILTER_TAGS' \
+  -w "write tag line into existing files (use with -t)" 'RETAG_FILES=1' \
+  -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1')
 
 process_options "$@"
 
