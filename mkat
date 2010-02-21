@@ -21,10 +21,10 @@
 
 # LOAD CONFIGURATION (all but ~/.mkatrc). It's loaded later because -c,
 # --config option allows to specify config name.
-RCFILE=mkatrc 
-[ -f /etc/$RCFILE ] && source /etc/$RCFILE
+RCFILE=mkatrc
+[ -f "/etc/$RCFILE" ] && . "/etc/$RCFILE"
 [ -z "$MKAT_LIBPATH" ] && \
-  { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
+  { echo >&2 "ERROR: MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
 
 # UNSET INTERNAL VARIABLES (so that environment variables wouldn't interfere)
