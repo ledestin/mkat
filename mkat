@@ -47,7 +47,7 @@ OPTIONS=(\
   -p=PATH 'catalog custom path instead of $CD' 'CATALOG_PATH=${2%%/}' \
   -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
   -s=REGEX "search the catalog database" '@REGEX' \
-  --seq-id 'automatically add #<NUMBER> tag' '?SEQ_ID' \
+  --seq-id 'automatically add #<NUMBER> tag, when cataloguing' '?SEQ_ID' \
   -S=TAG1,TAG2 "search within tags only" 'TAG_REGEX=$2; EXTENDED_REGEX=1' \
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -T "don't search within tags with -s (no tags)" '?FILTER_TAGS' \
