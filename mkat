@@ -47,6 +47,7 @@ OPTIONS=(\
   -p=PATH 'catalog custom path instead of $CD' 'CATALOG_PATH=${2%%/}' \
   -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
   -s=REGEX "search the catalog database" '@REGEX' \
+  --seq-id 'automatically add #<NUMBER> tag' '?SEQ_ID' \
   -S=TAG1,TAG2 "search within tags only" 'TAG_REGEX=$2; EXTENDED_REGEX=1' \
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -T "don't search within tags with -s (no tags)" '?FILTER_TAGS' \
@@ -166,6 +167,17 @@ if [ "$REGEX" ]; then
   fi
   debug "command: $cmd"; eval "set +f; $cmd"
   exit $?
+fi
+
+# Automatic ID tag (--seq-id) {{{2
+if [ -n "$SEQ_ID" ]; then
+  LAST_ID=`sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' "$LISTDIR"/*.list | sort -g --reverse | head -1`
+  if [ -n "$LAST_ID" ]; then
+    let LAST_ID++
+  else
+    LAST_ID=1
+  fi
+  TAGS="${TAGS:+$TAGS }#$LAST_ID"
 fi
 
 # Search by md5 sum of a file {{{2

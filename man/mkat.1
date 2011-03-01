@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKAT 1 "Jun 22, 2007"
+.TH MKAT 1 "Mar 2, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -85,6 +85,11 @@ assign tags to the .list file
 search the database. \fI<string>\fR is taken as a literal string unless
 \fB-E\fR option is given
 .TP
+.B \-\-seq-id
+add sequential ID tag for the media when cataloguing. The tag is in `#<NUMBER>'
+format. NUMBER is determined by searching catalog for the biggest `#<NUMBER>'
+tag and incrementing it by 1. If no such tags exist yet, NUMBER of 1 is used.
+.TP
 .B \-E
 use extended regular when searching db (default is literal search)
 .TP
@@ -159,7 +164,7 @@ config files where $CD, $DRIVE, etc. are defined
 \fIburn(1), mkatrc(5)\fR
 
 .SH COPYRIGHT
-Copyright 2004, 2005, 2007 Dmitry Maksyoma <ledestin@gmail.com>.
+Copyright 2004, 2005, 2007, 2011 Dmitry Maksyoma <ledestin@gmail.com>.
 .br
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
