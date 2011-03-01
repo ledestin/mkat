@@ -1,4 +1,10 @@
+BUGS:
+-m'-t anime' breaks burn(1).
+-m'-tjpop #24' breaks burn(1).
+.list entries sort
+afterburn check should go before cataloguing.
+eject necessary after writing? done by genisoimage?
+
 WISHLIST:
 Make `mkat --show-tags -s casablanca` possible. This would show how
 Casablanca is tagged.
-If you just want to do something, try to read and improve code.
