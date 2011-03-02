@@ -122,7 +122,7 @@ if [ "$DIR" ]; then
   unset IFS; 
   for f in "${FILES[@]}"; do
     cmd="$MKAT -q -m \"$f\""
-    debug "$cmd"; eval $cmd
+    debug "$cmd"; eval "$cmd"
     [ $? -ne 0 ] && echo "$f";
   done;
   exit
