@@ -196,7 +196,7 @@ LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 
 # MAKE ISO IMAGE
 if [ $PRINT_ONLY ]; then
-  cmd="mkisofs -print-size $MKIMAGE_OPTS"
+  cmd="genisoimage -print-size $MKIMAGE_OPTS"
   debug $cmd "${FILES[@]}"
   OUT=`$cmd "${FILES[@]}" 2>&1`
   OUT=`echo "$OUT" | grep ^Total`; echo "$OUT"
