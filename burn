@@ -89,6 +89,8 @@ fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
 # DEFINE CONSTANTS
 CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
+# Size after 256MB were allocated to defect management.
+BD_FREE_BLOCKS=12088320
 # List of options/variables, which, if set, will be translated as parameters
 # to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
 # DVD_OPTS
@@ -108,7 +110,7 @@ OPTIONS=(\
   -i=MKIMAGE_OPTS "pass parameters to image making program" \
     'MKIMAGE_OPTS="$MKIMAGE_OPTS $2"' \
   -m=MKAT_OPTS "pass parameters to mkat" 'MKAT_OPTS=$2' \
-  '-d|--dvd' "burn a DVD" 'BURN_DVD=1' \
+  --media=TYPE 'specify media type (one of cd, dvd, bd)' 'BURN_MEDIA=$2' \
   --noimg "don't create image, just burn" 'SKIP_MKIMAGE=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
@@ -150,7 +152,11 @@ fi
 
 # TRANSLATE PARAMETERS TO REC_OPTS
 # e.g. -o => -overburn
-[ $BURN_DVD ] && OPTS="DVD_OPTS" || OPTS="CD_OPTS"
+case "$BURN_MEDIA" in
+  cd) OPTS='CD_OPTS' ;;
+  dvd|bd) OPTS='DVD_OPTS' ;;
+  *) error "\`$BURN_MEDIA': unknown media type" ;;
+esac
 for o in $SUPPORTED_OPTIONS; do
   eval OPTION_CHECKED="\$$o"
   if [ "$OPTION_CHECKED" ]; then
@@ -202,7 +208,11 @@ if [ $PRINT_ONLY ]; then
   OUT=`echo "$OUT" | grep ^Total`; echo "$OUT"
   size=${OUT##* }; unset OUT
   print_mb $size
-  [ $BURN_DVD ] && FREE_BLOCKS=$DVD_FREE_BLOCKS || FREE_BLOCKS=$CD_FREE_BLOCKS
+  case "$BURN_MEDIA" in
+    cd) FREE_BLOCKS="$CD_FREE_BLOCKS" ;;
+    dvd) FREE_BLOCKS="$DVD_FREE_BLOCKS" ;;
+    bd) FREE_BLOCKS="$BD_FREE_BLOCKS" ;;
+  esac
   #complain if doesn't fit on media
   if [ $size -gt $FREE_BLOCKS ]; then 
     echo "won't fit: media size is $FREE_BLOCKS blocks, but $size blocks are to be written."
@@ -250,11 +260,10 @@ fi
 echo "BURN!"
 unset IFS
 
-if [ -z $BURN_DVD ]; then
-  BURN_CMD="$CD_BURN_CMD"
-else
-  BURN_CMD="$DVD_BURN_CMD"
-fi
+case "$BURN_MEDIA" in
+  cd) BURN_CMD="$CD_BURN_CMD" ;;
+  dvd|bd) BURN_CMD="$DVD_BURN_CMD" ;;
+esac
 
 if [ $PIPE_MKIMAGE ]; then
   cmd="$MKIMAGE_CMD | $BURN_CMD"
