@@ -45,6 +45,7 @@ OPTIONS=(\
   '-h|--help' "print this help screen" 'usage 0' \
   -m=FILE "make file md5 sum and search for it in the db" '@MD5FILES' \
   --md5dir=DIR "print files with md5 sums not present in the db" '@DIR'
+  --next-id-tag "print ID tag that would be used to catalog new media" '?NEXT_ID_TAG' \
   -p=PATH 'catalog custom path instead of $CD' 'CATALOG_PATH=${2%%/}' \
   -q "be quiet" 'CHILD_PARAMS=$CHILD_PARAMS\ -q; GREP_PARAMS="-q"' \
   -s=REGEX "search the catalog database" '@REGEX' \
@@ -170,13 +171,19 @@ if [ "$REGEX" ]; then
 fi
 
 # Automatic ID tag (--add-id-tag) {{{2
-if [ -n "$ADD_ID_TAG" ]; then
+if [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ]; then
   LAST_ID=`sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' "$LISTDIR"/*.list | sort -g --reverse | head -1`
   if [ -n "$LAST_ID" ]; then
     let LAST_ID++
   else
     LAST_ID=1
   fi
+
+  if [ -n "$NEXT_ID_TAG" ]; then
+    echo "Next ID tag: $LAST_ID"
+    exit
+  fi
+    
   TAGS="${TAGS:+$TAGS }#$LAST_ID"
 fi
 
