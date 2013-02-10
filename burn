@@ -299,21 +299,21 @@ if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   fi
 fi
 
-IFS=$RET
-# AFTERBURN CHECK
-if [ ! $SKIP_CHECK ] && [ $CD ]; then
+# {{{1 AFTERBURN CHECK
+if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
   set +e
-  echo "Afterburn check..."
-  if [ -z $SIMULATE ]; then
+  echo 'Afterburn check...'
+  if [ -z "$SIMULATE" ]; then
     for f in "${FILES[@]}"; do
       if [ -d "$f" ]; then
-	find "$f" -type f -printf "%P\n" | xargs -ivar -n1 cmp var "$CD"/var
+	find "$f" -type f -printf "%P\0" | xargs -0 -ifile -n1 cmp file "$CD"/file
       else
 	cmp "$f" "$CD/`basename "$f"`"
       fi
     done
   fi
 fi
+# }}}1
 
 # EJECT
 debug "going to sleep for $AUTOFS_DELAY seconds and eject"
