@@ -89,8 +89,9 @@ fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
 # DEFINE CONSTANTS
 CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
-# Size after 256MB were allocated to defect management.
-BD_FREE_BLOCKS=12088320
+# Blu-ray sizes after 256MB were allocated to defect management.
+BD25_FREE_BLOCKS=12088320
+BD50_FREE_BLOCKS=24307712
 # List of options/variables, which, if set, will be translated as parameters
 # to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
 # DVD_OPTS
@@ -110,7 +111,7 @@ OPTIONS=(\
   -i=MKIMAGE_OPTS "pass parameters to image making program" \
     'MKIMAGE_OPTS="$MKIMAGE_OPTS $2"' \
   -m=MKAT_OPTS "pass parameters to mkat" 'MKAT_OPTS=$2' \
-  --media=TYPE 'specify media type (one of cd, dvd, bd)' 'BURN_MEDIA=$2' \
+  --media=TYPE 'specify media type (one of cd, dvd, bd, bd50)' 'BURN_MEDIA=$2' \
   --noimg "don't create image, just burn" 'SKIP_MKIMAGE=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
@@ -154,7 +155,7 @@ fi
 # e.g. -o => -overburn
 case "$BURN_MEDIA" in
   cd) OPTS='CD_OPTS' ;;
-  dvd|bd) OPTS='DVD_OPTS' ;;
+  dvd|bd*) OPTS='DVD_OPTS' ;;
   *) error "\`$BURN_MEDIA': unknown media type" ;;
 esac
 for o in $SUPPORTED_OPTIONS; do
@@ -211,7 +212,8 @@ if [ $PRINT_ONLY ]; then
   case "$BURN_MEDIA" in
     cd) FREE_BLOCKS="$CD_FREE_BLOCKS" ;;
     dvd) FREE_BLOCKS="$DVD_FREE_BLOCKS" ;;
-    bd) FREE_BLOCKS="$BD_FREE_BLOCKS" ;;
+    bd) FREE_BLOCKS="$BD25_FREE_BLOCKS" ;;
+    bd50) FREE_BLOCKS="$BD50_FREE_BLOCKS" ;;
   esac
   #complain if doesn't fit on media
   if [ $size -gt $FREE_BLOCKS ]; then 
@@ -262,7 +264,7 @@ unset IFS
 
 case "$BURN_MEDIA" in
   cd) BURN_CMD="$CD_BURN_CMD" ;;
-  dvd|bd) BURN_CMD="$DVD_BURN_CMD" ;;
+  dvd|bd*) BURN_CMD="$DVD_BURN_CMD" ;;
 esac
 
 if [ $PIPE_MKIMAGE ]; then
