@@ -214,9 +214,9 @@ else
 fi
 
 if [ "$CATALOG_PATH" ]; then
-  FNAME=${CATALOG_PATH#/}
-  FNAME=${FNAME//\//.}
-  CD=$CATALOG_PATH
+  FNAME="${CATALOG_PATH#/}"
+  FNAME="${FNAME//\//.}"
+  CD="$CATALOG_PATH"
   TAGS="$TAGS filesystem"; TAGS=${TAGS# }
 fi
 
