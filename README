@@ -1,16 +1,16 @@
 MKAT
 ----
 
-MKAT is a set of command line tools to burn and catalog data CD/DVD, audio
-CD or arbitrary directories and then search the catalog database. Catalog
-tools are mkat and mkata, burn tools are burn and burna, with trailing `a'
-standing for `audio'.
+MKAT is a set of command line tools to burn and catalog data CD/DVD/BD, audio CD
+or arbitrary directories and then search the catalog database. Catalog tools are
+mkat and mkata, burn tools are burn and burna, with trailing `a' standing for
+`audio'.
 
 burn(1) uses genisoimage to create iso image and cdrecord/growisofs to burn
-CD/DVD. It has options that allow to pass arguments to genisoimage, burning and
-cataloging programs. In principle, it's possible to redefine
-CD_OPTS/DVD_OPTS and CD_BURN_CMD/DVD_BURN_CMD in one of the config files to
-use other programs. See burn(1) code for *_OPTS definition.
+CD/DVD/BD. It has options that allow to pass arguments to genisoimage, burning
+and cataloging programs. In principle, it's possible to redefine
+CD_OPTS/DVD_OPTS and CD_BURN_CMD/DVD_BURN_CMD in one of the config files to use
+other programs. See burn(1) code for *_OPTS definition.
 
 It has been made because I was tired of specifying parameters to genisoimage and
 cdrecord, and I also wanted a database of my CD collection that could be
@@ -104,9 +104,9 @@ LICENSE
 MKAT is released under GPL, see LICENSE for more info.
 
 --
-/Dmitry Maksyoma <ledestin@gmail.com>, Wed, 07 Sep 2005 20:06:09 +1000
+/Dmitry Maksyoma <ledestin@gmail.com>, Tue, 19 Mar 2013 02:26:09 +1300
 
-Copyright 2004, 2005  Dmitry Maksyoma
+Copyright 2004, 2005, 2013  Dmitry Maksyoma
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
