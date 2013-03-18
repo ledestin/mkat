@@ -104,7 +104,6 @@ OPTIONS=(\
   -n "print estimated image size, exit" 'PRINT_ONLY=1' \
   -s=SPEED "set burning speed" 'SPEED=$2' \
   -c "blank rewritable media" 'BLANK_MEDIA=1' \
-  '-a|--append' "multisession disk" 'MULTISESSION=1' \
   -o "overburn" 'OVERBURN=1' \
   '-p|--pipe' "pipe image directly to a burning program" \
     'PIPE_MKIMAGE=1; NO_QUESTIONS=1' \
