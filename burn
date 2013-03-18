@@ -92,6 +92,7 @@ DVD_FREE_BLOCKS=2295104
 # Blu-ray sizes after 256MB were allocated to defect management.
 BD25_FREE_BLOCKS=12088320
 BD50_FREE_BLOCKS=24307712
+BD_DEFECT_MANAGEMENT_BLOCKS=131072
 # List of options/variables, which, if set, will be translated as parameters
 # to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
 # DVD_OPTS
@@ -153,11 +154,29 @@ fi
 
 # TRANSLATE PARAMETERS TO REC_OPTS
 # e.g. -o => -overburn
-case "$BURN_MEDIA" in
-  cd) OPTS='CD_OPTS' ;;
-  dvd|bd*) OPTS='DVD_OPTS' ;;
-  *) error "\`$BURN_MEDIA': unknown media type" ;;
-esac
+if [ -z "$BURN_MEDIA" ]; then
+  BURN_MEDIA='auto'
+  FREE_BLOCKS=`dvd+rw-mediainfo \
+    2> >(grep -v 'READ BD SPARE INFORMATION failed') "$DRIVE" | \
+    sed -ne 's/^ unformatted:\s\+//p' | sed -ne 's/*.\+//p'`
+  [ -z "$FREE_BLOCKS" ] && \
+    { echo >&2 "can't get media block info, insert media or specify --media option"; exit 1; }
+
+  if [ "$FREE_BLOCKS" -ge "$DVD_FREE_BLOCKS" ]; then
+    OPTS='DVD_OPTS'
+    [ "$FREE_BLOCKS" -ge "$BD25_FREE_BLOCKS" ] && \
+      let "FREE_BLOCKS -= $BD_DEFECT_MANAGEMENT_BLOCKS"
+  else
+    OPTS='CD_OPTS'
+  fi
+else
+  case "$BURN_MEDIA" in
+    cd) OPTS='CD_OPTS' ;;
+    dvd|bd*) OPTS='DVD_OPTS' ;;
+    *) error "\`$BURN_MEDIA': unknown media type" ;;
+  esac
+fi
+
 for o in $SUPPORTED_OPTIONS; do
   eval OPTION_CHECKED="\$$o"
   if [ "$OPTION_CHECKED" ]; then

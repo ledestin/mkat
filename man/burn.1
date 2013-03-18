@@ -74,7 +74,9 @@ pass parameters to image making program
 pass parameters to mkat
 .TP
 .B \-\-media
-specify media type (one of cd, dvd, bd, bd50). No default media type.
+specify media type (one of cd, dvd, bd, bd50). If not defined, media size is
+taken from the media in the drive. For Blu-ray, 256Mb is always devoted for
+defect management.
 .TP
 .B \-\-noimg
 don't create image, useful when you already have an image. Label and files 
