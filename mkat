@@ -170,23 +170,6 @@ if [ "$REGEX" ]; then
   exit $?
 fi
 
-# Automatic ID tag (--add-id-tag) {{{2
-if [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ]; then
-  LAST_ID=`sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' "$LISTDIR"/*.list | sort -g --reverse | head -1`
-  if [ -n "$LAST_ID" ]; then
-    let LAST_ID++
-  else
-    LAST_ID=1
-  fi
-
-  if [ -n "$NEXT_ID_TAG" ]; then
-    echo "Next ID tag: $LAST_ID"
-    exit
-  fi
-    
-  TAGS="${TAGS:+$TAGS }#$LAST_ID"
-fi
-
 # Search by md5 sum of a file {{{2
 if [ "$MD5FILES" ]; then
   cmd="md5sum \"\${MD5FILES[@]}\" | awk '{ printf \"%s|\", \$1 }'\
@@ -237,9 +220,35 @@ if [ -z "$CATALOG_PATH" ]; then
   FNAME=$LABEL
 fi
 DEST="$LISTDIR/$FNAME.list"
-{ [ -z $FORCE_OVERWRITE ] \
-  && [ -e "$DEST" ] ; } && \
-  { echo >&2 "file already exists: '$DEST'"; exit 1; }
+if [ -z $FORCE_OVERWRITE ]; then
+  [ -e "$DEST" ] && \
+    { echo >&2 "file or directory already exists: '$DEST'"; exit 1; }
+else
+  [ ! -f "$DEST" ] && \
+    { echo >&2 "not a file already exists: '$DEST'"; exit 1; }
+  [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ] && rm "$DEST"
+fi
+
+# Automatic ID tag (--add-id-tag) {{{2
+# NOTE: this option needs to be here because an ID tag may be contained in a
+# file being overwritten. So, the file must be deleted first (above) and only
+# then next ID tag is calculated.
+if [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ]; then
+  LAST_ID=`sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' "$LISTDIR"/*.list | sort -g --reverse | head -1`
+  if [ -n "$LAST_ID" ]; then
+    let LAST_ID++
+  else
+    LAST_ID=1
+  fi
+
+  if [ -n "$NEXT_ID_TAG" ]; then
+    echo "Next ID tag: $LAST_ID"
+    exit
+  fi
+    
+  TAGS="${TAGS:+$TAGS }#$LAST_ID"
+fi
+
 
 {
 echo $LABEL
