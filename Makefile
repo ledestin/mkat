@@ -67,14 +67,15 @@ dist: changelog
 	  trap 'rm -f ../mkat' EXIT; \
 	  cd .. && ln -s "$$CWD" mkat && cd mkat; \
 	fi; \
-	tar -h --exclude .svn --exclude test --exclude tools --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
+	tar -h --exclude .git --exclude test --exclude tools --exclude \*.swp --exclude TODO -czf $(TARBALL) -C .. mkat/
 	-gpg -b $(TARBALL)
 
 #I need this dependency so that changelog would be remade only when
 #files it depends on change
 changelog: $(shell find . -maxdepth 1 -type f -not -name changelog -not -name \*.swp)
-	svn2cl --stdout --group-by-day --break-before-msg=1 --reparagraph | ./tools/strip-cl | sed 's/trunk\/mkat\///g' > changelog && \
-	echo "This file is public domain" >> changelog
+	@git log --pretty=format:%cd%n%B --date=short | \
+	  ./tools/git2cl > changelog && \
+	  echo "This file is public domain" >> changelog
 
 clean:
 	-rm changelog
