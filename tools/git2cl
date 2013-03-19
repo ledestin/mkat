@@ -1,0 +1,30 @@
+#!/usr/bin/ruby
+
+allComments = {}
+date = comment = nil
+$stdin.each { |l|
+  l.chomp!
+  if l.empty?
+    (allComments[date] ||= []) << comment if comment && !comment.empty?
+    date = comment = nil
+    next
+  end
+
+  unless date
+    date = l
+    next
+  end
+
+  comment ||= []
+  comment << l unless l =~ /^#/
+}
+
+allComments.keys.sort.reverse.each { |date|
+  puts date
+  comments = allComments[date]
+  comments.each { |commentLines|
+    puts "    * #{commentLines.shift}"
+    commentLines.each { |comment| puts "    #{comment}" }
+  }
+  puts
+}
