@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BURN-AUDIO 1 "Feb 25, 2005"
+.TH BURN-AUDIO 1 "Mar 19, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -23,7 +23,7 @@ burna \- burn audio CD from wav files, compare a CD with wav files
 .RI "[-s] <wav file>..."
 
 .SH DESCRIPTION
-\fBburna\fR uses cdrecord(1) to burn audio CD from wav files. The
+\fBburna\fR uses wodim(1) to burn audio CD from wav files. The
 burned CD can be checked against original wav files, which is done by 
 ripping the CD with cdparanoia(1) and comparing original and just ripped 
 wav files. If you just want to compare CD with wav files, use \fB-s\fR 

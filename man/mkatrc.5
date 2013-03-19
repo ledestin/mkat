@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKATRC 1 "Sep 7, 2005"
+.TH MKATRC 1 "Mar 19, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -42,16 +42,16 @@ LISTDIR="/home/ledestin/.mkat"
 #grabbed wav files from newly burned audio CD to compare
 #with the files CD was burned from).
 TMP=/home/ledestin
-#parameters for image creation (mkisofs)
+#parameters for image creation (genisoimage)
 MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
-CD_BURN_CMD='cdrecord -v $REC_OPTS "$ISO_IMAGE"'
+CD_BURN_CMD='wodim -v $REC_OPTS "$ISO_IMAGE"'
 DVD_BURN_CMD='growisofs $REC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
 
 #options for control freaks
 AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
 #meed the image creation program
-MKIMAGE_CMD='mkisofs $MKISO_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
-ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with mkisofs
+MKIMAGE_CMD='genisoimage $MKISO_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
+ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with genisoimage 
 #path to the library needed for mkat programs (helpers.sh)
 MKAT_LIBPATH=/usr/share/mkat
 .fi

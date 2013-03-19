@@ -45,7 +45,7 @@ esac
 set -e
 if [ ! $SKIP_BURN ]; then
   echo "Burning audio CD..."
-  cdrecord -v -dao -speed=4 "$@"
+  wodim -v -dao -speed=4 "$@"
 fi
 
 echo "Ripping CD..."

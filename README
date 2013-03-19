@@ -6,14 +6,14 @@ or arbitrary directories and then search the catalog database. Catalog tools are
 mkat and mkata, burn tools are burn and burna, with trailing `a' standing for
 `audio'.
 
-burn(1) uses genisoimage to create iso image and cdrecord/growisofs to burn
+burn(1) uses genisoimage to create iso image and wodim/growisofs to burn
 CD/DVD/BD. It has options that allow to pass arguments to genisoimage, burning
 and cataloging programs. In principle, it's possible to redefine
 CD_OPTS/DVD_OPTS and CD_BURN_CMD/DVD_BURN_CMD in one of the config files to use
 other programs. See burn(1) code for *_OPTS definition.
 
 It has been made because I was tired of specifying parameters to genisoimage and
-cdrecord, and I also wanted a database of my CD collection that could be
+wodim, and I also wanted a database of my CD collection that could be
 simple, easy to read and searchable with grep.
 
 NOTE: I use autofs to mount CD-ROM for checking and cataloging. Actually, I
@@ -32,11 +32,11 @@ INSTALLATION
 `make install' if you're a not Debian user, apt-get otherwise.
 `make uninstall' is also available.
 
-MKAT depends on cdrecord, dvd+rw-tools, genisoimage, sed, awk, dotlockfile,
+MKAT depends on wodim, dvd+rw-tools, genisoimage, sed, awk, dotlockfile,
 cdparanoia, cd-discid present, the last two only required for work with
 audio CDs.
 
-burn(1) depends on cdrecord, dvd+rw-tools, dotlockfile exclusively, so 
+burn(1) depends on wodim, dvd+rw-tools, dotlockfile exclusively, so 
 if you don't intend to use it, no need for them. The same thing goes for
 burna(1) and cdparanoia.
 

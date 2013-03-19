@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BURN 1 "Jun 22, 2007"
+.TH BURN 1 "Mar 19, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,7 +16,7 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-burn \- create iso image, burn it to a CD/DVD, catalog burned media, compare
+burn \- create iso image, burn it to a CD/DVD/BD, catalog burned media, compare
 burned data with the files iso were made from.
 
 .SH SYNOPSIS
@@ -24,13 +24,13 @@ burned data with the files iso were made from.
 .RI "[ options ] <label> <file>..."
 
 .SH DESCRIPTION
-\fBburn\fR creates iso, burns and catalogs it using mkisofs(8),
-cdrecord(1)/growisofs(1) and mkat(1) respectively.
+\fBburn\fR creates iso, burns and catalogs it using genisoimage(1),
+wodim(1)/growisofs(1) and mkat(1) respectively.
 
 Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
 options control burn speed and if the CD needs to be blanked (in case of
 CD-RW) by passing a parameter to the burning program. \fB-r\fR option allows
-to pass any option through to the burning program (e.g. -dummy for cdrecord).
+to pass any option through to the burning program (e.g. -dummy for wodim).
 To check if the files you are burning are in the mkat db, use \fB--dbcheck\fR option,
 if some of them are, it will ask you if you still want to burn the CD.
 
@@ -56,7 +56,7 @@ set burning speed
 blank rewritable media
 .TP
 .B \-a, \-\-append
-burn a multisession disk (cdrecord -multi, growisofs -M)
+burn a multisession disk (wodim -multi, growisofs -M)
 .TP
 .B \-o
 overburn
