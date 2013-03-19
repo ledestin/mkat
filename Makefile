@@ -3,7 +3,9 @@
 #are permitted in any medium without royalty provided the copyright
 #notice and this notice are preserved.
 
-RELEASE_VERSION := 0.4.1
+SHELL := /bin/bash
+
+RELEASE_VERSION := 0.5
 RELEASE_DIR ?= ..
 TARBALL := $(RELEASE_DIR)/mkat_$(RELEASE_VERSION).tgz
 
