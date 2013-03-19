@@ -80,12 +80,8 @@ changelog: $(shell find . -maxdepth 1 -type f -not -name changelog -not -name \*
 clean:
 	-rm changelog
 
-deploy:
-	scp $(TARBALL) monster.amur.ru:~/public_html/mkat/files
-	scp README monster.amur.ru:~/public_html/mkat/files
-
 upload_savannah:
 	curl -T $(TARBALL) ftp://savannah.gnu.org/incoming/savannah/mkat/
 	curl -T $(TARBALL).sig ftp://savannah.gnu.org/incoming/savannah/mkat/
 
-.PHONY: clean install uninstall dist deploy
+.PHONY: clean install uninstall dist
