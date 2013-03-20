@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# LICENSE {{{1
 # This file is part of Mkat
 #
 # Copyright (C) 2004, 2005 Dmitry Maksyoma <ledestin at gmail.com>.
@@ -19,16 +20,18 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 # USA.
 
+# ALGORITHM {{{1
 #1. Make iso
 #2. Burn iso
 #3. Add the burned CD to the catalog
 #4. Compare files on the CD with the original files
 
-# Sensible defaults for overridable constants
+# Sensible defaults for overridable constants {{{1
 CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
 DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SINGLESESSION' '-Z')
 ISO_OPTS=('QUIET' '-quiet')
 
+# FUNCTIONS {{{1
 # Complain and exit if $LOCKFILE exists.
 function check_lock() {
   debug "checking for lockfile $LOCKFILE"
@@ -73,7 +76,7 @@ function unlock {
   dotlockfile -u $LOCKFILE && trap - EXIT
 }
 
-# LOAD CONFIGURATION
+# LOAD CONFIGURATION {{{1
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
@@ -81,12 +84,12 @@ RCFILE=mkatrc
   { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
 
-# CHECK CONFIGURATION (CONFIG-LOADED)
+# CHECK CONFIGURATION (CONFIG-LOADED) {{{1
 # The essential variables must be defined.
 fail_unless_defined "DRIVE CD_BURN_CMD DVD_BURN_CMD CD LISTDIR TMP
   MKIMAGE_OPTS MKIMAGE_CMD ISO_IMAGE"
 
-# DEFINE CONSTANTS
+# DEFINE CONSTANTS {{{1
 CD_FREE_BLOCKS=358400
 DVD_FREE_BLOCKS=2295104
 # Blu-ray sizes after 256MB were allocated to defect management.
@@ -98,7 +101,7 @@ BD_DEFECT_MANAGEMENT_BLOCKS=131072
 # DVD_OPTS
 SUPPORTED_OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
 
-# COMMAND LINE PARAMETER PROCESSING
+# COMMAND LINE PARAMETER PROCESSING {{{1
 BANNERS=("[options] <label> <file>...")
 OPTIONS=(\
   -n "print estimated image size, exit" 'PRINT_ONLY=1' \
@@ -122,7 +125,7 @@ OPTIONS=(\
   '-h|--help' "print available options" 'usage 0')
 process_options "$@"
 
-# CHECK PARAMETERS
+# CHECK PARAMETERS {{{1
 # Complain and exit if `-o file' option is present in MKIMAGE_OPTS or MKIMAGE_CMD.
 for v in MKIMAGE_OPTS MKIMAGE_CMD; do
   eval "var=\"\$$v\""
@@ -151,7 +154,7 @@ if [ -z $PRINT_ONLY ]; then
 fi
 [ -z $MULTISESSION ] && SINGLESESSION=1
 
-# TRANSLATE PARAMETERS TO REC_OPTS
+# TRANSLATE PARAMETERS TO REC_OPTS {{{1
 # e.g. -o => -overburn
 if [ -z "$BURN_MEDIA" ]; then
   BURN_MEDIA='auto'
@@ -194,7 +197,8 @@ if [ -z $SKIP_MKIMAGE ]; then
   LABEL="${ARGUMENTS[0]}"; unset 'ARGUMENTS[0]'; FILES=("${ARGUMENTS[@]}")
 fi
 
-# REAL WORK
+# REAL WORK {{{1
+# PREPARE {{{2
 # Give choice to quit if files you're about to write are already archived
 # (exist in mkat database).
 if [ $DB_CHECK ]; then
@@ -219,7 +223,7 @@ ISO_DIR="${ISO_IMAGE%/*}"
 LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 
 
-# MAKE ISO IMAGE
+# MAKE ISO IMAGE {{{2
 if [ $PRINT_ONLY ]; then
   cmd="genisoimage -print-size $MKIMAGE_OPTS"
   debug $cmd "${FILES[@]}"
@@ -273,7 +277,7 @@ elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
   fi
 fi
 
-# BURN
+# BURN {{{2
 if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
   read -p "Press Enter to proceed to burn or Control-C to abort"
 fi
@@ -309,7 +313,7 @@ if [ -z $SIMULATE ]; then
   [ -z $PIPE_MKIMAGE ] && unlock
 fi
 
-# CATALOG
+# CATALOG {{{2
 if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   echo "Catalog..."
   if [ $SIMULATE ]; then
@@ -319,7 +323,7 @@ if [ ! $SKIP_CATALOG ] && [ $CD ]; then
   fi
 fi
 
-# {{{1 AFTERBURN CHECK
+# AFTERBURN CHECK {{{2
 if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
   set +e
   echo 'Afterburn check...'
@@ -333,8 +337,7 @@ if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
     done
   fi
 fi
-# }}}1
 
-# EJECT
+# EJECT {{{2
 debug "going to sleep for $AUTOFS_DELAY seconds and eject"
 [ -z $SIMULATE ] && sleep $AUTOFS_DELAY && eject
