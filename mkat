@@ -191,7 +191,7 @@ fi
 if [ -z "$CATALOG_PATH" ]; then
   [ -z `which isoinfo` ] && { error 'binary not found: isoinfo'; exit 1; }
   LABEL=`isoinfo -d -i $DRIVE | sed -ne 's/Volume id: //p'`
-  [ -z "$LABEL" ] && { echo "could not obtain CD label"; LABEL="NO_LABEL"; }
+  [ -z "$LABEL" ] && { echo "could not obtain disc label"; LABEL="NO_LABEL"; }
 else
   LABEL="$CATALOG_PATH"
 fi

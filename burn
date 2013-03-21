@@ -23,8 +23,8 @@
 # ALGORITHM {{{1
 #1. Make iso
 #2. Burn iso
-#3. Add the burned CD to the catalog
-#4. Compare files on the CD with the original files
+#3. Add the burned disc to the catalog
+#4. Compare files on the disc with the original files
 
 # Sensible defaults for overridable constants {{{1
 CD_OPTS=('OVERBURN' '-overburn -dao' 'BLANK_MEDIA' 'blank=fast' 'SPEED' 'speed=$SPEED' 'MULTISESSION' '-multi')
@@ -97,8 +97,8 @@ BD25_FREE_BLOCKS=12088320
 BD50_FREE_BLOCKS=24307712
 BD_DEFECT_MANAGEMENT_BLOCKS=131072
 # List of options/variables, which, if set, will be translated as parameters
-# to CD or DVD burning program. Parameter dictionaries are defined in CD_OPTS and
-# DVD_OPTS
+# to CD or DVD/BD burning program. Parameter dictionaries are defined in CD_OPTS
+# and DVD_OPTS
 SUPPORTED_OPTIONS="OVERBURN BLANK_MEDIA SPEED MULTISESSION SINGLESESSION"
 
 # COMMAND LINE PARAMETER PROCESSING {{{1
