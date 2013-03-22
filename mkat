@@ -257,7 +257,7 @@ echo $LABEL
 [ "$TAGS" ] && echo "tags: $TAGS"
 IFS='
 '
-for f in `find $CD -mindepth 1`; do
+for f in `find $CD -mindepth 1 | sort`; do
   rel=`echo "$f" | sed -ne "s!${CD%%/}/!!p"`
   if [ -f "$f" ]; then
     echo -e $rel:`du -h "$f" | awk '{print $1}'`:`md5sum "$f" | awk '{ print $1}'`
