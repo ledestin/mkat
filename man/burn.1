@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BURN 1 "Mar 19, 2013"
+.TH BURN 1 "Mar 23, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,30 +16,30 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-burn \- create iso image, burn it to a CD/DVD/BD, catalog burned media, compare
-burned data with the files iso were made from.
+burn \- create iso image, burn it to a CD/DVD/BD, compare burned data with the
+files iso were made from, catalog burned media.
 
 .SH SYNOPSIS
 \fBburn\fR
-.RI "[ options ] <label> <file>..."
+.RI "[ options ] <disc label> <file>..."
 
 .SH DESCRIPTION
-\fBburn\fR creates iso, burns and catalogs it using genisoimage(1),
+\fBburn\fR creates iso image, burns and catalogs it using genisoimage(1),
 wodim(1)/growisofs(1) and mkat(1) respectively.
 
-Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
-options control burn speed and if the disc needs to be blanked (in case of
-CD-RW) by passing a parameter to the burning program. \fB-r\fR option allows to
+Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR options
+control burn speed and whether the disc needs to be blanked (in case of a RW
+disc) by passing a parameter to the burning program. \fB-r\fR option allows to
 pass any option through to the burning program (e.g. -dummy for wodim).  To
-check if the files you are burning are in the mkat db, use \fB--dbcheck\fR
+check whether the files you are burning are in the mkat db, use \fB--dbcheck\fR
 option, if some of them are, it will ask you if you still want to burn the disc.
 
 By default, first an image file will be created (takes some time), and then,
-after the image is ready, the file is passed as an argument to a burning
-program. It's also possible to burn image while it's being created by
-piping image to a burning program. Use \fB-p, --pipe\fR option to
-do that. It's faster to burn in that way, however, if somebody deletes files
-you're about to burn, you will end up with a media without those files.
+after the image is ready, it is passed as an argument to a burning program. It's
+also possible to burn image while it's being created by piping image to a
+burning program. Use \fB-p, --pipe\fR option to do that. It's faster to burn in
+that way, however, if somebody deletes files you're about to burn, you will end
+up with a media without those files.
 
 If you don't want to catalog your discs with mkat(1), use \fB--nocat\fR
 option.
@@ -47,7 +47,8 @@ option.
 .SH OPTIONS
 .TP
 .B \-n
-print estimated iso image size
+print estimated iso image size, how much more can be added to the image or
+should be subtracted from to fit
 .TP
 .B \-s \fI<SPEED>\fR
 set burning speed
@@ -76,7 +77,7 @@ taken from the media in the drive. For Blu-ray, 256Mb is always devoted for
 defect management.
 .TP
 .B \-\-noimg
-don't create image, useful when you already have an image. Label and files 
+don't create image, useful when you already have an image ready. Label and files
 need not be specified.
 .TP
 .B \-\-nocat
@@ -90,7 +91,7 @@ check if the files are already in mkat db (i.e. you have them burned
 already)
 .TP
 .B \-y, \-\-yes
-don't ask for user input, just burn it
+don't ask questions, just burn it
 .TP
 .B \-\-simulate
 print commands that would be executed, implies --debug
@@ -107,8 +108,8 @@ burn -n 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Find out how much space files would take
 .TP
 burn -s4 -c --nocat 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
-Burn a RW media with 4x max speed, blanking it since it already has data on it,
-skip catalog since it's a RW, because it's a reusable disc.
+Burn a RW disc with 4x max speed, blanking it since it already has data on it,
+skip catalog since it's a RW (you don't expect data there to last).
 .TP
 burn -r'-dummy' 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Burn a CD-R in dummy mode

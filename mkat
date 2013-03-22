@@ -54,7 +54,7 @@ OPTIONS=(\
   -t=TAG1,TAG2 "write list file with 'tags: TAG1 TAG2' string" 'TAGS=${2//,/ }' \
   -T "don't search within tags with -s (no tags)" '?FILTER_TAGS' \
   -w "write tag line into existing files (use with -t)" 'RETAG_FILES=1' \
-  -y "cycle { mkat; eject; }" 'CYCLE_CATALOG=1')
+  -y "loop { mkat; eject; }" 'CYCLE_CATALOG=1')
 
 process_options "$@"
 
@@ -201,7 +201,7 @@ fi
 if [ "$CATALOG_PATH" ]; then
   FNAME="${CATALOG_PATH#/}"
   FNAME="${FNAME//\//.}"
-  CD="$CATALOG_PATH"
+  CD=`realpath "$CATALOG_PATH"`
   TAGS="$TAGS filesystem"; TAGS=${TAGS# }
 fi
 

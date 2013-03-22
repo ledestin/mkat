@@ -7,34 +7,42 @@ mkat and mkata, burn tools are burn and burna, with trailing `a' standing for
 `audio'.
 
 burn(1) uses genisoimage to create iso image and wodim/growisofs to burn
-CD/DVD/BD. It has options that allow to pass arguments to genisoimage, burning
+CD/DVD/BD. It has options that allow to pass arguments to image making, burning
 and cataloging programs. In principle, it's possible to redefine
 CD_OPTS/DVD_OPTS and CD_BURN_CMD/DVD_BURN_CMD in one of the config files to use
 other programs. See burn(1) code for *_OPTS definition.
 
-It has been made because I was tired of specifying parameters to genisoimage and
-wodim, and I also wanted a database of my CD collection that could be
-simple, easy to read and searchable with grep.
+These commands were made because I was tired of specifying parameters to
+genisoimage and wodim, and I also wanted a database of my disk collection that
+could be simple, easy to read and searchable with grep.
 
-NOTE: I use autofs to mount CD-ROM for checking and cataloging. Actually, I
-just don't mount it explicitly and eject after sleeping $AUTOFS_DELAY seconds.
-Set unmount timeout for autofs to $AUTOFS_DELAY seconds or CD won't eject after 
-everything's done. Also, it's useful to look at created iso image before 
-burning, I have the following lines in my /etc/auto.misc:
+NOTE: I use autofs to mount a disc for checking and cataloging. Actually, I just
+don't mount it explicitly and eject after sleeping $AUTOFS_DELAY seconds.  Set
+unmount timeout for autofs to an appropriate number of seconds or the disk won't
+eject after everything's done (because it still will be mounted by autofs).
+
+Also, as it's useful to look at created iso image before burning, I have the
+following lines in my /etc/auto.misc:
 iso             -fstype=iso9660,ro,sync,nodev,nosuid,loop :/home/ledestin/cdimage.iso
 cd              -fstype=iso9660,ro,sync,nodev,nosuid,speed=32   :/dev/sr0
-I also have a symlink
+
+I also have a symlink:
 lrwxrwxrwx    1 root     root           17 2004-04-21 13:13 /misc -> /var/autofs/misc/
-so I can just say `ls /misc/iso' and see the contents of the iso image.
+so I can just say `ls /misc/iso' and see the contents of the iso image or the
+disk.
 
 INSTALLATION
 
-`make install' if you're a not Debian user, apt-get otherwise.
-`make uninstall' is also available.
+Debian:
+dpkg -i mkat_0.5-1_all.deb
+apt-get -f install
+
+Non-Debian (tarball):
+`make install' and `make uninstall'
 
 MKAT depends on wodim, dvd+rw-tools, genisoimage, sed, awk, dotlockfile,
-cdparanoia, cd-discid present, the last two only required for work with
-audio CDs.
+realpath, cdparanoia, cd-discid present, the last two only required for working
+with audio CDs.
 
 burn(1) depends on wodim, dvd+rw-tools, dotlockfile exclusively, so 
 if you don't intend to use it, no need for them. The same thing goes for
@@ -43,31 +51,32 @@ burna(1) and cdparanoia.
 CONFIGURATION
 
 /etc/mkatrc and ~/.mkatrc are sourced by the tools in that order,
-.mkatrc settings override global settings from /etc/mkatrc.
+~/.mkatrc settings override global settings from /etc/mkatrc.
 
-Both tarball and deb version installers recognize "###CUSTOM SECTION" string
-as the end of the default section. New options supplied with default config
-are written into default options and locally modified part is written after
-the defaults this way defaults can be easily overrided.
+Both tarball and deb installers recognize ###CUSTOM SECTION string as the end of
+the default section. New options supplied with default config are written into
+default options and locally modified part is written after the defaults this way
+the defaults can be easily overrided.
 
 On a Debian system I use debconf and a config will be created automatically
 after you answer questions. But if you install from a tarball you need to
 edit config file before running anything. I provide a sample config file 
 in examples/mkatrc, which is copied to /etc/mkatrc on install.
 
-See manual page mkatrc(5) for more info.
+See manual page mkatrc(5) for more info on configuration.
 
 DESCRIPTION
 
-mkat creates a file in $LISTDIR (see mkatrc(5)) named after CD label with
-first line being a label, consecutive lines listing CD contents, e.g.
+mkat creates a file in $LISTDIR (see mkatrc(5)) named after disk label with
+first line being the label and the consecutive lines listing disc contents,
+e.g.:
 FMP2 1-4
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_04.avi:175M:b43e0fd3bd7f3afc97b47a75810276d3
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_03.avi:175M:7cfd53c75e2753aafea0e6fddcfb4e07
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_02.avi:175M:d6f3b47f254df00d4419fddf59919bb1
 [A-F_&_AF]_Fullmetal_Panic_Fumoffu_-_01.avi:176M:635f23f89dd69fff11162a89655f5ca1
 
-That is file description consists of the file name, size, md5 sum.
+That is, a file description consists of the file name, size, md5 sum.
 
 TAGS
 
@@ -78,22 +87,26 @@ http://animenfo.com/animetitle,114,tzoabg,cowboy_bebop.html).
 You can specify tags when burning:
 burn '-m-t anime,comedy,adventure' 'Cowboy Bebop' .
 
-or when you wish to catalog already burned:
+Or, when you wish to catalog already burned:
 mkat -t anime,comedy,adventure
 
-Or, if you have a .list file already, edit it, adding
-"tags: anime comedy adventure" as the *SECOND* line.
+Or, if you have a .list file already, edit it, adding "tags: anime comedy
+adventure" as the *SECOND* line:
 $vi ~/.mkat/Cowboy\ Bebop.list
 
-"mkat -S anime" will print all list files with "anime" tag,
-"mkat -S movie,romance" will print files containing both "movie" and
-"romance" tags.
+`mkat -S anime' will print all list files with the `anime' tag,
+`mkat -S movie,romance' will print files containing both `movie' and
+`romance' tags.
 
-List existing tags with "mkat -a".
+List existing tags with `mkat -a'.
 
 GETTING A NEW VERSION
 
-This project is hosted at https://savannah.nongnu.org/projects/mkat/
+This project's deliverables are hosted at
+https://savannah.nongnu.org/projects/mkat/
+
+Git repository:
+https://github.com/ledestin/mkat.git
 
 FEEDBACK
 
@@ -104,7 +117,7 @@ LICENSE
 MKAT is released under GPL, see LICENSE for more info.
 
 --
-/Dmitry Maksyoma <ledestin@gmail.com>, Tue, 19 Mar 2013 02:26:09 +1300
+/Dmitry Maksyoma <ledestin@gmail.com>, Sat, 23 Mar 2013 09:28:58 +1300
 
 Copyright 2004, 2005, 2013  Dmitry Maksyoma
 Copying and distribution of this file, with or without modification,
