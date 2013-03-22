@@ -83,6 +83,7 @@ RCFILE=mkatrc
 [ -z "$MKAT_LIBPATH" ] && \
   { echo >&2 "MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
+. "$MKAT_LIBPATH/common.sh" || exit 1
 
 # CHECK CONFIGURATION (CONFIG-LOADED) {{{1
 # The essential variables must be defined.
@@ -126,6 +127,8 @@ OPTIONS=(\
 process_options "$@"
 
 # CHECK PARAMETERS {{{1
+interpolate_envvars
+
 # Complain and exit if `-o file' option is present in MKIMAGE_OPTS or MKIMAGE_CMD.
 for v in MKIMAGE_OPTS MKIMAGE_CMD; do
   eval "var=\"\$$v\""

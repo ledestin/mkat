@@ -27,6 +27,7 @@ RCFILE=mkatrc
 [ -z "$MKAT_LIBPATH" ] && \
   { echo >&2 "ERROR: MKAT_LIBPATH not set (edit /etc/$RCFILE)"; exit 1; }
 . "$MKAT_LIBPATH/helpers.sh" || exit 1
+. "$MKAT_LIBPATH/common.sh" || exit 1
 
 # UNSET INTERNAL VARIABLES {{{1
 # (so that environment variables wouldn't interfere)
@@ -74,6 +75,7 @@ fi
 
 # CHECK CONFIGURATION (CONFIG-LOADED) {{{1
 fail_unless_defined "CD LISTDIR"
+interpolate_envvars
 
 make_dir "$LISTDIR"
 
