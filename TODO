@@ -2,7 +2,6 @@ BUGS:
 -m'-t anime' breaks burn(1).
 -m'-tjpop #24' breaks burn(1).
 .list entries sort
-afterburn check should go before cataloguing.
 eject necessary after writing? done by genisoimage?
 
 WISHLIST:
