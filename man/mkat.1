@@ -16,7 +16,7 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-mkat \- catalog a CD or filesystem path, then search database by file name, tags or md5 sum
+mkat \- catalog a disc or filesystem path, then search database by file name, tags or md5 sum
 
 .SH SYNOPSIS
 \fBmkat\fR
@@ -26,17 +26,17 @@ mkat \- catalog a CD or filesystem path, then search database by file name, tags
 -t <tag[,tag]...> -w <file>...
 
 .SH DESCRIPTION
-\fBmkat\fR can catalog a CD or a filesystem directory. It
+\fBmkat\fR can catalog a disc or a filesystem directory. It
 creates a .list file in $LISTDIR which contans data about files you want
 cataloged.
 
-The .list file name is named after the CD label or NO_LABEL if label 
+The .list file name is named after the disc label or NO_LABEL if label 
 could not be obtained
 if \fBmkat\fR is called without \fB-p\fR option, or path with the leading '/'
 stripped and the rest of '/'s replaced with '.'s if \fB-p\fR option is used.
-The CD label is obtained from $DRIVE, which should be a cdrom device
+The disc label is obtained from $DRIVE, which should be a cdrom device
 (see \fImkatrc(5)\fR).
-If you catalog a CD, its data should reside at $CD, if you catalog a
+If you catalog a disc, its data should reside at $CD, if you catalog a
 directory, path you specified with \fB-p\fR option is used.
 
 \fB-t\fR (tag) option can be given to assign tags, which later

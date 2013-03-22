@@ -28,11 +28,11 @@ burned data with the files iso were made from.
 wodim(1)/growisofs(1) and mkat(1) respectively.
 
 Use \fB-n\fR option to see how much space your files take. \fB-s, -c\fR
-options control burn speed and if the CD needs to be blanked (in case of
-CD-RW) by passing a parameter to the burning program. \fB-r\fR option allows
-to pass any option through to the burning program (e.g. -dummy for wodim).
-To check if the files you are burning are in the mkat db, use \fB--dbcheck\fR option,
-if some of them are, it will ask you if you still want to burn the CD.
+options control burn speed and if the disc needs to be blanked (in case of
+CD-RW) by passing a parameter to the burning program. \fB-r\fR option allows to
+pass any option through to the burning program (e.g. -dummy for wodim).  To
+check if the files you are burning are in the mkat db, use \fB--dbcheck\fR
+option, if some of them are, it will ask you if you still want to burn the disc.
 
 By default, first an image file will be created (takes some time), and then,
 after the image is ready, the file is passed as an argument to a burning
@@ -41,7 +41,7 @@ piping image to a burning program. Use \fB-p, --pipe\fR option to
 do that. It's faster to burn in that way, however, if somebody deletes files
 you're about to burn, you will end up with a media without those files.
 
-If you don't want to catalog your CDs with mkat(1), use \fB--nocat\fR
+If you don't want to catalog your discs with mkat(1), use \fB--nocat\fR
 option.
 
 .SH OPTIONS
@@ -107,8 +107,8 @@ burn -n 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Find out how much space files would take
 .TP
 burn -s4 -c --nocat 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
-Burn a CDRW with 4x max speed, blanking it since it already has data on it,
-skip catalog since it's a CDRW, so new data will probably be written soon.
+Burn a RW media with 4x max speed, blanking it since it already has data on it,
+skip catalog since it's a RW, because it's a reusable disc.
 .TP
 burn -r'-dummy' 'Fruits Basket 10-13' Fruits\\ Basket\\ \\(1[0-3]*
 Burn a CD-R in dummy mode
