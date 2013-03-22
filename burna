@@ -26,6 +26,7 @@
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
+interpolate_envvars
 
 function usage {
   echo >&2 "missing arguments"

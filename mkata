@@ -27,6 +27,7 @@
 RCFILE=mkatrc 
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
+interpolate_envvars
 
 function usage() {
   echo "  -c		check if the CD is in database"
