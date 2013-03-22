@@ -1,7 +1,7 @@
 #this file is public domain
-DRIVE="/dev/cdrom"
-CD="/misc/cd"
-LISTDIR="$HOME/.mkat"
+DRIVE='/dev/cdrom'
+CD='/misc/cd'
+LISTDIR='$HOME/.mkat'
 TMP=/tmp/$LOGNAME
 AUTOFS_DELAY=6
 MKIMAGE_OPTS='-J -r -iso-level=3 -file-mode 444 -graft-points' 
@@ -10,4 +10,4 @@ DVD_BURN_CMD='growisofs $REC_OPTS "$DRIVE"="$ISO_IMAGE"'
 
 #options for the control freaks
 MKIMAGE_CMD='genisoimage -V "$LABEL" $MKIMAGE_OPTS "${FILES[@]}"'
-ISO_IMAGE="$TMP/cdimage.iso"
+ISO_IMAGE='$TMP/cdimage.iso'
