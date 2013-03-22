@@ -25,7 +25,7 @@ ETC_S := examples/mkatrc
 MAN1_S := $(shell ls man/*.1)
 MAN5_S := $(shell ls man/*.5)
 DOC_S := README LICENSE
-SHARE_S := helpers.sh
+SHARE_S := common.sh helpers.sh
 SRC := $(BIN_S),$(ETC_S),$(MAN1_S),$(MAN5_S),$(DOC_S),$(SHARE_S)
 
 install:
