@@ -8,5 +8,4 @@ eject necessary after writing? done by genisoimage?
 WISHLIST:
 Make `mkat --show-tags -s casablanca` possible. This would show how
 Casablanca is tagged.
-Check that no such label exists before burning
 Need example file anymore? Also should be in the deb.
