@@ -83,7 +83,6 @@ clean:
 	-rm changelog
 
 upload_savannah:
-	curl -T $(TARBALL) ftp://savannah.gnu.org/incoming/savannah/mkat/
-	curl -T $(TARBALL).sig ftp://savannah.gnu.org/incoming/savannah/mkat/
+	scp $(TARBALL) $(TARBALL).sig ledestin@dl.sv.gnu.org:/releases/mkat/
 
 .PHONY: clean install uninstall dist
