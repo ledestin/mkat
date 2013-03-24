@@ -103,7 +103,7 @@ List existing tags with `mkat -a'.
 GETTING A NEW VERSION
 
 This project's deliverables are hosted at
-https://savannah.nongnu.org/projects/mkat/
+http://ledestin.github.com/mkat/
 
 Git repository:
 https://github.com/ledestin/mkat.git
