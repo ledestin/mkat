@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKATRC 1 "Mar 19, 2013"
+.TH MKATRC 1 "Apr 3, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -50,7 +50,7 @@ DVD_BURN_CMD='growisofs $REC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
 #options for control freaks
 AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
 #meed the image creation program
-MKIMAGE_CMD='genisoimage $MKISO_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
+MKIMAGE_CMD='genisoimage $MKIMAGE_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
 ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with genisoimage 
 #path to the library needed for mkat programs (helpers.sh)
 MKAT_LIBPATH=/usr/share/mkat

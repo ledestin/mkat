@@ -141,8 +141,6 @@ done;
 # If --noimg is specified, ignore --pipe option.
 [ $PIPE_MKIMAGE ] && [ $SKIP_MKIMAGE ] && PIPE_MKIMAGE=
 
-[ "$MKISO_OPTS" ] && MKIMAGE_OPTS="$MKIMAGE_OPTS $MKISO_OPTS"
-
 # Append `-o' option to MKIMAGE_OPTS where necessary.
 if [ -z $PRINT_ONLY ]; then
   if [ -z $PIPE_MKIMAGE ]; then
