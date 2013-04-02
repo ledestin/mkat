@@ -1,4 +1,5 @@
 BUGS:
+Check that overburn is specified or complain that iso won't fit the disc.
 -m'-t anime' breaks burn(1).
 -m'-tjpop #24' breaks burn(1).
 eject necessary after writing? done by genisoimage?
