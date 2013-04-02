@@ -168,19 +168,25 @@ if [ -z "$BURN_MEDIA" ]; then
     { echo >&2 "can't get media block info, insert media or specify --media option"; exit 1; }
 
   if [ "$FREE_BLOCKS" -ge "$DVD_FREE_BLOCKS" ]; then
-    OPTS='DVD_OPTS'
+    BURN_CMD_TYPE='dvd'
     [ "$FREE_BLOCKS" -ge "$BD25_FREE_BLOCKS" ] && \
       let "FREE_BLOCKS -= $BD_DEFECT_MANAGEMENT_BLOCKS"
   else
-    OPTS='CD_OPTS'
+    BURN_CMD_TYPE='cd'
   fi
 else
   case "$BURN_MEDIA" in
-    cd) OPTS='CD_OPTS' ;;
-    dvd|bd*) OPTS='DVD_OPTS' ;;
+    cd) BURN_CMD_TYPE='cd' ;;
+    dvd|bd*) BURN_CMD_TYPE='dvd' ;;
     *) error "\`$BURN_MEDIA': unknown media type" ;;
   esac
 fi
+
+case "$BURN_CMD_TYPE" in
+  cd) OPTS='CD_OPTS' ;;
+  dvd) OPTS='DVD_OPTS' ;;
+  *) error "\`$BURN_CMD_TYPE': unknown cmd type" ;;
+esac
 
 for o in $SUPPORTED_OPTIONS; do
   eval OPTION_CHECKED="\$$o"
@@ -293,9 +299,9 @@ fi
 echo "BURN!"
 unset IFS
 
-case "$BURN_MEDIA" in
+case "$BURN_CMD_TYPE" in
   cd) BURN_CMD="$CD_BURN_CMD" ;;
-  dvd|bd*) BURN_CMD="$DVD_BURN_CMD" ;;
+  dvd) BURN_CMD="$DVD_BURN_CMD" ;;
 esac
 
 if [ $PIPE_MKIMAGE ]; then
