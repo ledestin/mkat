@@ -117,6 +117,7 @@ OPTIONS=(\
   -m=MKAT_OPTS "pass parameters to mkat" 'MKAT_OPTS=$2' \
   --media=TYPE 'specify media type (one of cd, dvd, bd, bd50)' 'BURN_MEDIA=$2' \
   --noimg "don't create image, just burn" 'SKIP_MKIMAGE=1' \
+  --noburn "don't burn image", 'SKIP_BURN=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
   --dbcheck "check if the files are in mkat db" 'DB_CHECK=1' \
@@ -291,39 +292,41 @@ elif [ -z $SKIP_MKIMAGE ] && [ -z $PIPE_MKIMAGE ]; then
 fi
 
 # BURN {{{2
-if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
-  read -p "Press Enter to proceed to burn or Control-C to abort"
-fi
-echo "BURN!"
-unset IFS
-
-case "$BURN_CMD_TYPE" in
-  cd) BURN_CMD="$CD_BURN_CMD" ;;
-  dvd) BURN_CMD="$DVD_BURN_CMD" ;;
-esac
-
-if [ $PIPE_MKIMAGE ]; then
-  cmd="$MKIMAGE_CMD | $BURN_CMD"
-else
-  cmd="$BURN_CMD"
-fi
-
-eval "cmd_debug=\"$cmd\""
-debug "$cmd_debug"
-
-if [ -z $SIMULATE ]; then
-  # Lock if image file is used for burning and if image wasn't made (and
-  # locked) at this time run.
-  if [ -z $PIPE_MKIMAGE ] && [ $SKIP_MKIMAGE ]; then
-    # If the $LOCKFILE exists lock() will block. As a result, burn(1) will
-    # just hang doing nothing. To mitigate it, I check if lockfile exists
-    # before calling lock(). There is a race condition here, but it's better
-    # than nothing.
-    check_lock
-    lock
+if [ -z "$SKIP_BURN" ]; then
+  if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
+    read -p "Press Enter to proceed to burn or Control-C to abort"
   fi
-  eval $cmd
-  [ -z $PIPE_MKIMAGE ] && unlock
+  echo "BURN!"
+  unset IFS
+
+  case "$BURN_CMD_TYPE" in
+    cd) BURN_CMD="$CD_BURN_CMD" ;;
+    dvd) BURN_CMD="$DVD_BURN_CMD" ;;
+  esac
+
+  if [ $PIPE_MKIMAGE ]; then
+    cmd="$MKIMAGE_CMD | $BURN_CMD"
+  else
+    cmd="$BURN_CMD"
+  fi
+
+  eval "cmd_debug=\"$cmd\""
+  debug "$cmd_debug"
+
+  if [ -z $SIMULATE ]; then
+    # Lock if image file is used for burning and if image wasn't made (and
+    # locked) at this time run.
+    if [ -z $PIPE_MKIMAGE ] && [ $SKIP_MKIMAGE ]; then
+      # If the $LOCKFILE exists lock() will block. As a result, burn(1) will
+      # just hang doing nothing. To mitigate it, I check if lockfile exists
+      # before calling lock(). There is a race condition here, but it's better
+      # than nothing.
+      check_lock
+      lock
+    fi
+    eval $cmd
+    [ -z $PIPE_MKIMAGE ] && unlock
+  fi
 fi
 
 # CATALOG {{{2
