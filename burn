@@ -196,7 +196,7 @@ for o in $SUPPORTED_OPTIONS; do
 done
 
 # Label and files arguments must be provided.
-if [ -z $SKIP_MKIMAGE ]; then
+if [ -z "$SKIP_MKIMAGE" -o -z "$SKIP_CHECK" ]; then
   [ ${#ARGUMENTS[@]} -lt 2 ] && {
     echo >&2 "not enough parameters"
     usage 1
