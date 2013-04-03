@@ -223,12 +223,11 @@ if [ -z "$CATALOG_PATH" ]; then
 fi
 DEST="$LISTDIR/$FNAME.list"
 if [ -z $FORCE_OVERWRITE ]; then
-  [ -e "$DEST" ] && \
+  [ -z "$NEXT_ID_TAG" -a -e "$DEST" ] && \
     { echo >&2 "file or directory already exists: '$DEST'"; exit 1; }
 else
   [ ! -f "$DEST" ] && \
     { echo >&2 "not a file already exists: '$DEST'"; exit 1; }
-  [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ] && rm "$DEST"
 fi
 
 # Automatic ID tag (--add-id-tag) {{{2
@@ -236,7 +235,9 @@ fi
 # file being overwritten. So, the file must be deleted first (above) and only
 # then next ID tag is calculated.
 if [ -n "$ADD_ID_TAG" -o -n "$NEXT_ID_TAG" ]; then
-  LAST_ID=`sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' "$LISTDIR"/*.list | sort -g --reverse | head -1`
+  LAST_ID=`find "$LISTDIR" -name \*.list -and -not -name "${DEST##*/}" -print0 | \
+    xargs -0 sed -rn 's/^tags:.*[[:space:]]#([0-9]+)([[:space:]].*|$)/\1/p' | \
+    sort -g --reverse | head -1`
   if [ -n "$LAST_ID" ]; then
     let LAST_ID++
   else
