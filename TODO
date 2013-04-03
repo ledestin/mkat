@@ -4,5 +4,7 @@ BUGS:
 eject necessary after writing? done by genisoimage?
 
 WISHLIST:
+Testing harness.
+Maybe stop if cmp finds difference in a file? Also don't catalog in this case?
 Make `mkat --show-tags -s casablanca` possible. This would show how
 Casablanca is tagged.
