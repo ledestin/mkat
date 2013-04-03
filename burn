@@ -346,7 +346,8 @@ if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
   if [ -z "$SIMULATE" ]; then
     for f in "${FILES[@]}"; do
       if [ -d "$f" ]; then
-	find "$f" -type f -printf "%P\0" | xargs -0 -ifile -n1 cmp file "$CD"/file
+	find "$f" -type f -printf "%P\0" | \
+	  xargs -0 -ifile -n1 cmp "$f"/file "$CD"/file
       else
 	cmp "$f" "$CD/`basename "$f"`"
       fi
