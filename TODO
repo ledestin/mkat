@@ -2,6 +2,7 @@ BUGS:
 -m'-t anime' breaks burn(1).
 -m'-tjpop #24' breaks burn(1).
 eject necessary after writing? done by genisoimage?
+how come TMP isn't used for ISO image creation?
 
 WISHLIST:
 Testing harness.
