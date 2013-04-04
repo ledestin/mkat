@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MKATRC 1 "Apr 3, 2013"
+.TH MKATRC 1 "Apr 4, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -30,31 +30,44 @@ bash scripts. First \fI/etc/mkatrc\fR is sourced, then
 override global settings from \fI/etc/mkatrc\fR.
 Neither of config files is required, the variables could be, in principle,
 defined in .bashrc.
-See a sample config file in /usr/[local/]share/doc/mkat/examples/.
 
-.nf
-The following variables must be set:
-DRIVE="/dev/sr0" #physical CD drive
-CD="/misc/cd"	 #mounted CD drive (autofs mounted in my case)
-#where to place catalog database
-LISTDIR="/home/ledestin/.mkat"
-#where to place temporary files (image to burn,
-#grabbed wav files from newly burned audio CD to compare
-#with the files CD was burned from).
-TMP=/home/ledestin
-#parameters for image creation (genisoimage)
-MKIMAGE_OPTS='-J -iso-level=3 -file-mode 444 -graft-points' 
-CD_BURN_CMD='wodim -v $REC_OPTS "$ISO_IMAGE"'
-DVD_BURN_CMD='growisofs $REC_OPTS "$DVD_DRIVE"="$ISO_IMAGE"'
-
-#options for control freaks
-AUTOFS_DELAY=6		     #how long to 'sleep' before ejecting CD
-#meed the image creation program
-MKIMAGE_CMD='genisoimage $MKIMAGE_OPTS -V "$LABEL" -o "$ISO_IMAGE" "${FILES[@]}"'
-ISO_IMAGE="$TMP/cdimage.iso" #where to create iso image with genisoimage 
-#path to the library needed for mkat programs (helpers.sh)
-MKAT_LIBPATH=/usr/share/mkat
-.fi
+The following variables must be set (mostly there will be sensible defaults in
+/etc/mkatrc):
+.TP
+.B DRIVE
+disc drive device (e.g. /dev/dvd)
+.TP
+.B CD
+path where mounted disc files can be found (via autofs for example).
+MKAT won't do any mounting.
+.TP
+.B LISTDIR
+directory to store catalog (usually ~/.mkat)
+.TP
+.B ISO_IMAGE
+path pointing at ISO image
+.TP
+.B TMP
+directory for temporary files (grabbed wav files from newly burned audio CD to
+compare with the files CD was burned from).
+.TP
+.B MKIMAGE_OPTS
+arguments for image creation command
+.TP
+.B CD_BURN_CMD
+command to burn a CD
+.TP
+.B DVD_BURN_CMD
+command to burn a DVD/BD
+.TP
+.B MKIMAGE_CMD
+command to create ISO image
+.TP
+.B AUTOFS_DELAY
+sleep this amount of seconds before ejecting disc
+.TP
+.B MKAT_LIBPATH
+path to the library needed for mkat commands
 
 .SH SEE ALSO
 \fIburn(1), mkat(1)\fR
