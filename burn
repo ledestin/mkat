@@ -117,7 +117,7 @@ OPTIONS=(\
   -m=MKAT_OPTS "pass parameters to mkat" 'MKAT_OPTS=$2' \
   --media=TYPE 'specify media type (one of cd, dvd, bd, bd50)' 'BURN_MEDIA=$2' \
   --noimg "don't create image, just burn" 'SKIP_MKIMAGE=1' \
-  --noburn "don't burn image" 'SKIP_BURN=1' \
+  --noburn "don't burn disc" 'SKIP_BURN=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
   --dbcheck "check if the files are in mkat db" 'DB_CHECK=1' \
