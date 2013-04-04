@@ -204,7 +204,7 @@ if [ -z "$SKIP_MKIMAGE" -o -z "$SKIP_CHECK" ]; then
   # Vars needed for $MKIMAGE_CMD.
   LABEL="${ARGUMENTS[0]}"; unset 'ARGUMENTS[0]'; FILES=("${ARGUMENTS[@]}")
   listfile="$LISTDIR/$LABEL.list"
-  [ -z "$SKIP_CATALOG" -a -f "$listfile" ] && \
+  [ -z "$SKIP_BURN" -a -z "$SKIP_CATALOG" -a -f "$listfile" ] && \
     { echo >&2 "listfile already exists: $listfile";
       echo >&2 'Hint: use a different label';
       exit 1;
