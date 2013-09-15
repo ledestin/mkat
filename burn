@@ -345,7 +345,7 @@ if [ -z "$SKIP_BURN" ]; then
 fi
 
 # CATALOG {{{2
-if [ ! $SKIP_CATALOG ] && [ $CD ]; then
+if [ ! $SKIP_CATALOG ]; then
   echo "Catalog..."
   if [ $SIMULATE ]; then
     echo "mkat $MKAT_OPTS"
@@ -355,7 +355,7 @@ if [ ! $SKIP_CATALOG ] && [ $CD ]; then
 fi
 
 # AFTERBURN CHECK {{{2
-if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
+if [ -z "$SKIP_CHECK" ]; then
   echo 'Afterburn check...'
   [ -z "$SIMULATE" ] && compare_files
 fi
