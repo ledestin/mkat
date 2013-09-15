@@ -41,6 +41,15 @@ function check_lock() {
   fi
 }
 
+function compare_files() {
+  echo 'Comparing burned and original files...'
+  for f in "${FILES[@]}"; do
+    find "$f" -type f | while read file; do
+      cmp "$file" "$CD/$file"
+    done
+  done
+}
+
 # getopt(array_name, var_name)
 # arran_name - name of variable containing array of NAME, VALUE pairs.
 # var_name   - NAME part of the sought NAME, VALUE pair.
@@ -120,6 +129,7 @@ OPTIONS=(\
   --noburn "don't burn disc" 'SKIP_BURN=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
+  --filecheck 'compeare burned files to originals, exit' 'FILE_CHECK_ONLY=1' \
   --dbcheck "check if the files are in mkat db" 'DB_CHECK=1' \
   '-y|--yes' "don't ask questions" 'NO_QUESTIONS=1' \
   --simulate "print only, --debug implied" 'SIMULATE=1; DEBUG=1' \
@@ -238,6 +248,11 @@ LOCKFILE="${ISO_DIR:+$ISO_DIR/}.${ISO_IMAGE##*/}.lock"
 
 
 # MAKE ISO IMAGE {{{2
+if [ -n "$FILE_CHECK_ONLY" ]; then
+  compare_files
+  exit 0
+fi
+
 if [ $PRINT_ONLY ]; then
   cmd="genisoimage -print-size $MKIMAGE_OPTS"
   debug $cmd "${FILES[@]}"
@@ -341,18 +356,8 @@ fi
 
 # AFTERBURN CHECK {{{2
 if [ -z "$SKIP_CHECK" -a -n "$CD" ]; then
-  set +e
   echo 'Afterburn check...'
-  if [ -z "$SIMULATE" ]; then
-    for f in "${FILES[@]}"; do
-      if [ -d "$f" ]; then
-	find "$f" -type f -printf "%P\0" | \
-	  xargs -0 -ifile -n1 cmp "$f"/file "${CD%/}"/file
-      else
-	cmp "$f" "${CD%/}/`basename "$f"`"
-      fi
-    done
-  fi
+  [ -z "$SIMULATE" ] && compare_files
 fi
 
 # EJECT {{{2
