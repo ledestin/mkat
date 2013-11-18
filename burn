@@ -129,7 +129,7 @@ OPTIONS=(\
   --noburn "don't burn disc" 'SKIP_BURN=1' \
   --nocat "skip catalog" 'SKIP_CATALOG=1' \
   --nocheck "skip afterburn check" 'SKIP_CHECK=1' \
-  --filecheck 'compeare burned files to originals, exit' 'FILE_CHECK_ONLY=1' \
+  --filecheck 'compare burned files to originals, exit' 'FILE_CHECK_ONLY=1' \
   --dbcheck "check if the files are in mkat db" 'DB_CHECK=1' \
   '-y|--yes' "don't ask questions" 'NO_QUESTIONS=1' \
   --simulate "print only, --debug implied" 'SIMULATE=1; DEBUG=1' \
