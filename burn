@@ -48,6 +48,7 @@ function compare_files() {
       cmp "$file" "$CD/$file"
     done
   done
+  echo 'Files are the same'
 }
 
 # getopt(array_name, var_name)
