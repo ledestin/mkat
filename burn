@@ -346,8 +346,25 @@ if [ -z "$SKIP_BURN" ]; then
       check_lock
       lock
     fi
-    eval $cmd
+
+    set +e
+    eval $cmd; ret="$?"
+    set -e
     [ -z $PIPE_MKIMAGE ] && unlock
+
+    # Workaround growisofs failing, but still producing a valid disk. Ask user
+    # if they want to continue. If yes, eject and merrily continue. If no, exit.
+    if [ "$ret" -ne 0 ]; then
+      echo "Burning program failed."
+      echo "If 100% of files were burned, it still might be a success."
+      read -p "Would you still like to try to continue? (y/N)" answer
+      if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
+	exit "$ret"
+      fi
+
+      eject "$DRIVE"
+      eject -t "$DRIVE"
+    fi
   fi
 fi
 
