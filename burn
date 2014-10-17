@@ -80,6 +80,12 @@ function print_mb() {
   echo $(($1*2048/1024**2))Mb
 }
 
+# Label and files arguments required, unless both --noimg and --nocheck were
+# given.
+function required_label_and_files {
+  [ -z "$SKIP_MKIMAGE" -o -z "$SKIP_CHECK" ]
+}
+
 # Remove lock file
 function unlock {
   debug "releasing lock file..."
@@ -207,7 +213,7 @@ for o in $SUPPORTED_OPTIONS; do
 done
 
 # Label and files arguments must be provided.
-if [ -z "$SKIP_MKIMAGE" -o -z "$SKIP_CHECK" ]; then
+if required_label_and_files; then
   [ ${#ARGUMENTS[@]} -lt 2 ] && {
     echo >&2 "not enough parameters"
     usage 1
