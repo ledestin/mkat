@@ -355,11 +355,13 @@ if [ -z "$SKIP_BURN" ]; then
     # Workaround growisofs failing, but still producing a valid disk. Ask user
     # if they want to continue. If yes, eject and merrily continue. If no, exit.
     if [ -z "$SKIP_CATALOG" -a -z "$SKIP_CHECK" -a "$ret" -ne 0 ]; then
-      echo "Burning program failed."
-      echo "If 100% of files were burned, it still might be a success."
-      read -p "Would you still like to try to continue? (y/N)" answer
-      if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
-	exit "$ret"
+      if [ -z "$NO_QUESTIONS" ]; then
+	echo "Burning program failed."
+	echo "If 100% of files were burned, it still might be a success."
+	read -p "Would you still like to try to continue? (y/N)" answer
+	if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
+	  exit "$ret"
+	fi
       fi
 
       eject "$DRIVE"
