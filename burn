@@ -372,8 +372,8 @@ if [ -z "$SKIP_BURN" ]; then
     fi
 
     set +e
-    eval $cmd
-    [ "$?" -ne 0 ] && burn_failed="$?"
+    eval $cmd; ret="$?"
+    [ "$ret" -ne 0 ] && burn_failed="$ret"
     set -e
     [ -z $PIPE_MKIMAGE ] && unlock
 
