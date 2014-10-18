@@ -32,6 +32,30 @@ DVD_OPTS=('OVERBURN' '-overburn' 'SPEED' '-speed=$SPEED' 'MULTISESSION' '-M' 'SI
 ISO_OPTS=('QUIET' '-quiet')
 
 # FUNCTIONS {{{1
+
+# burn_fails_but_leaves_valid_disk_workaround(burn_failed)
+#
+# Workaround growisofs failing, but still producing a valid disk. Ask user if
+# they want to continue. If yes, eject and merrily continue. If no, return
+# burn_failed (serves as exit code for burn program).
+function burn_fails_but_leaves_valid_disk_workaround {
+  local burn_failed="$1"
+
+  if will_do_stuff_after_burn && [ -n "$burn_failed" ]; then
+    if will_ask_questions; then
+      echo "Burning program failed."
+      echo "If 100% of files were burned, it still might be a success."
+      read -p "Would you still like to try to continue? (y/N)" answer
+      if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
+	return "$burn_failed"
+      fi
+    fi
+
+      eject "$DRIVE"
+      eject -t "$DRIVE"
+    fi
+}
+
 # Complain and exit if $LOCKFILE exists.
 function check_lock() {
   debug "checking for lockfile $LOCKFILE"
@@ -377,21 +401,7 @@ if [ -z "$SKIP_BURN" ]; then
     set -e
     [ -z $PIPE_MKIMAGE ] && unlock
 
-    # Workaround growisofs failing, but still producing a valid disk. Ask user
-    # if they want to continue. If yes, eject and merrily continue. If no, exit.
-    if will_do_stuff_after_burn && [ -n "$burn_failed" ]; then
-      if will_ask_questions; then
-	echo "Burning program failed."
-	echo "If 100% of files were burned, it still might be a success."
-	read -p "Would you still like to try to continue? (y/N)" answer
-	if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
-	  exit "$burn_failed"
-	fi
-      fi
-
-      eject "$DRIVE"
-      eject -t "$DRIVE"
-    fi
+    burn_fails_but_leaves_valid_disk_workaround "$burn_failed"
   fi
 fi
 
