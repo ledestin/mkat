@@ -126,7 +126,7 @@ OPTIONS=(\
   -c "blank rewritable media" 'BLANK_MEDIA=1' \
   -o "overburn" 'OVERBURN=1' \
   '-p|--pipe' "pipe image directly to a burning program" \
-    'PIPE_MKIMAGE=1; NO_QUESTIONS=1' \
+    'PIPE_MKIMAGE=1' \
   -r=REC_OPTS "pass parameters to burning program" 'REC_OPTS="$REC_OPTS $2"' \
   -i=MKIMAGE_OPTS "pass parameters to image making program" \
     'MKIMAGE_OPTS="$MKIMAGE_OPTS $2"' \
@@ -315,7 +315,7 @@ fi
 
 # BURN {{{2
 if [ -z "$SKIP_BURN" ]; then
-  if [ -z $NO_QUESTIONS ] && [ -z $SKIP_MKIMAGE ]; then
+  if [ -z "$NO_QUESTIONS" -a -z "$PIPE_MKIMAGE" -a -z "$SKIP_MKIMAGE" ]; then
     read -p "Press Enter to proceed to burn or Control-C to abort"
   fi
   echo "BURN!"
