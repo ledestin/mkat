@@ -33,21 +33,21 @@ ISO_OPTS=('QUIET' '-quiet')
 
 # FUNCTIONS {{{1
 
-# burn_fails_but_leaves_valid_disk_workaround(burn_failed)
+# burn_fails_but_leaves_valid_disk_workaround(burn_fail_code)
 #
 # Workaround growisofs failing, but still producing a valid disk. Ask user if
 # they want to continue. If yes, eject and merrily continue. If no, return
-# burn_failed (serves as exit code for burn program).
+# burn_fail_code (serves as exit code for burn program).
 function burn_fails_but_leaves_valid_disk_workaround {
-  local burn_failed="$1"
+  local burn_fail_code="$1"
 
-  if will_do_stuff_after_burn && [ -n "$burn_failed" ]; then
+  if will_do_stuff_after_burn && [ -n "$burn_fail_code" ]; then
     if will_ask_questions; then
       echo "Burning program failed."
       echo "If 100% of files were burned, it still might be a success."
       read -p "Would you still like to try to continue? (y/N)" answer
       if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
-	return "$burn_failed"
+	return "$burn_fail_code"
       fi
     fi
 
@@ -397,11 +397,11 @@ if [ -z "$SKIP_BURN" ]; then
 
     set +e
     eval $cmd; ret="$?"
-    [ "$ret" -ne 0 ] && burn_failed="$ret"
+    [ "$ret" -ne 0 ] && burn_fail_code="$ret"
     set -e
     [ -z $PIPE_MKIMAGE ] && unlock
 
-    burn_fails_but_leaves_valid_disk_workaround "$burn_failed"
+    burn_fails_but_leaves_valid_disk_workaround "$burn_fail_code"
   fi
 fi
 
