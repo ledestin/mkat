@@ -93,7 +93,7 @@ function unlock {
 }
 
 # LOAD CONFIGURATION {{{1
-RCFILE=mkatrc 
+RCFILE=mkatrc
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
 [ -f ~/.$RCFILE ] && source ~/.$RCFILE
 [ -z "$MKAT_LIBPATH" ] && \
