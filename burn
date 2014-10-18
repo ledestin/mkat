@@ -92,6 +92,30 @@ function unlock {
   dotlockfile -u $LOCKFILE && trap - EXIT
 }
 
+function will_ask_questions {
+  [ -z "$NO_QUESTIONS" ]
+}
+
+function will_create_image {
+  [ -z "$SKIP_MKIMAGE" ]
+}
+
+function will_catalog {
+  [ -z "$SKIP_CATALOG" ]
+}
+
+function will_do_stuff_after_burn {
+  will_catalog || will_filecheck
+}
+
+function will_filecheck {
+  [ -z "$SKIP_CHECK" ]
+}
+
+function will_pipe_image {
+  [ -n "$PIPE_MKIMAGE" ]
+}
+
 # LOAD CONFIGURATION {{{1
 RCFILE=mkatrc
 [ -f /etc/$RCFILE ] && source /etc/$RCFILE
@@ -315,7 +339,7 @@ fi
 
 # BURN {{{2
 if [ -z "$SKIP_BURN" ]; then
-  if [ -z "$NO_QUESTIONS" -a -z "$PIPE_MKIMAGE" -a -z "$SKIP_MKIMAGE" ]; then
+  if will_ask_questions && will_create_image && ! will_pipe_image; then
     read -p "Press Enter to proceed to burn or Control-C to abort"
   fi
   echo "BURN!"
@@ -348,19 +372,20 @@ if [ -z "$SKIP_BURN" ]; then
     fi
 
     set +e
-    eval $cmd; ret="$?"
+    eval $cmd
+    [ "$?" -ne 0 ] && burn_failed="$?"
     set -e
     [ -z $PIPE_MKIMAGE ] && unlock
 
     # Workaround growisofs failing, but still producing a valid disk. Ask user
     # if they want to continue. If yes, eject and merrily continue. If no, exit.
-    if [ -z "$SKIP_CATALOG" -a -z "$SKIP_CHECK" -a "$ret" -ne 0 ]; then
-      if [ -z "$NO_QUESTIONS" ]; then
+    if will_do_stuff_after_burn && [ -n "$burn_failed" ]; then
+      if will_ask_questions; then
 	echo "Burning program failed."
 	echo "If 100% of files were burned, it still might be a success."
 	read -p "Would you still like to try to continue? (y/N)" answer
 	if [ "$answer" != 'y' -a "$answer" != 'Y' ]; then
-	  exit "$ret"
+	  exit "$burn_failed"
 	fi
       fi
 
